@@ -1,11 +1,12 @@
 
 
-DROP SCHEMA IF EXISTS lbaw24104 ;
+
 
 CREATE SCHEMA IF NOT EXISTS lbaw24104
-    AUTHORIZATION postgres;
-DROP TYPE activity_status;
-DROP TYPE report_status;
+
+SET search_path TO lbaw24104;
+DROP TYPE IF EXISTS activity_status;
+DROP TYPE IF EXISTS report_status;
 CREATE TYPE activity_status AS ENUM('active', 'flagged', 'deleted');
 CREATE TYPE report_status AS ENUM('resolved', 'pending', 'dismissed');
 
