@@ -9,5 +9,22 @@ class Post extends Model
 {
     use HasFactory;
 
+    public $timestamps  = false;
 
+    protected $table = 'Posts';
+
+    protected $primaryKey = 'post_id';
+
+
+    protected $fillable = ['title','body','updated_at','upvotes','downvotes'];
+
+
+
+
+    public function owner() {
+
+        return $this->belongsTo(User::class,'ownerId');
+      
+      }
+    
 }
