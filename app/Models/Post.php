@@ -11,7 +11,7 @@ class Post extends Model
 
     public $timestamps  = false;
 
-    protected $table = 'Posts';
+    protected $table = 'posts';
 
     protected $primaryKey = 'post_id';
 
@@ -23,7 +23,7 @@ class Post extends Model
 
     public function owner() {
 
-        return $this->belongsTo(User::class,'ownerId');
+        return $this->belongsTo(User::class,'ownerid');
       
       }
     

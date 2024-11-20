@@ -18,7 +18,7 @@ class User extends Authenticatable
     // Don't add create and update timestamps in database.
     public $timestamps  = false;
 
-    protected $table = 'Users';
+    protected $table = 'users';
 
     protected $primaryKey = 'user_id';
 
@@ -30,7 +30,7 @@ class User extends Authenticatable
     protected $fillable = [
         'username',
         'email',
-        'hash_password',
+        'password',
     ];
 
     /**
@@ -39,7 +39,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'hash_password',
+        'password',
         'remember_token',
     ];
 
@@ -62,6 +62,6 @@ class User extends Authenticatable
     }
 
     public function posts(): HasMany{
-        return $this->hasMany(Post::class,'ownerId');
+        return $this->hasMany(Post::class,'ownerid');
     }
 }

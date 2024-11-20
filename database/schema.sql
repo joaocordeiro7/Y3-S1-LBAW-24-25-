@@ -37,8 +37,9 @@ CREATE TABLE Users(
     user_id SERIAL PRIMARY KEY NOT NULL,
     username TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
-    hash_password TEXT NOT NULL,
-    reputation INT DEFAULT 0 NOT NULL
+    password TEXT NOT NULL,
+    reputation INT DEFAULT 0 NOT NULL,
+    remember_token VARCHAR(100)
 );
 
 
