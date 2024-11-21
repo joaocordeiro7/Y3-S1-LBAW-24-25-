@@ -3,7 +3,7 @@
 
 @section('content')
 <section id="post_form">
-    <form action="" method="POST">
+    <form action="{{ route('publish')}}" method="POST">
         {{csrf_field()}}
 
         <label for="title">Title</label>

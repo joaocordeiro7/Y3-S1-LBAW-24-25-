@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
+use Illuminate\Http\RedirectResponse;
+
+
+use Illuminate\View\View;
+
 class PostController extends Controller
 {
     /**
@@ -27,7 +32,7 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $newPost= new Post();
 
@@ -35,6 +40,9 @@ class PostController extends Controller
 
         $newPost->title=$request->input('newsTitle');
         $newPost->body=$request->input('newsBody');
+        $newPost->save();
+
+        return redirect()->intended('/createPosts');
     }
 
     /**

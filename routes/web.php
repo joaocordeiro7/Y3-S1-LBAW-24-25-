@@ -8,6 +8,8 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 
+use App\Http\Controllers\PostController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -35,6 +37,11 @@ Route::controller(CardController::class)->group(function () {
     Route::delete('/api/cards/{card_id}', 'delete');
 });
 
+
+Route::controller(PostController::class)->group(function (){
+    Route::get('/createPosts','create')->name('createPosts');
+    Route::post('/api/createPosts','store')->name('publish');
+});
 Route::controller(ItemController::class)->group(function () {
     Route::put('/api/cards/{card_id}', 'create');
     Route::post('/api/item/{id}', 'update');
