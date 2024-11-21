@@ -92,46 +92,46 @@ CREATE TABLE Comments(
 
 
 CREATE TABLE followed_tags(
+    id SERIAL PRIMARY KEY NOT NULL,
     tagId INT REFERENCES Tag (tag_id) ON UPDATE CASCADE,
-    userId INT REFERENCES Users (user_id) ON UPDATE CASCADE,
-    PRIMARY KEY (tagId,userId)
+    userId INT REFERENCES Users (user_id) ON UPDATE CASCADE
 );
 
 
 CREATE TABLE follwed_users(
+    id SERIAL PRIMARY KEY NOT NULL,
     userId1 INT REFERENCES Users (user_id) ON UPDATE CASCADE,
-    userId2 INT REFERENCES Users (user_id) ON UPDATE CASCADE,
-    PRIMARY KEY (userId1,userId2)
+    userId2 INT REFERENCES Users (user_id) ON UPDATE CASCADE
 );
 
 
 CREATE TABLE Post_tags(
+    id SERIAL PRIMARY KEY NOT NULL,
     post INT REFERENCES Posts (post_id) ON UPDATE CASCADE,
-    tag INT REFERENCES Tag (tag_id) ON UPDATE CASCADE,
-    PRIMARY KEY (post,tag)
+    tag INT REFERENCES Tag (tag_id) ON UPDATE CASCADE
 );
 
 --upvotes / downvotes
 CREATE TABLE InterationComments(
+    id SERIAL PRIMARY KEY NOT NULL,
     userId INT REFERENCES Users (user_id) ON UPDATE CASCADE,
     comment_id INT REFERENCES Comments (comment_id) ON UPDATE CASCADE,
-    liked BOOLEAN NOT NULL,
-    PRIMARY KEY (userId,comment_id)
+    liked BOOLEAN NOT NULL
 );
 
 
 CREATE TABLE InterationPosts(
+    id SERIAL PRIMARY KEY NOT NULL,
     userId INT REFERENCES Users (user_id) ON UPDATE CASCADE,
     postId INT REFERENCES Posts (post_id) ON UPDATE CASCADE,
-    liked BOOLEAN NOT NULL,
-    PRIMARY KEY (userId,postId)
+    liked BOOLEAN NOT NULL
 );
 
 
 CREATE TABLE favorite_posts(
+    id SERIAL PRIMARY KEY NOT NULL,
     userId INT REFERENCES Users (user_id) ON UPDATE CASCADE,
-    postId INT REFERENCES Posts (post_id) ON UPDATE CASCADE,
-    PRIMARY KEY (userId,postId)
+    postId INT REFERENCES Posts (post_id) ON UPDATE CASCADE
 );
 
 
