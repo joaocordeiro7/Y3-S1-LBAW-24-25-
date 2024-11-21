@@ -11,6 +11,6 @@
 
         <label for="body">News body</label>
         <input id="newsBody" name="newsBody" type="text" value="Write your news here">
-        <input name="submitButton" type="submit" value="Post">
+        <button type="submit">Publish</button>
     </form>
 </section>
