@@ -7,10 +7,11 @@
         {{csrf_field()}}
 
         <label for="title">Title</label>
-        <input id="newsTitle" name="newsTitle" type="text" value="Write the title of your news here">
+        <input id="newsTitle" name="newsTitle" type="text" placeholder="Write the title of your news here">
 
         <label for="body">News body</label>
-        <input id="newsBody" name="newsBody" type="text" value="Write your news here">
+        <input id="newsBody" name="newsBody" type="text" placeholder="Write your news here">
         <button type="submit">Publish</button>
     </form>
 </section>
+@endsection
