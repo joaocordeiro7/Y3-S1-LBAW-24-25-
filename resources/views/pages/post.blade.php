@@ -1,4 +1,4 @@
-@extends(layout.app)
+@extends('layouts.app')
 
 @section('content')
     <article id="post">
@@ -15,11 +15,11 @@
             </span>
             <span id="downvotes">
                 <img src="" alt="image for upvotes" id="upvotesLogo" class="interationLogo">
-                <span id="numberOfDownvotes" class="numberOfInterations">{{$post->upvotes}}</span>
+                <span id="numberOfDownvotes" class="numberOfInterations">{{$post->downvotes}}</span>
             </span>
         </div>
         <div id="postDetails">
-            <p>Author: {{$post->owner()}}</p>
+            <p>Author: {{$post->owner->username}}</p>
             <p>Published at {{$post->created_at}}</p>
         </div>
         <div id="postComments">

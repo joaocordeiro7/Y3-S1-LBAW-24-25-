@@ -16,7 +16,7 @@ class Post extends Model
     protected $primaryKey = 'post_id';
 
 
-    protected $fillable = ['title','body','updated_at','upvotes','downvotes'];
+    protected $fillable = ['title','body','updated_at','upvotes','downvotes','ownerid'];
 
 
 
@@ -25,6 +25,11 @@ class Post extends Model
 
         return $this->belongsTo(User::class,'ownerid');
       
-      }
+    }
+
+    public function ownerName() {
+      $user =User::findOrFail($this->owner())->name;
+      return $user;
+    }
     
 }

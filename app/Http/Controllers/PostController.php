@@ -6,6 +6,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 
 
 use Illuminate\View\View;
@@ -40,6 +41,7 @@ class PostController extends Controller
 
         $newPost->title=$request->input('newsTitle');
         $newPost->body=$request->input('newsBody');
+        $newPost->ownerid=Auth::user()->user_id;
         $newPost->save();
 
         return redirect()->intended('/createPosts');
@@ -48,9 +50,10 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Post $post)
+    public function show(string $id): View
     {
-        //
+        $post = Post::findOrFail($id);
+        return view('pages.post',['post'=>$post]);
     }
 
     /**

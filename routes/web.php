@@ -38,10 +38,18 @@ Route::controller(CardController::class)->group(function () {
 });
 
 
+
+Route::controller(PostController::class)->group(function (){
+    Route::get('/post/{id}','show');
+});
+
+
 Route::controller(PostController::class)->group(function (){
     Route::get('/createPosts','create')->name('createPosts');
     Route::post('/api/createPosts','store')->name('publish');
 });
+
+
 Route::controller(ItemController::class)->group(function () {
     Route::put('/api/cards/{card_id}', 'create');
     Route::post('/api/item/{id}', 'update');
