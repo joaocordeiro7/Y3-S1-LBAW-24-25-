@@ -159,4 +159,7 @@ body {
   input[type=password]:focus {
     border-color: #9b4dca;
   }
+  .hidden{
+    display: none;
+  }
   

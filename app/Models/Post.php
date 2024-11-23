@@ -18,7 +18,7 @@ class Post extends Model
 
     protected $fillable = ['title','body','updated_at','upvotes','downvotes','ownerid'];
 
-
+    protected $casts = ['created_at'=> 'datetime','updated_at'=> 'datetime'];
 
 
     public function owner() {

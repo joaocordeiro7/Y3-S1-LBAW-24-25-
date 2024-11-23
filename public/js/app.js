@@ -22,6 +22,19 @@ function addEventListeners() {
     let cardCreator = document.querySelector('article.card form.new_card');
     if (cardCreator != null)
       cardCreator.addEventListener('submit', sendCreateCardRequest);
+
+    let newsEditor = document.querySelector('article.post button.editButton');
+    if(newsEditor != null)
+      newsEditor.addEventListener('click', openNewsEditor);
+
+    let newsEditCancelButton = document.querySelector('section.postEditForm button.cancelButton');
+    if(newsEditCancelButton != null)
+      newsEditCancelButton.addEventListener('click',closeNewsEditor);
+    
+    let newsEditSaveButton = document.querySelector('section.postEditForm button.saveButton');
+    if(newsEditSaveButton != null)
+      newsEditSaveButton.addEventListener('click',sendUpdatePostRequest);
+    
   }
   
   function encodeForAjax(data) {
@@ -41,6 +54,42 @@ function addEventListeners() {
     request.send(encodeForAjax(data));
   }
   
+  function  openNewsEditor(){
+    let parent=this.parentElement;
+    parent.classList.add('hidden');
+    parent.parentElement.querySelector('section.postEditForm').classList.remove('hidden');
+  }
+
+  function closeNewsEditor(event){
+    let parent=this.parentElement;
+    parent.classList.add('hidden');
+    parent.parentElement.querySelector('article.post').classList.remove('hidden');
+    event.preventDefault();
+  }
+
+  function sendUpdatePostRequest(event){
+    let parent=this.parentElement;
+    let postTitle = parent.querySelector('input#newTitle').value;
+    let postBody = parent.querySelector('input#newBody').value;
+    let newTimestamp = new Date().toISOString();
+    let id = parent.parentElement.getAttribute('data-id');
+    
+    sendAjaxRequest('post','/post/edit/'+id,{title: postTitle, body: postBody, timestamp: newTimestamp },updatePostHandler);
+    event.preventDefault();
+  }
+
+  function updatePostHandler(){
+    
+    let post = JSON.parse(this.responseText);
+    
+    document.querySelector('article.post header.newsTitle h2').innerHTML=post.title;
+    document.querySelector('article.post div.newsBody p').innerHTML=post.body;
+
+    document.querySelector('article.post').classList.remove('hidden');
+    document.querySelector('section.postEditForm').classList.add('hidden');
+
+  }
+
   function sendItemUpdateRequest() {
     let item = this.closest('li.item');
     let id = item.getAttribute('data-id');

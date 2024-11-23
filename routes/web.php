@@ -47,6 +47,7 @@ Route::controller(PostController::class)->group(function (){
 Route::controller(PostController::class)->group(function (){
     Route::get('/createPosts','create')->name('createPosts');
     Route::post('/api/createPosts','store')->name('publish');
+    Route::post('/post/edit/{id}','update');
 });
 
 
