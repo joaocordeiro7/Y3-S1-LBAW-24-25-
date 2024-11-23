@@ -12,11 +12,13 @@
         </div>
     @endif
 
+    <!-- Ensure the correct route is chosen based on user role -->
     <form action="{{ Auth::user()->isAdmin() ? route('adminUpdateUser', ['id' => $user->user_id]) : route('updateProfile', ['id' => $user->user_id]) }}" method="POST">
         @csrf
 
         @include('partials.editProfileForm', ['user' => $user])
 
+        <!-- Admin-specific fields (e.g., Admin Note) -->
         @if (Auth::user()->isAdmin())
             <div class="form-group">
                 <label for="admin_note">Admin Note:</label>

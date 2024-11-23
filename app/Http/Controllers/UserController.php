@@ -40,33 +40,35 @@ class UserController extends Controller
     {
         $user = User::find($id);
     
-        if (!$user) {
-            abort(404, 'User not found.');
-        }
+        $currentUser = Auth::check() && Auth::id() == $user->user_id;
     
-        $isAdmin = Auth::check() && Auth::user()->isAdmin(); 
-        $currentUser = Auth::check() && $id == Auth::id();  
+        $canAdminEdit = Auth::check() && Auth::user()->isAdmin();
     
         return view('pages.profile', [
             'user' => $user,
             'currentUser' => $currentUser,
-            'isAdmin' => $isAdmin,
-            'canAdminEdit' => $isAdmin && !$currentUser,
+            'canAdminEdit' => $canAdminEdit,
         ]);
     }
-
+    
     /**
      * Show the form for editing the authenticated user's profile.
      */
-    public function editUser()
+    public function editUser($id)
     {
-
-        $user = Auth::user(); 
-
-        return view('pages.editProfile', [
-            'user' => $user,
-        ]);
+        $user = User::find($id);
+    
+        if (!$user) {
+            return redirect()->route('profile', ['id' => $id])->with('error', 'User not found.');
+        }
+    
+        if (Auth::id() != $user->user_id && !Auth::user()->isAdmin()) {
+            return redirect()->route('profile', ['id' => $id])->with('error', 'You are not authorized to edit this profile.');
+        }
+    
+        return view('pages.editProfile', ['user' => $user]);
     }
+    
 
     /**
      * Update the authenticated user's profile.
@@ -92,33 +94,6 @@ class UserController extends Controller
 
         return redirect()->route('profile', ['id' => $user->user_id])
             ->with('success', 'Profile updated successfully.');
-    }
-
-    public function adminUpdateUser(Request $request, $id)
-    {
-        $user = User::find($id);
-    
-        if (!$user) {
-            abort(404, 'User not found.');
-        }
-    
-        $request->validate([
-            'username' => 'required|string|max:250|unique:users,username,' . $user->user_id . ',user_id', 
-            'email' => 'required|email|max:250|unique:users,email,' . $user->user_id . ',user_id',
-            'password' => 'nullable|string|min:8|confirmed',
-        ]);
-    
-        $user->username = $request->input('username');
-        $user->email = $request->input('email');
-    
-        if ($request->filled('password')) {
-            $user->password = bcrypt($request->input('password'));
-        }
-
-        $user->save();
-    
-        return redirect()->route('profile', ['id' => $user->user_id])
-            ->with('success', 'User updated successfully.');
     }
     
 

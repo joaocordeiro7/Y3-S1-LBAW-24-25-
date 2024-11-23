@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminController;
 
 
 use App\Http\Controllers\Auth\LoginController;
@@ -60,5 +61,12 @@ Route::controller(UserController::class)->group(function () {
     Route::get('/users/{id}', 'show')->name('profile');
     Route::get('/users/{id}/edit', 'editUser')->name('editProfile');
     Route::post('/users/{id}/edit', 'edit')->name('updateProfile');
-    Route::post('/admin/users/{id}', 'adminUpdateUser')->name('adminUpdateUser');
+});
+
+// Admin
+Route::controller(AdminController:: class)->group(function () {
+    Route::get('/admin', 'index')->name('adminDashboard');
+    Route::get('/admin/users/create', 'createUserForm')->name('adminCreateUserForm'); 
+    Route::post('/admin/users/create', 'createUser')->name('adminCreateUser');
+    Route::post('/admin/edit/{id}',  'adminUpdateUser')->name('adminUpdateUser');
 });
