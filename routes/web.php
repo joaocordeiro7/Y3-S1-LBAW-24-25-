@@ -60,4 +60,5 @@ Route::controller(UserController::class)->group(function () {
     Route::get('/users/{id}', 'show')->name('profile');
     Route::get('/users/{id}/edit', 'editUser')->name('editProfile');
     Route::post('/users/{id}/edit', 'edit')->name('updateProfile');
+    Route::post('/admin/users/{id}', 'adminUpdateUser')->name('adminUpdateUser');
 });

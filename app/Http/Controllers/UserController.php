@@ -39,14 +39,19 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::find($id);
-
+    
         if (!$user) {
             abort(404, 'User not found.');
         }
-
+    
+        $isAdmin = Auth::check() && Auth::user()->isAdmin(); 
+        $currentUser = Auth::check() && $id == Auth::id();  
+    
         return view('pages.profile', [
             'user' => $user,
-            'canEdit' => $id == Auth::id() || (Auth::check() && Auth::user()->isAdmin()),        
+            'currentUser' => $currentUser,
+            'isAdmin' => $isAdmin,
+            'canAdminEdit' => $isAdmin && !$currentUser,
         ]);
     }
 
@@ -80,7 +85,7 @@ class UserController extends Controller
         $user->email = $request->input('email');
 
         if ($request->filled('password')) {
-            $user->hash_password = bcrypt($request->input('password'));
+            $user->password = bcrypt($request->input('password'));
         }
 
         $user->save();
@@ -89,6 +94,33 @@ class UserController extends Controller
             ->with('success', 'Profile updated successfully.');
     }
 
+    public function adminUpdateUser(Request $request, $id)
+    {
+        $user = User::find($id);
+    
+        if (!$user) {
+            abort(404, 'User not found.');
+        }
+    
+        $request->validate([
+            'username' => 'required|string|max:250|unique:users,username,' . $user->user_id . ',user_id', 
+            'email' => 'required|email|max:250|unique:users,email,' . $user->user_id . ',user_id',
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+    
+        $user->username = $request->input('username');
+        $user->email = $request->input('email');
+    
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->input('password'));
+        }
+
+        $user->save();
+    
+        return redirect()->route('profile', ['id' => $user->user_id])
+            ->with('success', 'User updated successfully.');
+    }
+    
 
     /**
      * Update the specified resource in storage.

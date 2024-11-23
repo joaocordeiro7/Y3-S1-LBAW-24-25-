@@ -8,8 +8,10 @@
     <p>Email: {{ $user->email }}</p>
     <p>Reputation: {{ $user->reputation }}</p>
 
-    @if ($canEdit)
-        <a href="{{ route('editProfile', ['id' => $user->user_id])}}" class="btn btn-primary">Edit Profile</a>
+    @if ($currentUser)
+        <a href="{{ route('editProfile', ['id' => $user->user_id]) }}" class="btn btn-primary">Edit Profile</a>
+    @elseif ($canAdminEdit)
+        <a href="{{ route('editProfile', ['id' => $user->user_id]) }}" class="btn btn-primary">Edit as Admin</a>
     @endif
 </div>
 @endsection

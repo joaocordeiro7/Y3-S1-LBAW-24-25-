@@ -1,63 +1,28 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Profile')
+@section('title', "Edit Profile: $user->username")
 
 @section('content')
 <div class="container">
-    <h1>Edit Profile</h1>
-    <form method="POST" action="{{ route('updateProfile', ['id' => $user->user_id]) }}">
+    <h1>Edit {{ $user->username }}'s Profile</h1>
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <form action="{{ Auth::user()->isAdmin() ? route('adminUpdateUser', ['id' => $user->user_id]) : route('updateProfile', ['id' => $user->user_id]) }}" method="POST">
         @csrf
 
-        <!-- Username -->
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input 
-                id="username" 
-                type="text" 
-                name="username" 
-                value="{{ old('username', $user->username) }}" 
-                class="form-control @error('username') is-invalid @enderror">
-            @error('username')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
+        @include('partials.editProfileForm', ['user' => $user])
 
-        <!-- Email -->
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input 
-                id="email" 
-                type="email" 
-                name="email" 
-                value="{{ old('email', $user->email) }}" 
-                class="form-control @error('email') is-invalid @enderror">
-            @error('email')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <!-- Password -->
-        <div class="form-group">
-            <label for="password">New Password</label>
-            <input 
-                id="password" 
-                type="password" 
-                name="password" 
-                class="form-control @error('password') is-invalid @enderror">
-            @error('password')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="form-group">
-            <label for="password_confirmation">Confirm Password</label>
-            <input 
-                id="password_confirmation" 
-                type="password" 
-                name="password_confirmation" 
-                class="form-control">
-        </div>
+        @if (Auth::user()->isAdmin())
+            <div class="form-group">
+                <label for="admin_note">Admin Note:</label>
+                <textarea name="admin_note" id="admin_note" class="form-control">{{ old('admin_note', $user->admin_note ?? '') }}</textarea>
+            </div>
+        @endif
 
         <button type="submit" class="btn btn-primary">Save Changes</button>
         <a href="{{ route('profile', ['id' => $user->user_id]) }}" class="btn btn-secondary">Cancel</a>
