@@ -43,8 +43,8 @@ class PostController extends Controller
         $newPost->body=$request->input('newsBody');
         $newPost->ownerid=Auth::user()->user_id;
         $newPost->save();
-
-        return redirect()->intended('/createPosts');
+        $postPage='/post/'.strval($newPost->post_id);
+        return redirect()->intended($postPage);
     }
 
     /**
@@ -70,7 +70,8 @@ class PostController extends Controller
     public function update(Request $request, $id)
     {
         $post = Post::find($id);
-        //check policy
+        
+        $this->authorize('update',$post);
 
         $post->title = $request->input('title');
         $post->body = $request->input('body');

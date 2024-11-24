@@ -58,6 +58,9 @@ function addEventListeners() {
     let parent=this.parentElement;
     parent.classList.add('hidden');
     parent.parentElement.querySelector('section.postEditForm').classList.remove('hidden');
+    let newTitleInput=parent.parentElement.querySelector('section.postEditForm input#newTitle');
+    newTitleInput.focus();
+    newTitleInput.setSelectionRange(newTitleInput.value.length,newTitleInput.value.length);
   }
 
   function closeNewsEditor(event){

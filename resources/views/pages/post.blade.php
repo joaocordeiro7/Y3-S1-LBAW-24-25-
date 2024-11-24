@@ -2,7 +2,9 @@
 
 @section('content')
     <article class="post" data-id="{{ $post->post_id }}">
-        <button class="editButton">Edit</button>
+        @if(Auth::check() && Auth::user()->user_id == $post->owner->user_id)
+            <button class="editButton">Edit</button>
+        @endif
         <header class="newsTitle">
             <h2>{{$post->title}}</h2>
         </header>
@@ -31,8 +33,8 @@
     <section class="postEditForm hidden" data-id="{{ $post->post_id }}">
         <form>
             {{csrf_field()}}
-            <input type="text" id="newTitle" value="{{$post->title}}">
-            <input type="text" id="newBody" value="{{$post->body}}">
+            <input type="text" id="newTitle" value="{{$post->title}}" required>
+            <input type="text" id="newBody" value="{{$post->body}}" required>
             <button type="submit" class="saveButton">Save Changes</button>
         </form>
         <button class="cancelButton">Cancel</button>
