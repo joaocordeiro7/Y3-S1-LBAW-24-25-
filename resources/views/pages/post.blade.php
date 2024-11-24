@@ -27,14 +27,20 @@
         </div>
         <div id="postComments">
             <h3>Comments</h3>
-            <p>The comments will br displayed here</p>
+            <p>The comments will be displayed here</p>
         </div>
     </article>
     <section class="postEditForm hidden" data-id="{{ $post->post_id }}">
         <form>
             {{csrf_field()}}
             <input type="text" id="newTitle" value="{{$post->title}}" required>
+            @if($errors->has('title'))
+                <span class="error">{{$errors->first('title')}}</span>
+            @endif
             <input type="text" id="newBody" value="{{$post->body}}" required>
+            @if($errors->has('body'))
+                <span class="error">{{$errors->first('body')}}</span>
+            @endif
             <button type="submit" class="saveButton">Save Changes</button>
         </form>
         <button class="cancelButton">Cancel</button>

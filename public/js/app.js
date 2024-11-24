@@ -76,7 +76,16 @@ function addEventListeners() {
     let postBody = parent.querySelector('input#newBody').value;
     let newTimestamp = new Date().toISOString();
     let id = parent.parentElement.getAttribute('data-id');
+    let editForm = parent.parentElement.querySelector('section.postEditForm form'); 
+    if(!editForm.checkValidity()){
+      
+      editForm.reportValidity();
+      event.preventDefault();
+      return
+    }
     
+    
+
     sendAjaxRequest('post','/post/edit/'+id,{title: postTitle, body: postBody, timestamp: newTimestamp },updatePostHandler);
     event.preventDefault();
   }
