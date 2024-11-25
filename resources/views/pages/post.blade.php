@@ -22,8 +22,8 @@
             </span>
         </div>
         <div id="postDetails">
-            <p>Author: {{$post->owner->username}}</p>
-            <p>Published at {{$post->created_at->format('d M Y H:i')}}</p>
+            <p>{{$post->owner->username}} - Published at {{$post->created_at->format('d M Y H:i')}}</p>
+            
         </div>
         <div id="postComments">
             <h3>Comments</h3>
@@ -37,12 +37,13 @@
             @if($errors->has('title'))
                 <span class="error">{{$errors->first('title')}}</span>
             @endif
-            <input type="text" id="newBody" value="{{$post->body}}" required>
+            <textarea id="newBody" value="{{$post->body}}" rows="16" required></textarea>
             @if($errors->has('body'))
                 <span class="error">{{$errors->first('body')}}</span>
             @endif
             <button type="submit" class="saveButton">Save Changes</button>
+            <button class="cancelButton">Cancel</button>
         </form>
-        <button class="cancelButton">Cancel</button>
+        
     </section>
 @endsection

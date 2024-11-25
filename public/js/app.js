@@ -65,15 +65,15 @@ function addEventListeners() {
 
   function closeNewsEditor(event){
     let parent=this.parentElement;
-    parent.classList.add('hidden');
-    parent.parentElement.querySelector('article.post').classList.remove('hidden');
+    parent.parentElement.classList.add('hidden');
+    parent.parentElement.parentElement.querySelector('article.post').classList.remove('hidden');
     event.preventDefault();
   }
 
   function sendUpdatePostRequest(event){
     let parent=this.parentElement;
     let postTitle = parent.querySelector('input#newTitle').value;
-    let postBody = parent.querySelector('input#newBody').value;
+    let postBody = parent.querySelector('textarea#newBody').value;
     let newTimestamp = new Date().toISOString();
     let id = parent.parentElement.getAttribute('data-id');
     let editForm = parent.parentElement.querySelector('section.postEditForm form'); 

@@ -1,12 +1,12 @@
 body {
     background-color: #ffffff;
-    color: #9b4dca;
+    color: black;
   }
   main > header {
     display: grid;
     grid-template-columns: 1fr auto auto;
     align-items: center;
-    background-color: #d2afe7;
+    background-color: #918a95;
     padding: 1em;
     margin: 1em;
   }
@@ -25,12 +25,76 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
   }
-  #cards article.card {
-    display: flex;
-    flex-direction: column;
-    background-color: #d3edc3;
+  article.post {
+    display: grid;
+    grid-template-rows: auto auto auto auto;
+    grid-template-columns: auto auto;
     padding: 1em;
     margin: 1em;
+  }
+  article.post .editButton{
+    grid-row: 1;
+    grid-column: 2;
+    width: 40px;
+    display: flex;
+    align-self: center;
+    justify-content: center;
+  }
+  article.post > .newsBody{
+    grid-row: 2;
+    
+    grid-column-start: 1;
+    grid-column-end: 3;
+  }
+  article.post  div#postDetails{
+    grid-row: 3;
+    grid-column: 1;
+    
+    
+  }
+  article.post  div#interactions{
+    grid-row: 3;
+    grid-column: 2;
+  }
+  article.post div#postComments{
+    grid-row: 4;
+    grid-column-start: 1;
+    grid-column-end: 3;
+  }
+  section.postEditForm form{
+    display: grid;
+    grid-template-columns: 15% auto;
+    grid-template-rows: 2fr 10fr 2fr;
+    padding: 1em;
+    margin: 1em;
+  }
+  section.postEditForm form input#newTitle{
+    grid-row: 1;
+    grid-column-start: 1;
+    grid-column-end: 3;
+  }
+  section.postEditForm form #newBody{
+    grid-row: 2;
+    grid-column-start: 1;
+    grid-column-end: 3;
+    height: auto;
+  }
+  section.postEditForm .cancelButton{
+    grid-row: 3;
+    grid-column-start: 2;
+    grid-column-end: 3;
+    width: 100px;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+  }
+  section.postEditForm .saveButton{
+    grid-row: 3;
+    grid-column-start: 1;
+    grid-column-end: 2;
+    width: 100px;
+    display: flex;
+    justify-content: center;
   }
   #cards article.card header {
     display: flex;
@@ -141,25 +205,25 @@ body {
    * Some styles might be missing
    **/
   button {
-    background-color: #9b4dca;
-    border-color: #9b4dca;
+    background-color: black;
+    border-color: black;
   }
   a.button {
-    background-color: #9b4dca;
-    border-color: #9b4dca;
+    background-color: black;
+    border-color: black;
   }
   a.button.button-outline {
-    color: #9b4dca;
+    color: black;
   }
   a {
-    color: #9b4dca;
+    color: black;
   }
   input[type=text]:focus,
   input[type=email]:focus,
   input[type=password]:focus {
-    border-color: #9b4dca;
+    border-color: black;
   }
-  .hidden{
+  article.hidden , section.hidden{
     display: none;
   }
   
