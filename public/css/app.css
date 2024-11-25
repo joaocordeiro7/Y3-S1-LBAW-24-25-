@@ -32,6 +32,10 @@ body {
     padding: 1em;
     margin: 1em;
   }
+  article.post div.newsBody p{
+    overflow-wrap: break-word;
+    max-width: calc(100vw - 4em);
+  }
   article.post .editButton{
     grid-row: 1;
     grid-column: 2;
