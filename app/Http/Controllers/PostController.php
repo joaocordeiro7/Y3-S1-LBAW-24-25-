@@ -11,15 +11,10 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\View\View;
 
+use Illuminate\Support\Facades\DB;
+
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
 
     /**
      * Show the form for creating a new resource.
@@ -91,14 +86,39 @@ class PostController extends Controller
     }
 
     /**
- * List all post titles.
- */
-public function list(): View
-{
-    // Obter todos os posts com título e corpo
-    $posts = Post::all(['post_id', 'title', 'body']);
+     * List all post titles.
+     */
+    public function list(): View
+    {
+        // Obter todos os posts com título e corpo
+        $posts = Post::all(['post_id', 'title', 'body']);
 
-    // Passar os dados para a view
-    return view('pages.home', ['posts' => $posts]);
+        // Passar os dados para a view
+        return view('pages.home', ['posts' => $posts]);
+    }
+
+    public function index(Request $request)
+    {
+        // Captura os parâmetros de busca
+        $search = $request->input('search');
+    
+        // Constrói a consulta
+        $query = Post::query();
+    
+        // Realiza a busca no título e no corpo
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('body', 'like', '%' . $search . '%');
+            });
+        }
+    
+        // Paginação dos resultados
+        $posts = $query->paginate(10);
+    
+        // Retorna a view com os resultados
+        return view('pages.home', ['posts' => $posts]);
+    }    
 }
-}
+
+

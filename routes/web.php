@@ -50,6 +50,10 @@ Route::controller(PostController::class)->group(function (){
     Route::get('/createPosts','create')->name('createPosts');
     Route::post('/api/createPosts','store')->name('publish');
     Route::post('/post/edit/{id}','update');
+    Route::get('/', [PostController::class, 'index'])->name('home');
+    Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
+
+
 });
 
 
@@ -71,3 +75,4 @@ Route::controller(RegisterController::class)->group(function () {
     Route::get('/register', 'showRegistrationForm')->name('register');
     Route::post('/register', 'register');
 });
+
