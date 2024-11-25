@@ -121,3 +121,77 @@ footer {
   padding:10px 0;
   margin-top: auto;
 }
+
+/* Estilo para a Barra de Pesquisa */
+form.mb-4 {
+  display: flex; /* Organização horizontal */
+  gap: 1em; /* Espaçamento entre os elementos */
+  align-items: center; /* Alinhamento vertical */
+  margin-bottom: 2em; /* Espaçamento abaixo do formulário */
+  padding: 1em;
+  background-color: #ffffff; /* Fundo branco */
+  border: 1px solid #dddddd; /* Borda cinzenta clara */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra subtil */
+  border-radius: 8px; /* Bordas arredondadas */
+}
+
+/* Campos de texto da pesquisa */
+form.mb-4 input[type="text"] {
+  flex: 1; /* Faz com que o campo ocupe o máximo espaço disponível */
+  padding: 0.5em;
+  font-size: 1rem;
+  border: 1px solid #cccccc; /* Borda cinzenta */
+  border-radius: 4px; /* Bordas arredondadas */
+  box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.1); /* Sombra interna subtil */
+  transition: border-color 0.2s ease;
+}
+
+form.mb-4 input[type="text"]:focus {
+  border-color: #dd3333; /* Destaque da borda em vermelho ao focar */
+  outline: none;
+}
+
+/* Botões de pesquisa e limpar */
+form.mb-4 button,
+form.mb-4 a.btn {
+  padding: 0.5em 1em;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ffffff; /* Branco para o texto */
+  background-color: #dd3333; /* Vermelho para os botões */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  text-decoration: none; /* Remove sublinhado do botão Clear (link) */
+  text-align: center; /* Centraliza o texto no botão Clear */
+}
+
+form.mb-4 button:hover,
+form.mb-4 a.btn:hover {
+  background-color: #bb2222; /* Vermelho mais escuro ao passar o rato */
+  transform: translateY(-2px); /* Elevação subtil */
+}
+
+form.mb-4 a.btn {
+  display: inline-block; /* Garante que o link funcione como botão */
+}
+
+/* Espaço entre o botão "Clear" e os outros elementos */
+form.mb-4 a.btn {
+  margin-left: 0.5em;
+}
+
+/* Ajuste para layouts responsivos */
+@media (max-width: 768px) {
+  form.mb-4 {
+    flex-direction: column; /* Alinha os elementos verticalmente em telas menores */
+    gap: 0.5em;
+  }
+
+  form.mb-4 input[type="text"],
+  form.mb-4 button,
+  form.mb-4 a.btn {
+    width: 100%; /* Campos e botões ocupam toda a largura */
+  }
+}
