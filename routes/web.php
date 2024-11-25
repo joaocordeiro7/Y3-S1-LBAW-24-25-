@@ -41,6 +41,8 @@ Route::controller(CardController::class)->group(function () {
 
 Route::controller(PostController::class)->group(function (){
     Route::get('/post/{id}','show');
+    Route::get('/home', 'list');
+
 });
 
 

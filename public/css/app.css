@@ -1,165 +1,133 @@
 body {
-    background-color: #ffffff;
-    color: #9b4dca;
-  }
-  main > header {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    align-items: center;
-    background-color: #d2afe7;
-    padding: 1em;
-    margin: 1em;
-  }
-  main > header h1 {
-    margin: 0;
-  }
-  main > header a.button {
-    margin: 1em;
-    justify-self: center;
-  }
-  main > header span {
-    margin: 1em;
-    justify-self: center;
-  }
-  #cards {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-  }
-  #cards article.card {
-    display: flex;
-    flex-direction: column;
-    background-color: #d3edc3;
-    padding: 1em;
-    margin: 1em;
-  }
-  #cards article.card header {
-    display: flex;
-    align-items: center;
-  }
-  #cards article.card header h2 {
-    flex-grow: 1;
-  }
-  #cards article.card header a.delete {
-    display: none;
-    font-size: 2.6rem;
-    margin-top: .5rem;
-    margin-bottom: 2.5rem;
-    line-height: 1.25;
-  }
-  #cards article.card header:hover a.delete {
-    display: inline;
-  }
-  #cards article.card li {
-    list-style-type: none;
-  }
-  #cards article.card li label {
-    display: flex;
-    align-items: baseline;
-  }
-  #cards article.card li label span {
-    margin-left: .5em;
-    flex-grow: 1;
-  }
-  #cards article.card li label a {
-    display: none;
-  }
-  #cards article.card li label:hover a {
-    display: inline;
-  }
-  #cards article.card input:checked + span {
-    text-decoration: var(--primary-color) solid line-through;
-  }
-  #cards article.card ul {
-    margin: 0;
-  }
-  #cards article.card form {
-    margin: 0;
-  }
-  #cards article.card input[type=text] {
-    background-color: white;
-    margin: 0;
-  }
-  #content label {
-    font-weight: normal;
-  }
-  #content > form {
-    margin: 0 auto;
-    padding: 1em;
-    max-width: 20em;
-    border: 1px solid #d2afe7;
-  }
-  #content > form .error {
-    font-weight: bold;
-    color: #ff3333;
-  }
-  #content > form .success {
-    font-weight: bold;
-    color: #106af1;
-  }
-  #content > form input {
-    background-color: white;
-  }
-  @media (max-width: 70em) {
-    #cards {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    main > header {
-      display: grid;
-      grid-template-columns: 1fr auto;
-    }
-    main > header h1 {
-      grid-row-end: span 2;
-    }
-  }
-  @media (max-width: 40em) {
-    #cards {
-      grid-template-columns: 1fr;
-    }
-  }
-  @media (max-width: 25em) {
-    body {
-      margin: 0;
-    }
-    main > header {
-      margin: 0;
-      padding: 0.5em;
-    }
-    main > header span {
-      margin: 0;
-    }
-    #content form {
-      margin: 0;
-      max-width: 25em;
-    }
-    article.card {
-      margin: 0;
-      border-bottom: 1px solid rgba(96, 108, 118, 0.4);
-    }
-  }
-  /**
-   * Override milligram colors
-   * Some styles might be missing
-   **/
-  button {
-    background-color: #9b4dca;
-    border-color: #9b4dca;
-  }
-  a.button {
-    background-color: #9b4dca;
-    border-color: #9b4dca;
-  }
-  a.button.button-outline {
-    color: #9b4dca;
-  }
-  a {
-    color: #9b4dca;
-  }
-  input[type=text]:focus,
-  input[type=email]:focus,
-  input[type=password]:focus {
-    border-color: #9b4dca;
-  }
-  .hidden{
-    display: none;
-  }
-  
+  background-color: #f7f7f7; /* Cinzento claro para o fundo */
+  color: #333333; /* Cinzento escuro para o texto */
+  font-family: 'Georgia', serif; /* Estilo de fonte clássico, como em jornais */
+  margin: 0;
+  display: flex;
+  flex-direction: column; /* Para permitir o footer fixado */
+  min-height: 100vh; /* Garante que o body ocupe pelo menos a altura da janela */
+}
+
+main {
+  flex: 1; /* Faz com que o conteúdo ocupe o máximo espaço disponível */
+}
+
+main > header {
+  display: flex; /* Usamos flexbox para alinhamento horizontal */
+  justify-content: space-between; /* Espaço entre o nome do site e o restante */
+  align-items: center; /* Garante que todos os elementos fiquem na mesma linha */
+  background-color: #111111; /* Preto para o cabeçalho */
+  color: #ffffff; /* Branco para o texto */
+  padding: 1em;
+}
+
+main > header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+main > header h1 a {
+  color: #ffffff !important; /* Branco fixo para o nome do site */
+  text-decoration: none;
+}
+
+main > header a.button {
+  color: #ffffff; /* Branco para o texto dos botões */
+  background-color: #333333; /* Cinzento escuro */
+  border: 1px solid #555555; /* Borda cinzenta */
+  padding: 0.5em 0.8em; /* Margem interna ajustada para menos largura */
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+main > header a.button:hover {
+  color: #dd3333; /* Apenas o texto do botão fica vermelho ao passar o rato */
+  background-color: #333333; /* O fundo permanece cinzento */
+}
+
+main > header span {
+  color: #cccccc; /* Cinzento claro para o nome do utilizador */
+}
+
+#content {
+  padding: 2em;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+#cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Adaptável para vários tamanhos de ecrã */
+  gap: 1.5em;
+}
+
+#cards article.card {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff; /* Branco para os cartões */
+  border: 1px solid #dddddd; /* Borda cinzenta clara */
+  padding: 1.5em;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra subtil */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#cards article.card:hover {
+  transform: translateY(-5px); /* Elevação ao passar o rato */
+  box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+#cards article.card header {
+  margin-bottom: 1em;
+}
+
+#cards article.card header h2 {
+  margin: 0;
+  color: #333333; /* Cinzento escuro */
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+#cards article.card header h2:hover {
+  color: #333333; /* Mantém o título cinzento ao passar o rato */
+}
+
+#cards article.card p {
+  color: #666666; /* Cinzento médio para o corpo do texto */
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 1em;
+}
+
+#cards article.card a {
+  align-self: flex-start;
+  color: #dd3333; /* Vermelho para o link */
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: auto;
+}
+
+#cards article.card a:hover {
+  text-decoration: underline;
+}
+
+footer {
+  background-color: #111111; /* Preto para o rodapé */
+  color: #ffffff; /* Branco para o texto */
+  text-align: center;
+  padding: 0.5em 0; /* Menor altura para o rodapé */
+  font-size: 0.8rem; /* Texto ligeiramente menor */
+  position: relative;
+  bottom: 0;
+  width: 100%; /* Garante que o rodapé ocupa toda a largura */
+  margin-top: auto; /* Faz com que o rodapé "grude" no fim da página se não houver muito conteúdo */
+}
+
+footer a {
+  color: #dd3333; /* Vermelho para links no rodapé */
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
