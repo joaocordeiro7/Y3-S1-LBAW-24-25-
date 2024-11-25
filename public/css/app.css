@@ -6,10 +6,13 @@ body {
   display: flex;
   flex-direction: column; /* Para permitir o footer fixado */
   min-height: 100vh; /* Garante que o body ocupe pelo menos a altura da janela */
+  scroll-behavior: smooth;
+  box-sizing: border-box;
 }
 
 main {
-  flex: 1; /* Faz com que o conteúdo ocupe o máximo espaço disponível */
+  min-height: 90vh;
+  width: 100%; /* Faz com que o conteúdo ocupe o máximo espaço disponível */
 }
 
 main > header {
@@ -112,22 +115,9 @@ main > header span {
 }
 
 footer {
-  background-color: #111111; /* Preto para o rodapé */
-  color: #ffffff; /* Branco para o texto */
+  background-color: #111111;
+  color: #ffffff;
   text-align: center;
-  padding: 0.5em 0; /* Menor altura para o rodapé */
-  font-size: 0.8rem; /* Texto ligeiramente menor */
-  position: relative;
-  bottom: 0;
-  width: 100%; /* Garante que o rodapé ocupa toda a largura */
-  margin-top: auto; /* Faz com que o rodapé "grude" no fim da página se não houver muito conteúdo */
-}
-
-footer a {
-  color: #dd3333; /* Vermelho para links no rodapé */
-  text-decoration: none;
-}
-
-footer a:hover {
-  text-decoration: underline;
+  padding:10px 0;
+  margin-top: auto;
 }
