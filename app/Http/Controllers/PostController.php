@@ -88,8 +88,15 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function destroy(Post $post, $id)
     {
-        //
+        $post=Post::find($id);
+        $this->authorize('delete',$post);
+
+        try{
+            $post->delete();
+        }catch(\Illuminate\Database\QueryException $ex){
+            return response()->json($ex->getMessage());
+        }
     }
 }
