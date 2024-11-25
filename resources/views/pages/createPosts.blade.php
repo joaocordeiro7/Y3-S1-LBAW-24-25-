@@ -13,7 +13,7 @@
         @endif
 
         <label for="newsBody">News body</label>
-        <input id="newsBody" name="newsBody" type="text" placeholder="Write your news here" value="{{old('newsTitle')}}" required>
+        <textarea id="newsBody" name="newsBody" type="text" placeholder="Write your news here" rows="16" required>{{old('newsTitle')}}</textarea>
         @if($errors->has('newsBody'))
             <span class="error">{{$errors->first('newsBody')}}</span>
         @endif

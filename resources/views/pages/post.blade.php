@@ -37,7 +37,7 @@
             @if($errors->has('title'))
                 <span class="error">{{$errors->first('title')}}</span>
             @endif
-            <textarea id="newBody" value="{{$post->body}}" rows="16" required></textarea>
+            <textarea id="newBody" rows="16" required>{{$post->body}}</textarea>
             @if($errors->has('body'))
                 <span class="error">{{$errors->first('body')}}</span>
             @endif

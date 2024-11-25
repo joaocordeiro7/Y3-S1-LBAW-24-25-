@@ -78,6 +78,7 @@ body {
     grid-column-start: 1;
     grid-column-end: 3;
     height: auto;
+    resize: none;
   }
   section.postEditForm .cancelButton{
     grid-row: 3;
@@ -95,6 +96,18 @@ body {
     width: 100px;
     display: flex;
     justify-content: center;
+  }
+  #post_form{
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+    margin: 1em;
+  }
+  #post_form textarea#newsBody{
+    flex-grow: 3;
+    height: auto;
+    resize: none;
+    
   }
   #cards article.card header {
     display: flex;
@@ -220,7 +233,8 @@ body {
   }
   input[type=text]:focus,
   input[type=email]:focus,
-  input[type=password]:focus {
+  input[type=password]:focus,
+  textarea:focus {
     border-color: black;
   }
   article.hidden , section.hidden{
