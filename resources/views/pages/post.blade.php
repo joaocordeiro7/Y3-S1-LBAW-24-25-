@@ -2,7 +2,7 @@
 
 @section('content')
     <article class="post" data-id="{{ $post->post_id }}">
-        @if(Auth::check() && Auth::user()->user_id == $post->owner->user_id)
+        @if((Auth::check() && Auth::user()->user_id == $post->owner->user_id) || (Auth::check() && Auth::user()->isAdmin()))
             <button class="editButton">Edit</button>
             <button class="deleteButton">Delete</button>
             <span class="error"></span>

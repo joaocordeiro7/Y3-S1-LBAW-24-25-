@@ -38,7 +38,7 @@ class PostPolicy
      */
     public function update(User $user, Post $post): bool
     {
-        return $user->user_id === $post->owner->user_id;
+        return $user->user_id === $post->owner->user_id || $user->isAdmin();
     }
 
     /**
@@ -46,7 +46,7 @@ class PostPolicy
      */
     public function delete(User $user, Post $post): bool
     {
-        return $user->user_id === $post->owner->user_id;
+        return $user->user_id === $post->owner->user_id || $user->isAdmin();
     }
 
     /**
