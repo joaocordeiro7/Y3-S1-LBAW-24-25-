@@ -99,26 +99,22 @@ class PostController extends Controller
 
     public function index(Request $request)
     {
-        // Captura os parâmetros de busca
         $search = $request->input('search');
-    
-        // Constrói a consulta
-        $query = Post::query();
-    
-        // Realiza a busca no título e no corpo
+
+        // Se houver pesquisa, usar ILIKE para busca tolerante
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', '%' . $search . '%')
-                  ->orWhere('body', 'like', '%' . $search . '%');
-            });
+            $posts = DB::table('posts')
+                ->where('title', 'ILIKE', '%' . $search . '%')
+                ->orWhere('body', 'ILIKE', '%' . $search . '%')
+                ->paginate(10);
+        } else {
+            // Retorna todos os posts caso não haja busca
+            $posts = DB::table('posts')->paginate(10);
         }
-    
-        // Paginação dos resultados
-        $posts = $query->paginate(10);
-    
-        // Retorna a view com os resultados
+
         return view('pages.home', ['posts' => $posts]);
-    }    
+    }
+
 }
 
 
