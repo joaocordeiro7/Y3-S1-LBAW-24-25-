@@ -19,7 +19,7 @@
         @csrf
         @include('partials.editProfileForm', ['user' => $user])
 
-        @if (Auth::user()->isAdmin() && Auth::user()->user_id != $user->user_id)
+        @if (Auth::user()->isAdmin() && Auth::user()->user_id != $user->user_id && !$user->isAdmin())
             <div class="form-group">
                 <label>Make Admin: (coming soon)</label>
                 <div class="form-check form-switch">
