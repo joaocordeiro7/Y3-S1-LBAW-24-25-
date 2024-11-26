@@ -318,3 +318,42 @@ footer {
   text-align: center;
   padding: 1em 0;
 }
+
+/* Ajustar o layout da barra de pesquisa para alinhar tudo na mesma linha */
+main > header form.mb-4.d-flex {
+  display: flex;
+  align-items: center; /* Alinhar verticalmente na mesma linha */
+  gap: 1em; /* Espaçamento entre os elementos */
+  flex-wrap: nowrap; /* Impede que os elementos sejam empilhados */
+}
+
+/* Certificar-se de que os grupos do formulário não tenham margens indesejadas */
+main > header form.mb-4.d-flex .form-group {
+  margin: 0; /* Remove margens adicionais */
+}
+
+/* Ajustar o campo de texto */
+main > header form.mb-4.d-flex #search {
+  flex-grow: 1; /* Faz o campo de pesquisa ocupar o espaço disponível */
+  max-width: 300px; /* Limita a largura máxima */
+  min-width: 200px; /* Garante uma largura mínima */
+}
+
+/* Garantir que os botões não quebrem */
+main > header form.mb-4.d-flex button,
+main > header form.mb-4.d-flex a {
+  white-space: nowrap; /* Impede quebra de texto nos botões */
+  flex-shrink: 0; /* Evita que os botões diminuam de tamanho */
+}
+
+/* Opcional: ajuste para o alinhamento no mobile */
+@media (max-width: 600px) {
+  main > header form.mb-4.d-flex {
+    flex-wrap: wrap; /* Permite que os elementos empilhem em telas pequenas */
+    justify-content: center; /* Centraliza no mobile */
+  }
+  main > header form.mb-4.d-flex .form-group {
+    flex: 1 1 100%; /* Faz os elementos ocuparem largura total */
+  }
+}
+

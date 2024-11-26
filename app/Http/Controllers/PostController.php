@@ -11,15 +11,10 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\View\View;
 
+use Illuminate\Support\Facades\DB;
+
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
 
     /**
      * Show the form for creating a new resource.
@@ -103,14 +98,35 @@ class PostController extends Controller
     }
 
     /**
- * List all post titles.
- */
-public function list(): View
-{
-    // Obter todos os posts com título e corpo
-    $posts = Post::all(['post_id', 'title', 'body']);
+     * List all post titles.
+     */
+    public function list(): View
+    {
+        // Obter todos os posts com título e corpo
+        $posts = Post::all(['post_id', 'title', 'body']);
 
-    // Passar os dados para a view
-    return view('pages.home', ['posts' => $posts]);
+        // Passar os dados para a view
+        return view('pages.home', ['posts' => $posts]);
+    }
+
+    public function index(Request $request)
+    {
+        $search = $request->input('search');
+
+        // Se houver pesquisa, usar ILIKE para busca tolerante
+        if ($search) {
+            $posts = DB::table('posts')
+                ->where('title', 'ILIKE', '%' . $search . '%')
+                ->orWhere('body', 'ILIKE', '%' . $search . '%')
+                ->paginate(10);
+        } else {
+            // Retorna todos os posts caso não haja busca
+            $posts = DB::table('posts')->paginate(10);
+        }
+
+        return view('pages.home', ['posts' => $posts]);
+    }
+
 }
-}
+
+

@@ -13,6 +13,7 @@ use App\Http\Controllers\Auth\RegisterController;
 
 use App\Http\Controllers\PostController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -53,6 +54,8 @@ Route::controller(PostController::class)->group(function (){
     Route::get('/createPosts','create')->name('createPosts');
     Route::post('/api/createPosts','store')->name('publish');
     Route::post('/post/edit/{id}','update');
+    Route::get('/', 'index')->name('home');
+    Route::get('/posts', 'index')->name('posts.index');
     Route::post('/deletePost/{id}','destroy');
 });
 
@@ -80,6 +83,7 @@ Route::controller(UserController::class)->group(function () {
     Route::get('/users/{id}', 'show')->name('profile');
     Route::get('/users/{id}/edit', 'editUser')->name('editProfile');
     Route::post('/api/users/{id}/edit', 'edit')->name('updateProfile');
+    Route::get('/search', 'search')->name('user.search');
 });
 
 // Admin
