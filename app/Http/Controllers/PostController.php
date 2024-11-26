@@ -101,4 +101,16 @@ class PostController extends Controller
 
         return response()->json(['success' => 'The post was deleted successfully']);
     }
+
+    /**
+ * List all post titles.
+ */
+public function list(): View
+{
+    // Obter todos os posts com título e corpo
+    $posts = Post::all(['post_id', 'title', 'body']);
+
+    // Passar os dados para a view
+    return view('pages.home', ['posts' => $posts]);
+}
 }
