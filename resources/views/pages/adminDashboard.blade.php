@@ -23,7 +23,7 @@
                     <td>{{ $user->username }}</td>
                     <td>{{ $user->email }}</td>
                     <td>
-                        <a href="{{ route('editProfile', $user->user_id) }}" class="btn btn-sm btn-primary">Edit</a>
+                        <a href="{{ route('profile', $user->user_id) }}" class="btn btn-sm btn-primary">View</a>
                         
                         <button class="btn btn-sm btn-danger" disabled>Delete (Coming Soon)</button>
                     </td>
