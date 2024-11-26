@@ -66,7 +66,6 @@ Route::controller(UserController::class)->group(function () {
 // Admin
 Route::controller(AdminController:: class)->group(function () {
     Route::get('/admin', 'index')->name('adminDashboard');
-    Route::get('/admin/users/create', 'createUserForm')->name('adminCreateUserForm'); 
-    Route::post('/admin/users/create', 'createUser')->name('adminCreateUser');
+    Route::post('/admin', 'createUser')->name('createUser');
     Route::post('/admin/edit/{id}',  'adminUpdateUser')->name('adminUpdateUser');
 });

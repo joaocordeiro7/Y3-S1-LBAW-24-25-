@@ -22,7 +22,27 @@ function addEventListeners() {
     let cardCreator = document.querySelector('article.card form.new_card');
     if (cardCreator != null)
       cardCreator.addEventListener('submit', sendCreateCardRequest);
+
+    let saveChangesButton = document.getElementById('saveChanges');
+    if (saveChangesButton) {
+        saveChangesButton.addEventListener('click', (event) => {
+          event.preventDefault();
+            updateUserProfile(
+                event,
+                'editProfileForm',
+                'success-message',
+                'error-message',
+                saveChangesButton.dataset.updateUrl
+            );
+        });
+    }
+
+    let createUserButton = document.getElementById('generateUser');
+    if (createUserButton) {
+        createUserButton.addEventListener('click', handleCreateUser);
+    }
   }
+  
   
   function encodeForAjax(data) {
     if (data == null) return null;
@@ -179,3 +199,114 @@ function addEventListeners() {
   
   addEventListeners();
   
+  function updateUserProfile(event, formId, successMessageId, errorMessageId, updateUrl) {
+    console.log("Save Changes button clicked!");
+
+    const form = document.getElementById(formId);
+    if (!form || !(form instanceof HTMLFormElement)) {
+        console.error("The form element was not found or is invalid.");
+        return;
+    }
+
+    const successMessage = document.getElementById(successMessageId);
+    const errorMessage = document.getElementById(errorMessageId);
+
+    const formData = new FormData(form);
+
+    fetch(updateUrl, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        },
+        body: formData,
+    })
+        .then((response) => {
+            console.log("Response received:", response);
+            if (!response.ok) {
+                throw new Error('Profile update failed');
+            }
+            return response.json();
+        })
+        .then((data) => {
+            successMessage.style.display = "block";
+            errorMessage.style.display = "none";
+
+            form.querySelector('#username').value = data.username;
+            form.querySelector('#email').value = data.email;
+
+            const title = document.querySelector('#title');
+            if (title) {
+                title.textContent = `Edit ${data.username}'s Profile`;
+            }
+        })
+        .catch((error) => {
+            console.error("Error details:", error);
+            errorMessage.style.display = "block";
+            successMessage.style.display = "none";
+            errorMessage.innerText = error.message || "Unexpected error occurred. Please try again.";
+        });
+}
+
+function handleCreateUser(event) {
+  console.log("Create User button clicked!");
+
+  const createUserButton = event.target;
+  const form = document.getElementById('adminCreateUser');
+  const actionUrl = createUserButton.dataset.actionUrl;
+
+  if (!form) {
+      console.error("Form element not found!");
+      return;
+  }
+
+  const formData = new FormData(form);
+
+  fetch(actionUrl, {
+      method: 'POST',
+      headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+      },
+      body: formData,
+  })
+      .then((response) => {
+          if (!response.ok) {
+              throw new Error('Failed to create user');
+          }
+          return response.json();
+      })
+      .then((data) => {
+          if (data.success) {
+              console.log("User created successfully:", data);
+
+              const usersTable = document.querySelector('table tbody');
+              if (usersTable) {
+                  const newRow = document.createElement('tr');
+                  newRow.innerHTML = `
+                      <td>${data.user_id}</td>
+                      <td>${data.username}</td>
+                      <td>${data.email}</td>
+                      <td>
+                          <a href="/users/${data.user_id}/edit" class="btn btn-sm btn-primary">Edit</a>
+                          <button class="btn btn-sm btn-danger" disabled>Delete (Coming Soon)</button>
+                      </td>
+                  `;
+                  usersTable.appendChild(newRow);
+              }
+
+              form.reset();
+
+              const successMessage = document.getElementById('userCreatedMessage');
+              successMessage.style.display = "block";
+
+          } else {
+              throw new Error('Server returned an unsuccessful response');
+          }
+      })
+      .catch((error) => {
+          console.error("Error creating user:", error);
+          alert('Error creating user. Please try again.');
+      });
+}
+
+
+

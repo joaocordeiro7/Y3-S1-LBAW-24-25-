@@ -4,30 +4,39 @@
 
 @section('content')
 <div class="container">
-    <h1>Edit {{ $user->username }}'s Profile</h1>
+    <h1 id="title">Edit {{ $user->username }}'s Profile</h1>
 
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+    <div id="success-message" class="alert alert-success" style="display: none;">
+        Profile updated successfully!
+    </div>
 
-    <!-- Ensure the correct route is chosen based on user role -->
-    <form action="{{ Auth::user()->isAdmin() ? route('adminUpdateUser', ['id' => $user->user_id]) : route('updateProfile', ['id' => $user->user_id]) }}" method="POST">
+    <div id="error-message" class="alert alert-danger" style="display: none;">
+        An error occurred while updating the profile. Please try again.
+    </div>
+
+
+    <form id="editProfileForm">
         @csrf
-
         @include('partials.editProfileForm', ['user' => $user])
 
-        <!-- Admin-specific fields (e.g., Admin Note) -->
-        @if (Auth::user()->isAdmin())
+        @if (Auth::user()->isAdmin() && Auth::user()->user_id != $user->user_id)
             <div class="form-group">
-                <label for="admin_note">Admin Note:</label>
-                <textarea name="admin_note" id="admin_note" class="form-control">{{ old('admin_note', $user->admin_note ?? '') }}</textarea>
+                <label>Make Admin: (coming soon)</label>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="makeAdmin" disabled>
+                </div>
             </div>
         @endif
 
-        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <button type="button" id="saveChanges" class="btn btn-primary" 
+            data-update-url="{{ Auth::user()->isAdmin() ? route('adminUpdateUser', ['id' => $user->user_id]) : route('updateProfile', ['id' => $user->user_id]) }}">
+            Save Changes
+        </button>
         <a href="{{ route('profile', ['id' => $user->user_id]) }}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
 @endsection
+
+@section('scripts')
+@endsection
+

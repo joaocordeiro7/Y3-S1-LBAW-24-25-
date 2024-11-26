@@ -25,7 +25,6 @@
                     <td>
                         <a href="{{ route('editProfile', $user->user_id) }}" class="btn btn-sm btn-primary">Edit</a>
                         
-                        {{-- Placeholder for Delete User --}}
                         <button class="btn btn-sm btn-danger" disabled>Delete (Coming Soon)</button>
                     </td>
                 </tr>
@@ -34,25 +33,44 @@
     </table>
 
     <h2>Create New User</h2>
-    <form method="POST" action="{{ route('adminCreateUser') }}">
+    <div id="userCreatedMessage" class="alert alert-success" style="display: none;">
+        User created successfully!
+    </div>
+    <form id="adminCreateUser">
         @csrf
         <div class="form-group">
             <label for="username">Username</label>
-            <input type="text" name="username" id="username" class="form-control" required>
+            <input type="text" name="username" id="username" value="{{ old('username') }}" class="form-control">            
+            @error('username')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
+
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" name="email" id="email" class="form-control" required>
+            <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" required>
+            @error('email')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
+
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" name="password" id="password" class="form-control" required>
+            <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" required>
+            @error('password')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
+
         <div class="form-group">
-            <label for="confirm_password">Confirm Password</label>
-            <input type="password" name="confirm_password" id="confirm_password" class="form-control" required>
+            <label for="password_confirmation">Confirm Password</label>
+            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
         </div>
-        <button type="submit" class="btn btn-success">Create User</button>
+
+        <button type="button" id="generateUser" data-action-url="{{ route('createUser') }}">Create User</button>
     </form>
 </div>
+@endsection
+
+@section('scripts')
 @endsection

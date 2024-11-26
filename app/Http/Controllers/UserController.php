@@ -73,28 +73,32 @@ class UserController extends Controller
     /**
      * Update the authenticated user's profile.
      */
-    public function edit(Request $request)
+    public function edit(Request $request, $id)
     {
-        $user = Auth::user();
-
+        $user = User::findOrFail($id); 
+    
         $request->validate([
             'username' => 'required|string|max:250|unique:users,username,' . $user->user_id . ',user_id',
             'email' => 'required|email|max:250|unique:users,email,' . $user->user_id . ',user_id',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
-        
+    
         $user->username = $request->input('username');
         $user->email = $request->input('email');
-
+    
         if ($request->filled('password')) {
             $user->password = bcrypt($request->input('password'));
         }
-
+    
         $user->save();
-
-        return redirect()->route('profile', ['id' => $user->user_id])
-            ->with('success', 'Profile updated successfully.');
+    
+        return response()->json([
+            'success' => true,
+            'username' => $user->username,
+            'email' => $user->email,
+        ]);
     }
+    
     
 
     /**

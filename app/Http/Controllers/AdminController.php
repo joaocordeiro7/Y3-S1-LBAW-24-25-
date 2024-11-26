@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -15,21 +16,13 @@ class AdminController extends Controller
      */
     public function index()
     {
-        // Check if the user is authenticated and an admin
         if (!Auth::check() || !Auth::user()->isAdmin()) {
-            // Redirect non-admin users or unauthenticated users
             return redirect('/')->with('error', 'You are not authorized to access this page.');
         }
 
-        // Logic for admin users
-        $users = User::paginate(10); // Example: Fetch all users for admin management
+        $users = User::paginate(10);
 
         return view('pages.adminDashboard', compact('users'));
-    }
-
-    public function createUserForm()
-    {
-        return view('pages.createUser');
     }
 
     public function createUser(Request $request)
@@ -40,22 +33,23 @@ class AdminController extends Controller
             'password' => 'required|min:8|confirmed',
         ]);
 
-        User::create([
-            'username' => $request->input('username'),
-            'email' => $request->input('email'),
-            'password' => bcrypt($request->input('password')),
+        $user = User::create([
+            'username' => $request->username,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('adminDashboard')->with('success', 'User created successfully!');
+        return response()->json([
+            'success' => true,
+            'user_id' => $user->user_id,
+            'username' => $user->username,
+            'email' => $user->email,
+        ]);
     }
 
     public function adminUpdateUser(Request $request, $id)
-    {
-        $user = User::find($id);
-    
-        if (!$user) {
-            abort(404, 'User not found.');
-        }
+    {   
+        $user = User::findOrFail($id);
     
         $request->validate([
             'username' => 'required|string|max:250|unique:users,username,' . $user->user_id . ',user_id', 
@@ -69,12 +63,15 @@ class AdminController extends Controller
         if ($request->filled('password')) {
             $user->password = bcrypt($request->input('password'));
         }
-
+    
         $user->save();
     
-        return redirect()->route('profile', ['id' => $user->user_id])
-            ->with('success', 'User updated successfully.');
-    }
+        return response()->json([
+            'success' => true,
+            'username' => $user->username,
+            'email' => $user->email,
+        ]);
+    }   
 
 
     /**
