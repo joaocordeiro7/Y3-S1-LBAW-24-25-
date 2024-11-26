@@ -4,7 +4,7 @@
 set -e
 
 # Replace with your group's image name
-IMAGE_NAME=gitlab.up.pt:5050/lbaw/lbaw24104/lbaw24104
+IMAGE_NAME=gitlab.up.pt:5050/lbaw/lbaw2425/lbaw24104
 
 # Ensure that dependencies are available
 composer install

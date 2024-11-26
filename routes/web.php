@@ -11,6 +11,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 
+use App\Http\Controllers\PostController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -37,6 +39,23 @@ Route::controller(CardController::class)->group(function () {
     Route::put('/api/cards', 'create');
     Route::delete('/api/cards/{card_id}', 'delete');
 });
+
+
+
+Route::controller(PostController::class)->group(function (){
+    Route::get('/post/{id}','show');
+    Route::get('/home', 'list');
+
+});
+
+
+Route::controller(PostController::class)->group(function (){
+    Route::get('/createPosts','create')->name('createPosts');
+    Route::post('/api/createPosts','store')->name('publish');
+    Route::post('/post/edit/{id}','update');
+    Route::post('/deletePost/{id}','destroy');
+});
+
 
 Route::controller(ItemController::class)->group(function () {
     Route::put('/api/cards/{card_id}', 'create');

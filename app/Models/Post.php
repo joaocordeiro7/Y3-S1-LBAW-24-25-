@@ -16,15 +16,20 @@ class Post extends Model
     protected $primaryKey = 'post_id';
 
 
-    protected $fillable = ['title','body','updated_at','upvotes','downvotes'];
+    protected $fillable = ['title','body','updated_at','upvotes','downvotes','ownerid'];
 
-
+    protected $casts = ['created_at'=> 'datetime','updated_at'=> 'datetime'];
 
 
     public function owner() {
 
         return $this->belongsTo(User::class,'ownerid');
       
-      }
+    }
+
+    public function ownerName() {
+      $user =User::findOrFail($this->owner())->name;
+      return $user;
+    }
     
 }

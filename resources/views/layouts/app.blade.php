@@ -21,14 +21,26 @@
     <body>
         <main>
             <header>
-                <h1><a href="{{ url('/cards') }}">Thingy!</a></h1>
+                <h1><a href="{{ url('/home') }}">The Bulletin</a></h1>
                 @if (Auth::check())
-                    <a class="button" href="{{ url('/logout') }}"> Logout </a> <span>{{ Auth::user()->name }}</span>
+                <a class="button" href="{{ url('/createPosts') }}"> Post News </a> <a class="button" href="{{ url('/logout') }}"> Logout </a> <span>{{ Auth::user()->username }}</span>
+                @else
+                <a class="button" href="{{ url('/login') }}"> Login </a> <a class="button" href="{{ url('/register') }}"> Register </a>
                 @endif
             </header>
             <section id="content">
                 @yield('content')
             </section>
+            <div class="container">
+                <hr>
+                <footer>
+                    <div class="row">
+                    <div class="col-lg-12">
+                        <p>Copyright &copy; The Bulletin 2024</p>
+                    </div>
+                    </div>
+                </footer>
+            </div>
         </main>
         @yield('scripts')
         <script type="text/javascript" src="{{ url('js/app.js') }}"  defer>
