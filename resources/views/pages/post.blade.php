@@ -4,6 +4,8 @@
     <article class="post" data-id="{{ $post->post_id }}">
         @if(Auth::check() && Auth::user()->user_id == $post->owner->user_id)
             <button class="editButton">Edit</button>
+            <button class="deleteButton">Delete</button>
+            <span class="error"></span>
         @endif
         <header class="newsTitle">
             <h2>{{$post->title}}</h2>
