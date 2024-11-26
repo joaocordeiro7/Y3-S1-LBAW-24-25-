@@ -115,4 +115,18 @@ class UserController extends Controller
     {
         //
     }
+
+
+    public function search(Request $request)
+    {
+        $username = $request->input('username');
+        $user = User::where('username', $username)->first();
+
+        if ($user) {
+            return redirect()->route('profile', ['id' => $user->user_id]);
+        } else {
+            return redirect()->back()->with('error', 'No user found.');
+        }
+    }
+
 }
