@@ -1,5 +1,4 @@
 openapi: 3.0.0
-
 info: 
   version: '2.0'
   title: 'The Bulletin API'
@@ -17,215 +16,93 @@ tags:
  - name: 'M02: Users'
  - name: 'M03: Posts'
  - name: 'M04: Administration'
-
 paths:
-
-#################################################
-# AUTHENTICATION
-#################################################
-
-/login:
-  get:
-    operationId: R101
-    summary: 'R101: Login Form'
-    description: 'Provide login form Access: PUB'
-    tags:
-      - 'M01: Authentication'
-    responses: 
-      '200':
-        description: 'Ok. Show Log-in UI'
-
-  post: 
-    operationId: R102
-    summary: 'R102: Login Action'
-    description: 'Process the login form submission. Access: PUB'
-    tags:
-      - 'M01: Authentication'
-    requestBody:
-      required: true
-      content: 
-        application/x-www-form-urlenconded:
-          schema:
-            type: object
-            properties:
-              email:
-                type: string
-                format: email
-              password: 
-                type: string
-                format: password
-            required:
-              - email
-              - password
-    responses:
-      '302':
-        description: 'Redirect after processing login credentials'
-        headers:
-          Location:
-            schema:
-              type: string
-            examples:
-              302Success:
-                description: 'Login Successful. Redirect to homepage.'
-                value: '/home'
-              302Error:
-                description: 'Failed authentication. Redirect to Login form.'
-                value: '/login'
-
-/logout:
-  get:
-    operationId: R103
-    summary: 'R103: Logout Action'
-    description: 'Logout current user. Access: USR,ADM'
-    tags:
-      - 'M01: Authentication'
-    responses:
-      '302':
-        description: 'Redirect after processing logout.'
-        headers:
-          Location:
-            schema:
-              type: string
-            examples:
-              302Success: 
-                description: 'Successful Logout. Redirect to login form.'
-                value: '/login'
-
-/register:
-  get:
-    operationId: R104
-    summary: 'R104: Register Form'
-    description: 'Register a new user. Access: PUB'
-    tags:
-      - 'M01: Authentication'
-    responses:
-      '200':
-        description: 'Ok. Show Sign-Up UI'
-
-  post:
-    operationId: R105
-    summary: 'R105: Register Action'
-    description: 'Processes the new user registration form submission. Access: PUB'
-    tags:
-     - 'M01: Authentication'
-    requestBody:
-      required: true
-      content:
-        application/x-www-form-urlencoded:
-          schema:
-            type: object
-            properties:
-              username:
-                type: string
-              email:
-                type: string
-                format: email
-              password:
-                type: string
-                format: password
-              confirm_password:
-                type: string
-                format: password
-            required:
-              - username
-              - email
-              - password
-              - confirm_password
-    responses:
-      '302':
-        description: 'Redirect after processing the new user information.'
-        headers:
-          Location:
-            schema:
-              type: string
-            examples:
-              302Success:
-                description: 'Successful authentication. Redirect to homepage.'
-                value: '/home'
-              302Failure:
-                description: 'Failed authentication. Redirect to login form.'
-                value: '/login'
-
-#################################################
-# USERS
-#################################################
-
-/users/{id}:
-  get:
-    operationId: R201
-    summary: 'R201: View user’s profile'
-    description: 'Show the profile for a specific user. Access: USR, ADM'
-    tags: 
-      - 'M02: Users'
-    parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
+  /login:
+    get:
+      operationId: 'R101'
+      summary: 'R101: Login Form'
+      description: 'Provide login form Access: PUB'
+      tags:
+        - 'M01: Authentication'
+      responses:
+        '200':
+          description: 'Ok. Show Log-in UI'
+    post: 
+      operationId: R102
+      summary: 'R102: Login Action'
+      description: 'Process the login form submission. Access: PUB'
+      tags:
+        - 'M01: Authentication'
+      requestBody:
         required: true
-        description: 'The ID of the user whose profile is being viewed.'
-    responses:
-      '200':
-        description: 'OK. Show the profile for the specified user.'
-      '404':
-        description: 'User not found.'
+        content: 
+          application/x-www-form-urlenconded:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password: 
+                  type: string
+                  format: password
+              required:
+                - email
+                - password
+      responses:
+        '302':
+          description: 'Redirect after processing login credentials'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Login Successful. Redirect to homepage.'
+                  value: '/home'
+                302Error:
+                  description: 'Failed authentication. Redirect to Login form.'
+                  value: '/login'
+      
+  /logout:
+    get:
+      operationId: R103
+      summary: 'R103: Logout Action'
+      description: 'Logout current user. Access: USR,ADM'
+      tags:
+        - 'M01: Authentication'
+      responses:
+        '302':
+          description: 'Redirect after processing logout.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success: 
+                  description: 'Successful Logout. Redirect to login form.'
+                  value: '/login'
+  /register:
+    get:
+      operationId: R104
+      summary: 'R104: Register Form'
+      description: 'Register a new user. Access: PUB'
+      tags:
+        - 'M01: Authentication'
+      responses:
+        '200':
+          description: 'Ok. Show Sign-Up UI'
 
-/users/{id}/edit:
-  get:
-    operationId: R202
-    summary: 'R202: Edit profile form'
-    description: 'Show the form to edit the profile information of the specified user. Access: USR, ADM'
-    tags: 
-      - 'M02: Users'
-    parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
+    post:
+      operationId: R105
+      summary: 'R105: Register Action'
+      description: 'Processes the new user registration form submission. Access: PUB'
+      tags:
+      - 'M01: Authentication'
+      requestBody:
         required: true
-        description: 'The ID of the user whose profile is being edited.'
-    responses:
-      '200':
-        description: 'OK. Show the form to edit the profile information.'
-      '404':
-        description: 'User not found.'
-
-/api/users/{id}/edit:
-  post:
-    operationId: R202
-    summary: 'R202: Edit profile'
-    description: 'Processes the form to update the profile information of the specified user. Access: USR, ADM'
-    tags: 
-      - 'M02: Users'
-    requestBody:
-      required: true
-      content:
-        application/x-www-form-urlencoded:
-          schema:
-            type: object
-            properties:
-              username:
-                type: string
-                description: 'Updated username'
-              email:
-                type: string
-                format: email
-                description: 'Updated email address'
-              password:
-                type: string
-                format: password
-              confirm_password:
-                type: string
-                format: password
-                description: 'Confirm updated password'
-            required:
-              - username
-              - email
-    responses:
-      '200':  
-        description: 'Profile updated successfully.'
         content:
-          application/json:
+          application/x-www-form-urlencoded:
             schema:
               type: object
               properties:
@@ -233,172 +110,274 @@ paths:
                   type: string
                 email:
                   type: string
-      '400':
-        description: 'Bad request. Invalid input.'
-      '404':
-        description: 'User not found.'
-
-#################################################
-# POSTS
-#################################################
-
-/createPosts:
-  get:
-    operationId: R301
-    summary: 'R301: Create News Item Form'
-    description: 'Show the form to create a new news item. Access: USR'
-    tags:
-      - 'M03: Posts'
-    responses:
-      '200':
-        description: 'Ok. Show the form to create a new news item.'
-
-/api/createPosts:
-  post:
-    operationId: R302
-    summary: 'R302: Create News Item action'
-    description: 'Submit a new news item. Access: USR'
-    tags:
-      - 'M03: Posts'
-    requestBody:
-      required: true
-      content:
-        application/x-www-form-urlencoded:
+                  format: email
+                password:
+                  type: string
+                  format: password
+                confirm_password:
+                  type: string
+                  format: password
+              required:
+                - username
+                - email
+                - password
+                - confirm_password
+      responses:
+        '302':
+          description: 'Redirect after processing the new user information.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Successful authentication. Redirect to homepage.'
+                  value: '/home'
+                302Failure:
+                  description: 'Failed authentication. Redirect to login form.'
+                  value: '/login'
+  /users/{id}:
+    get:
+      operationId: R201
+      summary: 'R201: View user’s profile'
+      description: 'Show the profile for a specific user. Access: USR, ADM'
+      tags: 
+        - 'M02: Users'
+      parameters:
+        - in: path
+          name: id
           schema:
-            type: object
-            properties:
-              title:
-                type: string
-                description: 'Title of the news item'
-              content:
-                type: string
-                description: 'Main content of the news item'
-            required:
-              - title
-              - content
-    responses:
-      '302':
-        description: 'Redirect after successfully creating the news item.'
-        headers:
-          Location:
-            schema:
-              type: string
-            examples:
-              302Success:
-                value: '/post/{id}'
-                description: 'Redirect to the newly created news item.'
-              302Failure:
-                value: '/posts/createPost'
-                description: 'Failed. Redirect back.'
-
-/post/{id}:
-  get:
-    operationId: R303
-    summary: 'R303: View News Item'
-    description: 'Retrieve detailed information about a specific news item. Access: PUB, USR'
-    tags:
-      - 'M03: Posts'
-    parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
+            type: integer
+          required: true
+          description: 'The ID of the user whose profile is being viewed.'
+      responses:
+        '200':
+          description: 'OK. Show the profile for the specified user.'
+        '404':
+          description: 'User not found.'
+  /users/{id}/edit:
+    post:
+      operationId: R202
+      summary: 'R202: Edit profile'
+      description: 'Processes the form to update the profile information of the specified user. Access: USR, ADM'
+      tags: 
+        - 'M02: Users'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
         required: true
-        description: 'The ID of the news item to retrieve.'
-    responses:
-      '200':
-        description: 'Success. Returns the details of the post.'
         content:
-          application/json:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: 'Updated username'
+                email:
+                  type: string
+                  format: email
+                  description: 'Updated email address'
+                password:
+                  type: string
+                  format: password
+                confirm_password:
+                  type: string
+                  format: password
+                  description: 'Confirm updated password'
+              required:
+                - username
+                - email
+      responses:
+        '200':  
+          description: 'Profile updated successfully.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  email:
+                    type: string
+        '400':
+          description: 'Bad request. Invalid input.'
+        '404':
+          description: 'User not found.'
+  /createPosts:
+    get:
+      operationId: R301
+      summary: 'R301: '
+      description: 'Provide login form Access: USR'
+      tags:
+        - 'M03: Posts'
+      responses:
+        '200':
+          description: 'Ok. Show Log-in UI'
+  /api/createPosts:
+    post:
+      operationId: R302
+      summary: 'R302: Create News action'
+      description: 'Submit a new news item. Access: USR'
+      tags:
+        - 'M03: Posts'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
             schema:
               type: object
               properties:
                 title:
                   type: string
+                  description: 'Title of the news item'
                 content:
                   type: string
-                created_at:
-                  type: string
-                  format: date-time
-                updated_at:
-                  type: string
-                  format: date-time
-                author:
-                  type: string
-      '404':
-        description: 'News item not found.'
-
-/post/edit/{id}:
-  post:
-    operationId: R304
-    summary: 'R304: Edit Post'
-    description: 'Edit an existing post by the author. Access: USR (author only).'
-    tags:
-      - 'M03: Posts'
-    parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-        description: 'The ID of the post to edit.'
-    requestBody:
-      required: true
-      content:
-        application/x-www-form-urlencoded:
+                  description: 'Main content of the news item'
+              required:
+                - title
+                - content
+      responses:
+        '302':
+          description: 'Redirect after successfully creating the news item.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  value: '/post/{id}'
+                  description: 'Redirect to the newly created news item.'
+                302Failure:
+                  value: '/posts/createPost'
+                  description: 'Failed. Redirect back.'
+  /post/{id}:
+    get:
+      operationId: R303
+      summary: 'R302: View News Item'
+      description: 'Retrieve detailed information about a specific news item. Access: PUB, USR'
+      tags:
+        - 'M03: Posts'
+      parameters:
+        - in: path
+          name: id
           schema:
-            type: object
-            properties:
-              title:
-                type: string
-                description: 'Updated title of the post.'
-              content:
-                type: string
-                description: 'Updated content of the post.'
-            required:
-              - title
-              - content
-    responses:
-      '200':
-        description: 'Post updated successfully.'
+            type: integer
+          required: true
+          description: 'The ID of the news item to retrieve.'
+      responses:
+        '200':
+          description: 'Success. Returns the details of the post.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  content:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
+                  author:
+                    type: string
+                  tags:
+                    type: array
+                    items:
+                      type: string
+        '404':
+          description: 'News item not found.'
+  /post/edit/{id}:
+    post:
+      operationId: R304
+      summary: 'R304: Edit Post action'
+      description: 'Edit an existing post by the author. Access: USR (author only) ADM.'
+      tags:
+        - 'M03: Posts'
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: 'The ID of the post to edit.'
+      requestBody:
+        required: true
         content:
-          application/json:
+          application/x-www-form-urlencoded:
             schema:
               type: object
               properties:
                 title:
                   type: string
+                  description: 'Updated title of the post.'
                 content:
                   type: string
-                updated_at:
-                  type: string
-                  format: date-time
-      '403':
-        description: 'Forbidden. You can only edit your own post.'
-      '404':
-        description: 'Post not found.'
-
-/deletePost/{id}:
-  delete:
-    operationId: R305
-    summary: 'R305: Delete Post'
-    description: 'Delete a post by the author. Access: USR (author only).'
-    tags:
-      - 'M03: Posts'
-    parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-        description: 'The ID of the post to delete.'
-    responses:
-      '200':
-        description: 'Post deleted successfully.'
-      '403':
-        description: 'Forbidden. You can only delete your own post.'
-      '404':
-        description: 'Post not found.'
+                  description: 'Updated content of the post.'
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  description: 'Updated tags for the post.'
+              required:
+                - title
+                - content
+      responses:
+        '200':
+          description: 'Post updated successfully.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  content:
+                    type: string
+                  updated_at:
+                    type: string
+                    format: date-time
+                  tags:
+                    type: array
+                    items:
+                      type: string
+        '403':
+          description: 'Forbidden. You can only edit your own post.'
+        '404':
+          description: 'Post not found.'
+  /deletePost/{id}:
+    post:
+      operationId: R305
+      summary: 'R305: Delete Post action'
+      description: 'Delete a post by the author. Access: USR (author only) ADM.'
+      tags:
+        - 'M03: Posts'
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: 'The ID of the post to delete.'
+      responses:
+        '200':
+          description: 'Post deleted successfully.'
+        '403':
+          description: 'Forbidden. You can only delete your own post.'
+        '404':
+          description: 'Post not found.'
 
 /posts/search:
   get:
