@@ -9,6 +9,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -76,3 +78,7 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('/register', 'register');
 });
 
+Route::controller(UserController::class)->group(function () {
+    Route::get('/search-user', 'searchByUsername')->name('user.search');
+    Route::get('/user/{id}', 'profile')->name('user.profile');
+});

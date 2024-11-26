@@ -16,6 +16,22 @@
         </div>
     </form>
 
+    <!-- Barra de Pesquisa de Username -->
+     @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+    <form method="GET" action="{{ route('user.search') }}" class="mb-4">
+        <div class="form-group">
+            <label for="username">Search Username:</label>
+            <input type="text" name="username" id="username" class="form-control" 
+                placeholder="Enter username" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+
     <!-- Exibição dos Posts -->
     <div class="container">
         <h1>Posts</h1>
