@@ -1,56 +1,256 @@
 body {
-  background-color: #f7f7f7; /* Cinzento claro para o fundo */
-  color: #333333; /* Cinzento escuro para o texto */
-  font-family: 'Georgia', serif; /* Estilo de fonte clássico, como em jornais */
+  background-color: #ffffff;
+  color: black;
+  height: 100%;
   margin: 0;
   display: flex;
-  flex-direction: column; /* Para permitir o footer fixado */
-  min-height: 100vh; /* Garante que o body ocupe pelo menos a altura da janela */
-  scroll-behavior: smooth;
-  box-sizing: border-box;
+  flex-direction: column;
 }
-
-main {
-  min-height: 90vh;
-  width: 100%; /* Faz com que o conteúdo ocupe o máximo espaço disponível */
-}
-
 main > header {
-  display: flex; /* Usamos flexbox para alinhamento horizontal */
-  justify-content: space-between; /* Espaço entre o nome do site e o restante */
-  align-items: center; /* Garante que todos os elementos fiquem na mesma linha */
-  background-color: #111111; /* Preto para o cabeçalho */
-  color: #ffffff; /* Branco para o texto */
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-auto-flow: column;
+  align-items: center;
+  background-color: #565456;
   padding: 1em;
+  margin: 1em;
+  column-gap: 1em; /* Espaçamento entre botões */
 }
 
 main > header h1 {
   margin: 0;
-  font-size: 2rem;
+  color: #ffffff;
 }
-
-main > header h1 a {
-  color: #ffffff !important; /* Branco fixo para o nome do site */
-  text-decoration: none;
-}
-
 main > header a.button {
-  color: #ffffff; /* Branco para o texto dos botões */
-  background-color: #333333; /* Cinzento escuro */
-  border: 1px solid #555555; /* Borda cinzenta */
-  padding: 0.5em 0.8em; /* Margem interna ajustada para menos largura */
-  text-decoration: none;
-  font-weight: bold;
-  transition: color 0.2s ease, background-color 0.2s ease;
+  margin: 1em;
+  justify-self: center;
 }
-
-main > header a.button:hover {
-  color: #dd3333; /* Apenas o texto do botão fica vermelho ao passar o rato */
-  background-color: #333333; /* O fundo permanece cinzento */
-}
-
 main > header span {
-  color: #cccccc; /* Cinzento claro para o nome do utilizador */
+  margin: 1em;
+  justify-self: center;
+}
+#cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+article.post {
+  display: grid;
+  grid-template-rows: auto auto auto auto;
+  grid-template-columns: auto auto;
+  padding: 1em;
+  margin: 1em;
+}
+article.post div.newsBody p{
+  overflow-wrap: break-word;
+  max-width: calc(100vw - 4em);
+}
+article.post .editButton{
+  grid-row: 1;
+  grid-column: 2;
+  width: 40px;
+  display: flex;
+  align-self: center;
+  justify-content: center;
+}
+article.post > .newsBody{
+  grid-row: 2;
+  
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+article.post  div#postDetails{
+  grid-row: 3;
+  grid-column: 1;
+  
+  
+}
+article.post  div#interactions{
+  grid-row: 3;
+  grid-column: 2;
+}
+article.post div#postComments{
+  grid-row: 4;
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+section.postEditForm form{
+  display: grid;
+  grid-template-columns: 15% auto;
+  grid-template-rows: 2fr 10fr 2fr;
+  padding: 1em;
+  margin: 1em;
+}
+section.postEditForm form input#newTitle{
+  grid-row: 1;
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+section.postEditForm form #newBody{
+  grid-row: 2;
+  grid-column-start: 1;
+  grid-column-end: 3;
+  height: auto;
+  resize: none;
+}
+section.postEditForm .cancelButton{
+  grid-row: 3;
+  grid-column-start: 2;
+  grid-column-end: 3;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+}
+section.postEditForm .saveButton{
+  grid-row: 3;
+  grid-column-start: 1;
+  grid-column-end: 2;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+}
+#post_form{
+  display: flex;
+  flex-direction: column;
+  padding: 1em;
+  margin: 1em;
+}
+#post_form textarea#newsBody{
+  flex-grow: 3;
+  height: auto;
+  resize: none;
+  
+}
+#cards article.card header {
+  display: flex;
+  align-items: center;
+}
+#cards article.card header h2 {
+  flex-grow: 1;
+}
+#cards article.card header a.delete {
+  display: none;
+  font-size: 2.6rem;
+  margin-top: .5rem;
+  margin-bottom: 2.5rem;
+  line-height: 1.25;
+}
+#cards article.card header:hover a.delete {
+  display: inline;
+}
+#cards article.card li {
+  list-style-type: none;
+}
+#cards article.card li label {
+  display: flex;
+  align-items: baseline;
+}
+#cards article.card li label span {
+  margin-left: .5em;
+  flex-grow: 1;
+}
+#cards article.card li label a {
+  display: none;
+}
+#cards article.card li label:hover a {
+  display: inline;
+}
+#cards article.card input:checked + span {
+  text-decoration: var(--primary-color) solid line-through;
+}
+#cards article.card ul {
+  margin: 0;
+}
+#cards article.card form {
+  margin: 0;
+}
+#cards article.card input[type=text] {
+  background-color: white;
+  margin: 0;
+}
+#content label {
+  font-weight: normal;
+}
+#content > form {
+  margin: 0 auto;
+  padding: 1em;
+  max-width: 20em;
+  border: 1px solid #d2afe7;
+}
+#content > form .error {
+  font-weight: bold;
+  color: #ff3333;
+}
+#content > form .success {
+  font-weight: bold;
+  color: #106af1;
+}
+#content > form input {
+  background-color: white;
+}
+@media (max-width: 70em) {
+  #cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  main > header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+  }
+  main > header h1 {
+    grid-row-end: span 2;
+  }
+}
+@media (max-width: 40em) {
+  #cards {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 25em) {
+  body {
+    margin: 0;
+  }
+  main > header {
+    margin: 0;
+    padding: 0.5em;
+  }
+  main > header span {
+    margin: 0;
+  }
+  #content form {
+    margin: 0;
+    max-width: 25em;
+  }
+  article.card {
+    margin: 0;
+    border-bottom: 1px solid rgba(96, 108, 118, 0.4);
+  }
+}
+/**
+ * Override milligram colors
+ * Some styles might be missing
+ **/
+button {
+  background-color: #111111;
+  border-color: #111111;
+}
+a.button {
+  background-color: #111111;
+  border-color: #111111;
+}
+a.button.button-outline {
+  color: #111111;
+}
+a {
+  color: #111111;
+}
+input[type=text]:focus,
+input[type=email]:focus,
+input[type=password]:focus,
+textarea:focus {
+  border-color: #111111;
+}
+article.hidden , section.hidden{
+  display: none;
 }
 
 #content {
@@ -59,13 +259,13 @@ main > header span {
   margin: 0 auto;
 }
 
-#cards {
+#posts {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Adaptável para vários tamanhos de ecrã */
+  grid-template-columns: repeat(3, 1fr); /* Adaptável para vários tamanhos de ecrã */
   gap: 1.5em;
 }
 
-#cards article.card {
+#posts article.post {
   display: flex;
   flex-direction: column;
   background-color: #ffffff; /* Branco para os cartões */
@@ -75,34 +275,34 @@ main > header span {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-#cards article.card:hover {
+#posts article.post:hover {
   transform: translateY(-5px); /* Elevação ao passar o rato */
   box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15);
 }
 
-#cards article.card header {
+#posts article.post header {
   margin-bottom: 1em;
 }
 
-#cards article.card header h2 {
+#posts article.post header h2 {
   margin: 0;
   color: #333333; /* Cinzento escuro */
   font-size: 1.5rem;
   font-weight: bold;
 }
 
-#cards article.card header h2:hover {
+#posts article.post header h2:hover {
   color: #333333; /* Mantém o título cinzento ao passar o rato */
 }
 
-#cards article.card p {
+#posts article.post p {
   color: #666666; /* Cinzento médio para o corpo do texto */
   font-size: 1rem;
   line-height: 1.5;
   margin-bottom: 1em;
 }
 
-#cards article.card a {
+#posts article.post a {
   align-self: flex-start;
   color: #dd3333; /* Vermelho para o link */
   text-decoration: none;
@@ -110,88 +310,50 @@ main > header span {
   margin-top: auto;
 }
 
-#cards article.card a:hover {
+#posts article.post a:hover {
   text-decoration: underline;
 }
 
 footer {
-  background-color: #111111;
-  color: #ffffff;
   text-align: center;
-  padding:10px 0;
-  margin-top: auto;
+  padding: 1em 0;
 }
 
-/* Estilo para a Barra de Pesquisa */
-form.mb-4 {
-  display: flex; /* Organização horizontal */
+/* Ajustar o layout da barra de pesquisa para alinhar tudo na mesma linha */
+main > header form.mb-4.d-flex {
+  display: flex;
+  align-items: center; /* Alinhar verticalmente na mesma linha */
   gap: 1em; /* Espaçamento entre os elementos */
-  align-items: center; /* Alinhamento vertical */
-  margin-bottom: 2em; /* Espaçamento abaixo do formulário */
-  padding: 1em;
-  background-color: #ffffff; /* Fundo branco */
-  border: 1px solid #dddddd; /* Borda cinzenta clara */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra subtil */
-  border-radius: 8px; /* Bordas arredondadas */
+  flex-wrap: nowrap; /* Impede que os elementos sejam empilhados */
 }
 
-/* Campos de texto da pesquisa */
-form.mb-4 input[type="text"] {
-  flex: 1; /* Faz com que o campo ocupe o máximo espaço disponível */
-  padding: 0.5em;
-  font-size: 1rem;
-  border: 1px solid #cccccc; /* Borda cinzenta */
-  border-radius: 4px; /* Bordas arredondadas */
-  box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.1); /* Sombra interna subtil */
-  transition: border-color 0.2s ease;
+/* Certificar-se de que os grupos do formulário não tenham margens indesejadas */
+main > header form.mb-4.d-flex .form-group {
+  margin: 0; /* Remove margens adicionais */
 }
 
-form.mb-4 input[type="text"]:focus {
-  border-color: #dd3333; /* Destaque da borda em vermelho ao focar */
-  outline: none;
+/* Ajustar o campo de texto */
+main > header form.mb-4.d-flex #search {
+  flex-grow: 1; /* Faz o campo de pesquisa ocupar o espaço disponível */
+  max-width: 300px; /* Limita a largura máxima */
+  min-width: 200px; /* Garante uma largura mínima */
 }
 
-/* Botões de pesquisa e limpar */
-form.mb-4 button,
-form.mb-4 a.btn {
-  padding: 0.5em 1em;
-  font-size: 1rem;
-  font-weight: bold;
-  color: #ffffff; /* Branco para o texto */
-  background-color: #dd3333; /* Vermelho para os botões */
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-  text-decoration: none; /* Remove sublinhado do botão Clear (link) */
-  text-align: center; /* Centraliza o texto no botão Clear */
+/* Garantir que os botões não quebrem */
+main > header form.mb-4.d-flex button,
+main > header form.mb-4.d-flex a {
+  white-space: nowrap; /* Impede quebra de texto nos botões */
+  flex-shrink: 0; /* Evita que os botões diminuam de tamanho */
 }
 
-form.mb-4 button:hover,
-form.mb-4 a.btn:hover {
-  background-color: #bb2222; /* Vermelho mais escuro ao passar o rato */
-  transform: translateY(-2px); /* Elevação subtil */
-}
-
-form.mb-4 a.btn {
-  display: inline-block; /* Garante que o link funcione como botão */
-}
-
-/* Espaço entre o botão "Clear" e os outros elementos */
-form.mb-4 a.btn {
-  margin-left: 0.5em;
-}
-
-/* Ajuste para layouts responsivos */
-@media (max-width: 768px) {
-  form.mb-4 {
-    flex-direction: column; /* Alinha os elementos verticalmente em telas menores */
-    gap: 0.5em;
+/* Opcional: ajuste para o alinhamento no mobile */
+@media (max-width: 600px) {
+  main > header form.mb-4.d-flex {
+    flex-wrap: wrap; /* Permite que os elementos empilhem em telas pequenas */
+    justify-content: center; /* Centraliza no mobile */
   }
-
-  form.mb-4 input[type="text"],
-  form.mb-4 button,
-  form.mb-4 a.btn {
-    width: 100%; /* Campos e botões ocupam toda a largura */
+  main > header form.mb-4.d-flex .form-group {
+    flex: 1 1 100%; /* Faz os elementos ocuparem largura total */
   }
 }
+

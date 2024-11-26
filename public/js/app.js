@@ -27,6 +27,10 @@ function addEventListeners() {
     if(newsEditor != null)
       newsEditor.addEventListener('click', openNewsEditor);
 
+    let newsDestroyer = document.querySelector('article.post button.deleteButton');
+    if(newsDestroyer != null)
+      newsDestroyer.addEventListener('click', deleteNews);
+
     let newsEditCancelButton = document.querySelector('section.postEditForm button.cancelButton');
     if(newsEditCancelButton != null)
       newsEditCancelButton.addEventListener('click',closeNewsEditor);
@@ -35,7 +39,27 @@ function addEventListeners() {
     if(newsEditSaveButton != null)
       newsEditSaveButton.addEventListener('click',sendUpdatePostRequest);
     
+
+    let saveChangesButton = document.getElementById('saveChanges');
+    if (saveChangesButton) {
+        saveChangesButton.addEventListener('click', (event) => {
+          event.preventDefault();
+            updateUserProfile(
+                event,
+                'editProfileForm',
+                'success-message',
+                'error-message',
+                saveChangesButton.dataset.updateUrl
+            );
+        });
+    }
+
+    let createUserButton = document.getElementById('generateUser');
+    if (createUserButton) {
+        createUserButton.addEventListener('click', handleCreateUser);
+    }
   }
+  
   
   function encodeForAjax(data) {
     if (data == null) return null;
@@ -53,6 +77,12 @@ function addEventListeners() {
     request.addEventListener('load', handler);
     request.send(encodeForAjax(data));
   }
+
+  function deleteNews(){
+    let parent=this.parentElement;
+    let id=parent.getAttribute('data-id');
+    sendAjaxRequest('post','/deletePost/'+id,null,deleteNewsHandler)
+  }
   
   function  openNewsEditor(){
     let parent=this.parentElement;
@@ -65,18 +95,27 @@ function addEventListeners() {
 
   function closeNewsEditor(event){
     let parent=this.parentElement;
-    parent.classList.add('hidden');
-    parent.parentElement.querySelector('article.post').classList.remove('hidden');
+    parent.parentElement.classList.add('hidden');
+    parent.parentElement.parentElement.querySelector('article.post').classList.remove('hidden');
     event.preventDefault();
   }
 
   function sendUpdatePostRequest(event){
     let parent=this.parentElement;
     let postTitle = parent.querySelector('input#newTitle').value;
-    let postBody = parent.querySelector('input#newBody').value;
+    let postBody = parent.querySelector('textarea#newBody').value;
     let newTimestamp = new Date().toISOString();
     let id = parent.parentElement.getAttribute('data-id');
+    let editForm = parent.parentElement.querySelector('section.postEditForm form'); 
+    if(!editForm.checkValidity()){
+      
+      editForm.reportValidity();
+      event.preventDefault();
+      return
+    }
     
+    
+
     sendAjaxRequest('post','/post/edit/'+id,{title: postTitle, body: postBody, timestamp: newTimestamp },updatePostHandler);
     event.preventDefault();
   }
@@ -91,6 +130,22 @@ function addEventListeners() {
     document.querySelector('article.post').classList.remove('hidden');
     document.querySelector('section.postEditForm').classList.add('hidden');
 
+  }
+
+  function deleteNewsHandler(){
+    
+    let res = JSON.parse(this.responseText);
+    
+    if(res.success){
+      document.querySelector('article.post header.newsTitle h2').innerHTML='The post was deleted successfully';
+      document.querySelector('article.post div.newsBody p').innerHTML='';
+
+    }
+    else{
+      
+      document.querySelector('article.post span.error').innerHTML='Posts that already have either comments or interations can not be deleted';
+      
+    }
   }
 
   function sendItemUpdateRequest() {
@@ -231,3 +286,114 @@ function addEventListeners() {
   
   addEventListeners();
   
+  function updateUserProfile(event, formId, successMessageId, errorMessageId, updateUrl) {
+    console.log("Save Changes button clicked!");
+
+    const form = document.getElementById(formId);
+    if (!form || !(form instanceof HTMLFormElement)) {
+        console.error("The form element was not found or is invalid.");
+        return;
+    }
+
+    const successMessage = document.getElementById(successMessageId);
+    const errorMessage = document.getElementById(errorMessageId);
+
+    const formData = new FormData(form);
+
+    fetch(updateUrl, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        },
+        body: formData,
+    })
+        .then((response) => {
+            console.log("Response received:", response);
+            if (!response.ok) {
+                throw new Error('Profile update failed');
+            }
+            return response.json();
+        })
+        .then((data) => {
+            successMessage.style.display = "block";
+            errorMessage.style.display = "none";
+
+            form.querySelector('#username').value = data.username;
+            form.querySelector('#email').value = data.email;
+
+            const title = document.querySelector('#title');
+            if (title) {
+                title.textContent = `Edit ${data.username}'s Profile`;
+            }
+        })
+        .catch((error) => {
+            console.error("Error details:", error);
+            errorMessage.style.display = "block";
+            successMessage.style.display = "none";
+            errorMessage.innerText = error.message || "Unexpected error occurred. Please try again.";
+        });
+}
+
+function handleCreateUser(event) {
+  console.log("Create User button clicked!");
+
+  const createUserButton = event.target;
+  const form = document.getElementById('adminCreateUser');
+  const actionUrl = createUserButton.dataset.actionUrl;
+
+  if (!form) {
+      console.error("Form element not found!");
+      return;
+  }
+
+  const formData = new FormData(form);
+
+  fetch(actionUrl, {
+      method: 'POST',
+      headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+      },
+      body: formData,
+  })
+      .then((response) => {
+          if (!response.ok) {
+              throw new Error('Failed to create user');
+          }
+          return response.json();
+      })
+      .then((data) => {
+          if (data.success) {
+              console.log("User created successfully:", data);
+
+              const usersTable = document.querySelector('table tbody');
+              if (usersTable) {
+                  const newRow = document.createElement('tr');
+                  newRow.innerHTML = `
+                      <td>${data.user_id}</td>
+                      <td>${data.username}</td>
+                      <td>${data.email}</td>
+                      <td>
+                          <a href="/users/${data.user_id}/edit" class="btn btn-sm btn-primary">View</a>
+                          <button class="btn btn-sm btn-danger" disabled>Delete (Coming Soon)</button>
+                      </td>
+                  `;
+                  usersTable.appendChild(newRow);
+              }
+
+              form.reset();
+
+              const successMessage = document.getElementById('userCreatedMessage');
+              successMessage.style.display = "block";
+
+          } else {
+              throw new Error('Server returned an unsuccessful response');
+          }
+      })
+      .catch((error) => {
+          console.error("Error creating user:", error);
+          alert('Error creating user. Please try again.');
+      });
+}
+
+
+

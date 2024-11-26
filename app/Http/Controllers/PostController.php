@@ -30,12 +30,13 @@ class PostController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $validatedRequest=$request->validate(['newsTitle'=>'required','newsBody'=>'required']);
         $newPost= new Post();
 
         $this->authorize('store',$newPost);
 
-        $newPost->title=$request->input('newsTitle');
-        $newPost->body=$request->input('newsBody');
+        $newPost->title=$validatedRequest['newsTitle'];
+        $newPost->body=$validatedRequest['newsBody'];
         $newPost->ownerid=Auth::user()->user_id;
         $newPost->save();
         $postPage='/post/'.strval($newPost->post_id);
@@ -65,11 +66,13 @@ class PostController extends Controller
     public function update(Request $request, $id)
     {
         $post = Post::find($id);
+
+        $validatedRequest=$request->validate(['title'=>'required','body'=>'required']);
         
         $this->authorize('update',$post);
 
-        $post->title = $request->input('title');
-        $post->body = $request->input('body');
+        $post->title = $validatedRequest['title'];
+        $post->body = $validatedRequest['body'];
         $post->updated_at = $request->input('timestamp');
 
         $post->save();
@@ -80,9 +83,18 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function destroy(Post $post, $id)
     {
-        //
+        $post=Post::find($id);
+        $this->authorize('delete',$post);
+
+        try{
+            $post->delete();
+        }catch(\Illuminate\Database\QueryException $ex){
+            return response()->json($ex->getMessage());
+        }
+
+        return response()->json(['success' => 'The post was deleted successfully']);
     }
 
     /**

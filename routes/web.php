@@ -4,12 +4,14 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminController;
+
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\UserController;
 
 
 /*
@@ -52,10 +54,9 @@ Route::controller(PostController::class)->group(function (){
     Route::get('/createPosts','create')->name('createPosts');
     Route::post('/api/createPosts','store')->name('publish');
     Route::post('/post/edit/{id}','update');
-    Route::get('/', [PostController::class, 'index'])->name('home');
-    Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
-
-
+    Route::get('/', 'index')->name('home');
+    Route::get('/posts', 'index')->name('posts.index');
+    Route::post('/deletePost/{id}','destroy');
 });
 
 
@@ -79,6 +80,14 @@ Route::controller(RegisterController::class)->group(function () {
 });
 
 Route::controller(UserController::class)->group(function () {
-    Route::get('/search-user', 'searchByUsername')->name('user.search');
-    Route::get('/user/{id}', 'profile')->name('user.profile');
+    Route::get('/users/{id}', 'show')->name('profile');
+    Route::get('/users/{id}/edit', 'editUser')->name('editProfile');
+    Route::post('/users/{id}/edit', 'edit')->name('updateProfile');
+});
+
+// Admin
+Route::controller(AdminController:: class)->group(function () {
+    Route::get('/admin', 'index')->name('adminDashboard');
+    Route::post('/admin', 'createUser')->name('createUser');
+    Route::post('/admin/edit/{id}',  'adminUpdateUser')->name('adminUpdateUser');
 });

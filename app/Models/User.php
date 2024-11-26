@@ -64,4 +64,9 @@ class User extends Authenticatable
     public function posts(): HasMany{
         return $this->hasMany(Post::class,'ownerid');
     }
+
+    public function isAdmin(): bool {
+        return $this->hasOne(Admin::class, 'admin_id', 'user_id')->exists();
+    }
+
 }
