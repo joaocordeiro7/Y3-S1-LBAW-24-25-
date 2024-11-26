@@ -298,23 +298,34 @@ function addEventListeners() {
     const successMessage = document.getElementById(successMessageId);
     const errorMessage = document.getElementById(errorMessageId);
 
+    form.querySelectorAll('.error').forEach(error => {
+        error.textContent = '';
+        error.style.display = 'none';
+    });
+
     const formData = new FormData(form);
 
     fetch(updateUrl, {
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json',
         },
         body: formData,
     })
-        .then((response) => {
-            console.log("Response received:", response);
+        .then(response => {
             if (!response.ok) {
-                throw new Error('Profile update failed');
+                if (response.status === 422) {
+                    return response.json().then(data => {
+                        if (data.errors) throw data.errors;
+                        throw new Error('Validation failed without specific errors.');
+                    });
+                }
+                throw new Error('Profile update failed.');
             }
             return response.json();
         })
-        .then((data) => {
+        .then(data => {
             successMessage.style.display = "block";
             errorMessage.style.display = "none";
 
@@ -326,20 +337,30 @@ function addEventListeners() {
                 title.textContent = `Edit ${data.username}'s Profile`;
             }
         })
-        .catch((error) => {
-            console.error("Error details:", error);
-            errorMessage.style.display = "block";
-            successMessage.style.display = "none";
-            errorMessage.innerText = error.message || "Unexpected error occurred. Please try again.";
+        .catch(errors => {
+            if (typeof errors === 'object') {
+                console.error("Validation errors:", errors);
+
+                Object.keys(errors).forEach(field => {
+                    const errorSpan = form.querySelector(`#${field}-error`);
+                    if (errorSpan) {
+                        errorSpan.textContent = errors[field].join(', ');
+                        errorSpan.style.display = 'block';
+                    }
+                });
+            } else {
+                console.error("Error details:", errors);
+                errorMessage.style.display = "block";
+                successMessage.style.display = "none";
+                errorMessage.innerText = errors || "Unexpected error occurred. Please try again.";
+            }
         });
 }
 
 function handleCreateUser(event) {
-  console.log("Create User button clicked!");
 
-  const createUserButton = event.target;
   const form = document.getElementById('adminCreateUser');
-  const actionUrl = createUserButton.dataset.actionUrl;
+  const actionUrl = event.target.dataset.actionUrl;
 
   if (!form) {
       console.error("Form element not found!");
@@ -348,50 +369,59 @@ function handleCreateUser(event) {
 
   const formData = new FormData(form);
 
+  const errorSpans = form.querySelectorAll('span.error');
+  errorSpans.forEach((span) => span.textContent = '');
+
   fetch(actionUrl, {
       method: 'POST',
       headers: {
           'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+          'Accept': 'application/json', 
       },
       body: formData,
   })
       .then((response) => {
           if (!response.ok) {
-              throw new Error('Failed to create user');
+              return response.json().then((data) => {
+                  if (data.errors) throw data.errors;
+                  throw new Error('Failed to create user');
+              });
           }
           return response.json();
       })
       .then((data) => {
           if (data.success) {
-              console.log("User created successfully:", data);
-
               const usersTable = document.querySelector('table tbody');
-              if (usersTable) {
-                  const newRow = document.createElement('tr');
-                  newRow.innerHTML = `
-                      <td>${data.user_id}</td>
-                      <td>${data.username}</td>
-                      <td>${data.email}</td>
-                      <td>
-                          <a href="/users/${data.user_id}/edit" class="btn btn-sm btn-primary">View</a>
-                          <button class="btn btn-sm btn-danger" disabled>Delete (Coming Soon)</button>
-                      </td>
-                  `;
-                  usersTable.appendChild(newRow);
-              }
+              const newRow = document.createElement('tr');
+              newRow.innerHTML = `
+                  <td>${data.user_id}</td>
+                  <td>${data.username}</td>
+                  <td>${data.email}</td>
+                  <td>
+                      <a href="/users/${data.user_id}/edit" class="btn btn-sm btn-primary">Edit</a>
+                      <button class="btn btn-sm btn-danger" disabled>Delete (Coming Soon)</button>
+                  </td>
+              `;
+              usersTable.appendChild(newRow);
 
               form.reset();
 
-              const successMessage = document.getElementById('userCreatedMessage');
-              successMessage.style.display = "block";
-
-          } else {
-              throw new Error('Server returned an unsuccessful response');
+              const userCreatedMessage = document.getElementById('userCreatedMessage');
+              userCreatedMessage.style.display = 'block';
           }
       })
-      .catch((error) => {
-          console.error("Error creating user:", error);
-          alert('Error creating user. Please try again.');
+      .catch((errors) => {
+          console.error("Validation errors:", errors);
+
+          Object.keys(errors).forEach((field) => {
+              const input = form.querySelector(`[name="${field}"]`);
+              if (input) {
+                  const errorSpan = input.parentElement.querySelector('span.error');
+                  if (errorSpan) {
+                      errorSpan.textContent = errors[field].join(', ');
+                  }
+              }
+          });
       });
 }
 

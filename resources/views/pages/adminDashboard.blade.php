@@ -37,34 +37,29 @@
         User created successfully!
     </div>
     <form id="adminCreateUser">
-        @csrf
+        {{ csrf_field() }}
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" name="username" id="username" value="{{ old('username') }}" class="form-control">            
-            @error('username')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+            <span class="error"></span>
         </div>
 
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" required>
-            @error('email')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+            <input type="email" name="email" id="email" class="form-control">
+            <span class="error"></span>
         </div>
 
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" required>
-            @error('password')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+            <input type="password" name="password" id="password" class="form-control">
+            <span class="error"></span>
         </div>
 
         <div class="form-group">
             <label for="password_confirmation">Confirm Password</label>
-            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
+            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
+            <span class="error"></span>
         </div>
 
         <button type="button" id="generateUser" data-action-url="{{ route('createUser') }}">Create User</button>

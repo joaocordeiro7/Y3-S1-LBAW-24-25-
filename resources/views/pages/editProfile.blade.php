@@ -16,7 +16,7 @@
 
 
     <form id="editProfileForm">
-        @csrf
+        {{ csrf_field() }}
         @include('partials.editProfileForm', ['user' => $user])
 
         @if (Auth::user()->isAdmin() && Auth::user()->user_id != $user->user_id && !$user->isAdmin())
