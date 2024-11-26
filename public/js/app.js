@@ -373,7 +373,7 @@ function handleCreateUser(event) {
                       <td>${data.username}</td>
                       <td>${data.email}</td>
                       <td>
-                          <a href="/users/${data.user_id}/edit" class="btn btn-sm btn-primary">Edit</a>
+                          <a href="/users/${data.user_id}/edit" class="btn btn-sm btn-primary">View</a>
                           <button class="btn btn-sm btn-danger" disabled>Delete (Coming Soon)</button>
                       </td>
                   `;
