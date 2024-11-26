@@ -73,7 +73,7 @@ paths:
                 value: '/login'
 
 /logout:
-  post:
+  get:
     operationId: R103
     summary: 'R103: Logout Action'
     description: 'Logout current user. Access: USR,ADM'
@@ -171,6 +171,26 @@ paths:
         description: 'User not found.'
 
 /users/{id}/edit:
+  get:
+    operationId: R202
+    summary: 'R202: Edit profile form'
+    description: 'Show the form to edit the profile information of the specified user. Access: USR, ADM'
+    tags: 
+      - 'M02: Users'
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: 'The ID of the user whose profile is being edited.'
+    responses:
+      '200':
+        description: 'OK. Show the form to edit the profile information.'
+      '404':
+        description: 'User not found.'
+
+/api/users/{id}/edit:
   post:
     operationId: R202
     summary: 'R202: Edit profile'
@@ -222,10 +242,21 @@ paths:
 # POSTS
 #################################################
 
-/posts/createPost:
-  post:
+/createPosts:
+  get:
     operationId: R301
-    summary: 'R301: Create News Item action'
+    summary: 'R301: Create News Item Form'
+    description: 'Show the form to create a new news item. Access: USR'
+    tags:
+      - 'M03: Posts'
+    responses:
+      '200':
+        description: 'Ok. Show the form to create a new news item.'
+
+/api/createPosts:
+  post:
+    operationId: R302
+    summary: 'R302: Create News Item action'
     description: 'Submit a new news item. Access: USR'
     tags:
       - 'M03: Posts'
@@ -262,8 +293,8 @@ paths:
 
 /post/{id}:
   get:
-    operationId: R302
-    summary: 'R302: View News Item'
+    operationId: R303
+    summary: 'R303: View News Item'
     description: 'Retrieve detailed information about a specific news item. Access: PUB, USR'
     tags:
       - 'M03: Posts'
@@ -282,8 +313,6 @@ paths:
             schema:
               type: object
               properties:
-                id:
-                  type: integer
                 title:
                   type: string
                 content:
@@ -296,17 +325,13 @@ paths:
                   format: date-time
                 author:
                   type: string
-                tags:
-                  type: array
-                  items:
-                    type: string
       '404':
         description: 'News item not found.'
 
-/post/{id}:
+/post/edit/{id}:
   post:
-    operationId: R303
-    summary: 'R303: Edit Post'
+    operationId: R304
+    summary: 'R304: Edit Post'
     description: 'Edit an existing post by the author. Access: USR (author only).'
     tags:
       - 'M03: Posts'
@@ -330,11 +355,6 @@ paths:
               content:
                 type: string
                 description: 'Updated content of the post.'
-              tags:
-                type: array
-                items:
-                  type: string
-                description: 'Updated tags for the post.'
             required:
               - title
               - content
@@ -346,8 +366,6 @@ paths:
             schema:
               type: object
               properties:
-                id:
-                  type: integer
                 title:
                   type: string
                 content:
@@ -355,19 +373,15 @@ paths:
                 updated_at:
                   type: string
                   format: date-time
-                tags:
-                  type: array
-                  items:
-                    type: string
       '403':
         description: 'Forbidden. You can only edit your own post.'
       '404':
         description: 'Post not found.'
 
-/post/{id}:
+/deletePost/{id}:
   delete:
-    operationId: R304
-    summary: 'R304: Delete Post'
+    operationId: R305
+    summary: 'R305: Delete Post'
     description: 'Delete a post by the author. Access: USR (author only).'
     tags:
       - 'M03: Posts'
@@ -388,8 +402,8 @@ paths:
 
 /posts/search:
   get:
-    operationId: R305
-    summary: 'R305: Full-Text Search'
+    operationId: R306
+    summary: 'R306: Full-Text Search'
     description: 'Search for posts using full-text search. Access: PUB, USR'
     tags:
       - 'M03: Posts'
@@ -452,14 +466,36 @@ paths:
       '404':
         description: 'No posts found matching the query.'
 
+/home:
+  get:
+    operationId: R307
+    summary: 'R307: Home Page'
+    description: 'Show the home page with the latest news items. Access: PUB, USR'
+    tags:
+      - 'M03: Posts'
+    responses:
+      '200':
+        description: 'OK. Show the home page with the latest news items.'
+
 ####################################
 # ADMINISTRATION
 ####################################
 
 /admin:
-  post:
+  get:
     operationId: R401
-    summary: 'R401: Create User'
+    summary: 'R401: Admin Dashboard'
+    description: 'Show the Admin Dashboard. Access: ADM'
+    tags:
+      - 'M04: Administration'
+    responses:
+      '200':
+        description: 'OK. Show the Admin Dashboard.'
+
+/admin/create:
+  post:
+    operationId: R402
+    summary: 'R402: Create User'
     description: 'Allows a System Manager to create a new user account dynamically from the Admin Dashboard. Access: ADM'
     tags:
       - 'M04: Administration'
@@ -509,3 +545,59 @@ paths:
                   type: string
       '400':
         description: 'Validation error. Invalid input data.'
+
+/api/admin/edit/{id}:
+  post:
+    operationId: R403
+    summary: 'R403: Edit User'
+    description: 'Allows a System Manager to edit the profile information of a user. Access: ADM'
+    tags:
+      - 'M04: Administration'
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: 'The ID of the user to edit.'
+    requestBody:
+      required: true
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                description: 'Updated username'
+              email:
+                type: string
+                format: email
+                description: 'Updated email address'
+              password:
+                type: string
+                format: password
+                description: 'Updated password'
+              confirm_password:
+                type: string
+                format: password
+                description: 'Confirm updated password'
+            required:
+              - username
+              - email
+    responses:
+      '200':
+        description: 'User profile updated successfully.'
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+      '400':
+        description: 'Bad request. Invalid input.'
+      '404':
+        description: 'User not found.'

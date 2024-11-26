@@ -79,12 +79,12 @@ Route::controller(RegisterController::class)->group(function () {
 Route::controller(UserController::class)->group(function () {
     Route::get('/users/{id}', 'show')->name('profile');
     Route::get('/users/{id}/edit', 'editUser')->name('editProfile');
-    Route::post('api/users/{id}/edit', 'edit')->name('updateProfile');
+    Route::post('/api/users/{id}/edit', 'edit')->name('updateProfile');
 });
 
 // Admin
 Route::controller(AdminController:: class)->group(function () {
     Route::get('/admin', 'index')->name('adminDashboard');
     Route::post('/admin/create', 'createUser')->name('createUser');
-    Route::post('api/admin/edit/{id}',  'adminUpdateUser')->name('adminUpdateUser');
+    Route::post('/api/admin/edit/{id}',  'adminUpdateUser')->name('adminUpdateUser');
 });
