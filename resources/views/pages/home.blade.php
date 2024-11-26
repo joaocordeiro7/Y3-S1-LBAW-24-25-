@@ -36,8 +36,6 @@
                 @endforeach
             </section>
 
-            <!-- Paginação -->
-            {{ $posts->links() }}
         @endif
     </div>
 @endsection
