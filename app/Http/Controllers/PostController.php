@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 
 use Illuminate\View\View;
@@ -126,6 +127,17 @@ class PostController extends Controller
 
         return view('pages.home', ['posts' => $posts]);
     }
+
+    public function showUserPosts($id)
+    {
+        $user = User::findOrFail($id);
+        $posts = Post::where('ownerid', $id)->get();
+
+        return view('pages.user_posts', compact('user', 'posts'));
+    }
+
+    
+
 
 }
 

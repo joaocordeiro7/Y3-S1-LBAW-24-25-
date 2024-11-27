@@ -13,5 +13,6 @@
     @elseif ($canAdminEdit)
         <a href="{{ route('editProfile', ['id' => $user->user_id]) }}" class="btn btn-primary">Edit as Admin</a>
     @endif
+    <a href="{{ route('user.posts', ['id' => $user->user_id]) }}" class="btn btn-primary">View All Posts</a>
 </div>
 @endsection
