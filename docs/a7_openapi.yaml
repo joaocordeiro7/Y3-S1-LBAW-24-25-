@@ -175,7 +175,7 @@ paths:
         '403':
           description: 'No premission must be owner of the profile or admin'
 
-  /api//users/{id}/edit:
+  /api/users/{id}/edit:
     post: 
       operationId: R203
       summary: 'R203: Edit profile'
