@@ -23,7 +23,7 @@
             </span>
         </div>
         <div id="postDetails">
-            <p>{{$post->owner->username}} - Published at {{$post->created_at->format('d M Y H:i')}}</p>
+            <p><a href="/users/{{$post->owner->user_id}}">{{$post->owner->username}}</a> - Published at {{$post->created_at->format('d M Y H:i')}}</p>
             
         </div>
         <div id="postComments">
