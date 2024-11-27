@@ -5,7 +5,7 @@ info:
   description: 'The Bulletin Web Resources Specification (A7)'
 
 servers:
-  - url: https://lbaw24104.lbaw.fe.up.pt
+  - url: http://localhost:8001/
 
 externalDocs:
   description: Find more info here
