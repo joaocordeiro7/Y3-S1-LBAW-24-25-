@@ -156,9 +156,29 @@ paths:
         '404':
           description: 'User not found.'
   /users/{id}/edit:
-    post: 
+    get:
       operationId: R202
-      summary: 'R202: Edit profile'
+      summary: 'R202: View users edit profile form'
+      description: 'Show the edit profile form for a specific user. Access: USR, ADM'
+      tags:
+        - 'M02: Users'
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: 'Id of profile to edit'
+        responses:
+          '200':
+            description: 'OK. Show the form to edit profile'
+          '403':
+            description: 'No premission must be owner of the profile or admin'
+
+  /api//users/{id}/edit:
+    post: 
+      operationId: R203
+      summary: 'R203: Edit profile'
       description: 'Processes the form to update the profile information of the specified user. Access: USR, ADM'
       tags: 
         - 'M02: Users'
