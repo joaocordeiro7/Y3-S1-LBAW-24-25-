@@ -92,10 +92,10 @@ class PostController extends Controller
         try{
             $post->delete();
         }catch(\Illuminate\Database\QueryException $ex){
-            return response()->json($ex->getMessage());
+            return response()->json(['postId'=>$id]);
         }
 
-        return response()->json(['success' => 'The post was deleted successfully']);
+        return response()->json(['success' => 'The post was deleted successfully','postId'=>$id]);
     }
 
     /**

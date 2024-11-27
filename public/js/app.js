@@ -27,9 +27,11 @@ function addEventListeners() {
     if(newsEditor != null)
       newsEditor.addEventListener('click', openNewsEditor);
 
-    let newsDestroyer = document.querySelector('article.post button.deleteButton');
-    if(newsDestroyer != null)
-      newsDestroyer.addEventListener('click', deleteNews);
+    let newsDestroyers = document.querySelectorAll('ul#postsList li button');
+    [].forEach.call(newsDestroyers,function(destroyer){
+      destroyer.addEventListener('click',deleteNews);
+    })
+    
 
     let newsEditCancelButton = document.querySelector('section.postEditForm button.cancelButton');
     if(newsEditCancelButton != null)
@@ -78,10 +80,12 @@ function addEventListeners() {
     request.send(encodeForAjax(data));
   }
 
-  function deleteNews(){
-    let parent=this.parentElement;
-    let id=parent.getAttribute('data-id');
+  function deleteNews(event){
+    
+    let id=this.parentElement.getAttribute('id');
+    
     sendAjaxRequest('post','/deletePost/'+id,null,deleteNewsHandler)
+    event.preventDefault();
   }
   
   function  openNewsEditor(){
@@ -136,16 +140,23 @@ function addEventListeners() {
     
     let res = JSON.parse(this.responseText);
     
+    let post = document.getElementById(res.postId);
+    
+    let message=document.createElement('p');
+    
     if(res.success){
-      document.querySelector('article.post header.newsTitle h2').innerHTML='The post was deleted successfully';
-      document.querySelector('article.post div.newsBody p').innerHTML='';
+      
+      message.innerHTML='The post was deleted successfully';
 
     }
     else{
       
-      document.querySelector('article.post span.error').innerHTML='Posts that already have either comments or interations can not be deleted';
+      message.innerHTML='Posts that already have either comments or interations can not be deleted';
       
     }
+    
+    post.appendChild(message);
+    
   }
 
   function sendItemUpdateRequest() {

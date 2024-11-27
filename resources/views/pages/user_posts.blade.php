@@ -7,19 +7,16 @@
     @if($posts->isEmpty())
         <p>No posts available.</p>
     @else
-        <ul>
+        <span class="error"></span>
+        <ul id="postsList">
             @foreach($posts as $post)
-                <li>
+                <li id="{{$post->post_id}}">
                     <h2>{{ $post->title }}</h2>
                     <p>{{ \Illuminate\Support\Str::words($post->body, 25, '...') }}</p>
                     <a href="{{ url('/post/' . $post->post_id) }}">Read More</a>
                     
                     @can('delete', $post)
-                        <form action="{{ route('post.delete', ['id' => $post->post_id]) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
+                    <button type="submit" class="btn btn-danger">Delete</button>
                     @endcan
                 </li>
             @endforeach
