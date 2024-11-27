@@ -211,7 +211,7 @@ paths:
   /createPosts:
     get:
       operationId: R301
-      summary: 'R301: '
+      summary: 'R301: Create News Item Form'
       description: 'Provide login form Access: USR'
       tags:
         - 'M03: Posts'
@@ -258,7 +258,7 @@ paths:
   /post/{id}:
     get:
       operationId: R303
-      summary: 'R302: View News Item'
+      summary: 'R303: View News Item'
       description: 'Retrieve detailed information about a specific news item. Access: PUB, USR'
       tags:
         - 'M03: Posts'
@@ -380,70 +380,70 @@ paths:
           description: 'Post not found.'
 
   /posts/search:
-  get:
-    operationId: R306
-    summary: 'R306: Full-Text Search'
-    description: 'Search for posts using full-text search. Access: PUB, USR'
-    tags:
-      - 'M03: Posts'
-    parameters:
-      - in: query
-        name: query
-        description: 'Search string for full-text search in post titles and content.'
-        schema:
-          type: string
-        required: true
-      - in: query
-        name: tags
-        description: 'Filter posts by specific tags.'
-        schema:
-          type: array
-          items:
+    get:
+      operationId: R306
+      summary: 'R306: Full-Text Search'
+      description: 'Search for posts using full-text search. Access: PUB, USR'
+      tags:
+        - 'M03: Posts'
+      parameters:
+        - in: query
+          name: query
+          description: 'Search string for full-text search in post titles and content.'
+          schema:
             type: string
-        required: false
-      - in: query
-        name: author
-        description: 'Filter posts by specific author ID.'
-        schema:
-          type: integer
-        required: false
-      - in: query
-        name: date
-        description: 'Filter posts by a specific date.'
-        schema:
-          type: string
-          format: date
-        required: false
-    responses:
-      '200':
-        description: 'Success. Returns a list of posts matching the search query.'
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  title:
-                    type: string
-                  content:
-                    type: string
-                  created_at:
-                    type: string
-                    format: date-time
-                  updated_at:
-                    type: string
-                    format: date-time
-                  author:
-                    type: string
-                  tags:
-                    type: array
-                    items:
+          required: true
+        - in: query
+          name: tags
+          description: 'Filter posts by specific tags.'
+          schema:
+            type: array
+            items:
+              type: string
+          required: false
+        - in: query
+          name: author
+          description: 'Filter posts by specific author ID.'
+          schema:
+            type: integer
+          required: false
+        - in: query
+          name: date
+          description: 'Filter posts by a specific date.'
+          schema:
+            type: string
+            format: date
+          required: false
+      responses:
+        '200':
+          description: 'Success. Returns a list of posts matching the search query.'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
                       type: string
-      '404':
-        description: 'No posts found matching the query.'
+                    content:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+                    author:
+                      type: string
+                    tags:
+                      type: array
+                      items:
+                        type: string
+        '404':
+          description: 'No posts found matching the query.'
 
   /home:
     get:
