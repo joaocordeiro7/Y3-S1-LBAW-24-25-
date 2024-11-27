@@ -379,7 +379,7 @@ paths:
         '404':
           description: 'Post not found.'
 
-/posts/search:
+  /posts/search:
   get:
     operationId: R306
     summary: 'R306: Full-Text Search'
