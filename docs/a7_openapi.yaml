@@ -228,6 +228,34 @@ paths:
           description: 'Bad request. Invalid input.'
         '404':
           description: 'User not found.'
+  /search:
+    get:
+      operationId: R204
+      summary: 'R204: Exact Match Search'
+      description: 'Search for username using exact match search. Access: ADM, USR'
+      tags:
+        - 'M02: Users'
+      parameters:
+        - in: query
+          name: query
+          description: 'Search string for exact match search in user username.'
+          schema:
+            type: string
+          required: true
+      responses:
+        '302':
+          description: 'Redirect after successfully matching a username.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  value: '/users/{id}'
+                  description: 'Redirect to the user profile.'
+                302Failure:
+                  value: '/search'
+                  description: 'Failed. Redirect back.'
   /createPosts:
     get:
       operationId: R301
@@ -399,11 +427,11 @@ paths:
         '404':
           description: 'Post not found.'
 
-  /posts/search:
+  /:
     get:
       operationId: R306
-      summary: 'R306: Full-Text Search'
-      description: 'Search for posts using full-text search. Access: PUB, USR'
+      summary: 'R306: View all Posts'
+      description: 'Retrieve posts and show them in the home page.  Access: PUB, USR'
       tags:
         - 'M03: Posts'
       parameters:
@@ -412,31 +440,10 @@ paths:
           description: 'Search string for full-text search in post titles and content.'
           schema:
             type: string
-          required: true
-        - in: query
-          name: tags
-          description: 'Filter posts by specific tags.'
-          schema:
-            type: array
-            items:
-              type: string
-          required: false
-        - in: query
-          name: author
-          description: 'Filter posts by specific author ID.'
-          schema:
-            type: integer
-          required: false
-        - in: query
-          name: date
-          description: 'Filter posts by a specific date.'
-          schema:
-            type: string
-            format: date
           required: false
       responses:
         '200':
-          description: 'Success. Returns a list of posts matching the search query.'
+          description: 'Success. Returns the list of posts.'
           content:
             application/json:
               schema:
@@ -463,8 +470,8 @@ paths:
                       items:
                         type: string
         '404':
-          description: 'No posts found matching the query.'
-
+          description: 'No posts found.'
+  
   /home:
     get:
       operationId: R307
@@ -475,7 +482,52 @@ paths:
       responses:
         '200':
           description: 'OK. Show the home page with the latest news items.'
-
+  
+  /user/{id}/posts:
+    get:
+      operationId: R308
+      summary: 'R308: View Users Posts'
+      description: 'Show the page with a user news items. Access: USR'
+      tags:
+        - 'M03: Posts'
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: 'Success. Returns the list of posts in which the author has the same id as the owner of the profile.'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+                    content:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+                    author:
+                      type: string
+                    tags:
+                      type: array
+                      items:
+                        type: string
+        '404':
+          description: 'No posts found.'
+  
+  
   /admin:
     get:
       operationId: R401
