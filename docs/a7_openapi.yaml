@@ -156,7 +156,7 @@ paths:
         '404':
           description: 'User not found.'
   /users/{id}/edit:
-    post:
+    post: 
       operationId: R202
       summary: 'R202: Edit profile'
       description: 'Processes the form to update the profile information of the specified user. Access: USR, ADM'
@@ -445,138 +445,134 @@ paths:
       '404':
         description: 'No posts found matching the query.'
 
-/home:
-  get:
-    operationId: R307
-    summary: 'R307: Home Page'
-    description: 'Show the home page with the latest news items. Access: PUB, USR'
-    tags:
-      - 'M03: Posts'
-    responses:
-      '200':
-        description: 'OK. Show the home page with the latest news items.'
+  /home:
+    get:
+      operationId: R307
+      summary: 'R307: Home Page'
+      description: 'Show the home page with the latest news items. Access: PUB, USR'
+      tags:
+        - 'M03: Posts'
+      responses:
+        '200':
+          description: 'OK. Show the home page with the latest news items.'
 
-####################################
-# ADMINISTRATION
-####################################
+  /admin:
+    get:
+      operationId: R401
+      summary: 'R401: Admin Dashboard'
+      description: 'Show the Admin Dashboard. Access: ADM'
+      tags:
+        - 'M04: Administration'
+      responses:
+        '200':
+          description: 'OK. Show the Admin Dashboard.'
 
-/admin:
-  get:
-    operationId: R401
-    summary: 'R401: Admin Dashboard'
-    description: 'Show the Admin Dashboard. Access: ADM'
-    tags:
-      - 'M04: Administration'
-    responses:
-      '200':
-        description: 'OK. Show the Admin Dashboard.'
-
-/admin/create:
-  post:
-    operationId: R402
-    summary: 'R402: Create User'
-    description: 'Allows a System Manager to create a new user account dynamically from the Admin Dashboard. Access: ADM'
-    tags:
-      - 'M04: Administration'
-    requestBody:
-      required: true
-      content:
-        application/x-www-form-urlencoded:
-          schema:
-            type: object
-            properties:
-              username:
-                type: string
-                description: 'The username of the new user'
-              email:
-                type: string
-                format: email
-                description: 'The email address of the new user'
-              password:
-                type: string
-                format: password
-                description: 'The password for the new user'
-              confirm_password:
-                type: string
-                format: password
-                description: 'Confirmation of the password for the new user'
-            required:
-              - username
-              - email
-              - password
-              - confirm_password
-    responses:
-      '201':
-        description: 'User successfully created.'
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                success:
-                  type: boolean
-                  example: true
-                user_id:
-                  type: integer
-                username:
-                  type: string
-                email:
-                  type: string
-      '400':
-        description: 'Validation error. Invalid input data.'
-
-/api/admin/edit/{id}:
-  post:
-    operationId: R403
-    summary: 'R403: Edit User'
-    description: 'Allows a System Manager to edit the profile information of a user. Access: ADM'
-    tags:
-      - 'M04: Administration'
-    parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
+  /admin/create:
+    post:
+      operationId: R402
+      summary: 'R402: Create User'
+      description: 'Allows a System Manager to create a new user account dynamically from the Admin Dashboard. Access: ADM'
+      tags:
+        - 'M04: Administration'
+      requestBody:
         required: true
-        description: 'The ID of the user to edit.'
-    requestBody:
-      required: true
-      content:
-        application/x-www-form-urlencoded:
-          schema:
-            type: object
-            properties:
-              username:
-                type: string
-                description: 'Updated username'
-              email:
-                type: string
-                format: email
-                description: 'Updated email address'
-              password:
-                type: string
-                format: password
-                description: 'Updated password'
-              confirm_password:
-                type: string
-                format: password
-                description: 'Confirm updated password'
-            required:
-              - username
-              - email
-    responses:
-      '200':
-        description: 'User profile updated successfully.'
         content:
-          application/json:
+          application/x-www-form-urlencoded:
             schema:
               type: object
               properties:
                 username:
                   type: string
+                  description: 'The username of the new user'
                 email:
                   type: string
-      '400':
-        description: 'Bad request. Invalid input.'
-      '404':
-        description: 'User not found.'
+                  format: email
+                  description: 'The email address of the new user'
+                password:
+                  type: string
+                  format: password
+                  description: 'The password for the new user'
+                confirm_password:
+                  type: string
+                  format: password
+                  description: 'Confirmation of the password for the new user'
+              required:
+                - username
+                - email
+                - password
+                - confirm_password
+      responses:
+        '201':
+          description: 'User successfully created.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  user_id:
+                    type: integer
+                  username:
+                    type: string
+                  email:
+                    type: string
+        '400':
+          description: 'Validation error. Invalid input data.'
+
+  /api/admin/edit/{id}:
+    post:
+      operationId: R403
+      summary: 'R403: Edit User'
+      description: 'Allows a System Manager to edit the profile information of a user. Access: ADM'
+      tags:
+        - 'M04: Administration'
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: 'The ID of the user to edit.'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: 'Updated username'
+                email:
+                  type: string
+                  format: email
+                  description: 'Updated email address'
+                password:
+                  type: string
+                  format: password
+                  description: 'Updated password'
+                confirm_password:
+                  type: string
+                  format: password
+                  description: 'Confirm updated password'
+              required:
+                - username
+                - email
+      responses:
+        '200':
+          description: 'User profile updated successfully.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  email:
+                    type: string
+        '400':
+          description: 'Bad request. Invalid input.'
+        '404':
+          description: 'User not found.'
