@@ -179,7 +179,7 @@ paths:
     post: 
       operationId: R203
       summary: 'R203: Edit profile'
-      description: 'Processes the form to update the profile information of the specified user. Access: USR, ADM'
+      description: 'Updates the profile information of the specified user. Access: USR, ADM'
       tags: 
         - 'M02: Users'
       parameters:
