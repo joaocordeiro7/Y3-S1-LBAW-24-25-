@@ -33,14 +33,18 @@ class RegisterController extends Controller
             'password' => 'required|min:8|confirmed'
         ]);
 
-        User::create([
+        $user = User::create([
             'username' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password)
         ]);
 
+        $defaultPath = 'images/profile/default.png';    
+        $user->image()->create(['path' => $defaultPath]);
+
         $credentials = $request->only('email', 'password');
         Auth::attempt($credentials);
+
         $request->session()->regenerate();
         return redirect()->route('home')
             ->withSuccess('You have successfully registered & logged in!');

@@ -37,6 +37,11 @@ function addEventListeners() {
     if (createUserButton) {
         createUserButton.addEventListener('click', handleCreateUser);
     }
+
+    let deleteAccountButton = document.getElementById('deleteAccount');
+    if(deleteAccountButton) {
+      deleteAccountButton.addEventListener('click', handleDeleteAccount);
+    }
   }
   
   
@@ -166,48 +171,53 @@ function addEventListeners() {
         },
         body: formData,
     })
-        .then(response => {
-            if (!response.ok) {
-                if (response.status === 422) {
-                    return response.json().then(data => {
-                        if (data.errors) throw data.errors;
-                        throw new Error('Validation failed without specific errors.');
-                    });
-                }
-                throw new Error('Profile update failed.');
-            }
-            return response.json();
-        })
-        .then(data => {
-            successMessage.style.display = "block";
-            errorMessage.style.display = "none";
-
-            form.querySelector('#username').value = data.username;
-            form.querySelector('#email').value = data.email;
-
-            const title = document.querySelector('#title');
-            if (title) {
-                title.textContent = `Edit ${data.username}'s Profile`;
-            }
-        })
-        .catch(errors => {
-            if (typeof errors === 'object') {
-                console.error("Validation errors:", errors);
-
-                Object.keys(errors).forEach(field => {
-                    const errorSpan = form.querySelector(`#${field}-error`);
-                    if (errorSpan) {
-                        errorSpan.textContent = errors[field].join(', ');
-                        errorSpan.style.display = 'block';
-                    }
+    .then(response => {
+        if (!response.ok) {
+            if (response.status === 422) {
+                return response.json().then(data => {
+                    if (data.errors) throw data.errors;
+                    throw new Error('Validation failed without specific errors.');
                 });
-            } else {
-                console.error("Error details:", errors);
-                errorMessage.style.display = "block";
-                successMessage.style.display = "none";
-                errorMessage.innerText = errors || "Unexpected error occurred. Please try again.";
             }
-        });
+            throw new Error('Profile update failed.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        successMessage.style.display = "block";
+        errorMessage.style.display = "none";
+
+        form.querySelector('#username').value = data.username;
+        form.querySelector('#email').value = data.email;
+
+        const profilePicture = document.getElementById('profile-picture-display');
+        if (profilePicture && data.image_path) {
+            profilePicture.src = data.image_path + '?' + new Date().getTime(); // Cache-busting
+        }
+
+        const title = document.querySelector('#title');
+        if (title) {
+            title.textContent = `Edit ${data.username}'s Profile`;
+        }
+    })
+    .catch(errors => {
+        if (typeof errors === 'object') {
+            console.error("Validation errors:", errors);
+
+            Object.keys(errors).forEach(field => {
+                const errorSpan = form.querySelector(`#${field}-error`);
+                if (errorSpan) {
+                    errorSpan.textContent = errors[field].join(', ');
+                    errorSpan.style.display = 'block';
+                }
+            });
+        } else {
+            console.error("Error details:", errors);
+            errorMessage.style.display = "block";
+            successMessage.style.display = "none";
+            errorMessage.innerText = errors || "Unexpected error occurred. Please try again.";
+        }
+    });
 }
 
 function handleCreateUser(event) {
@@ -278,5 +288,38 @@ function handleCreateUser(event) {
       });
 }
 
+function handleDeleteAccount(event) {
+  const deleteUrl = event.target.dataset.deleteUrl;
+
+  // Show confirmation prompt
+  if (!confirm('Are you sure you want to delete your account? This action is irreversible.')) {
+      return;
+  }
+
+  // Send AJAX request to delete account
+  fetch(deleteUrl, {
+      method: 'DELETE', // Use DELETE method here
+      headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+          'Content-Type': 'application/json'
+      },
+  })
+      .then((response) => {
+          if (!response.ok) {
+              throw new Error('Failed to delete account.');
+          }
+          return response.json();
+      })
+      .then((data) => {
+          alert(data.message || 'Account deleted successfully.');
+
+          // Redirect to homepage
+          window.location.href = '/';
+      })
+      .catch((error) => {
+          console.error('Error:', error);
+          alert('An error occurred while deleting the account. Please try again.');
+      });
+}
 
 

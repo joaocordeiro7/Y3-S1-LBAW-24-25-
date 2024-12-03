@@ -69,4 +69,13 @@ class User extends Authenticatable
         return $this->hasOne(Admin::class, 'admin_id', 'user_id')->exists();
     }
 
+    public function image()
+    {
+        return $this->hasOne(Image::class, 'user_id', 'user_id');
+    }
+
+    public function getProfileImagePath()
+    {
+        return $this->image ? asset('images/profile/' . $this->image->path) : asset('images/profile/default.png');
+    }
 }

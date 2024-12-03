@@ -4,7 +4,20 @@
 
 @section('content')
 <div class="container">
-    <h1 id="title">Edit {{ $user->username }}'s Profile</h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 id="title">Edit {{ $user->username }}'s Profile</h1>
+        <img 
+            id="profile-picture-display" 
+            src="{{ asset('storage/' . $user->image->path) }}" 
+            alt="Profile Picture" 
+            style="max-width: 150px;">
+        </img>
+        <button type="button" id="deleteAccount" class="btn btn-danger" 
+            data-delete-url="{{ route('deleteAccount', ['id' => $user->user_id]) }}">
+            Delete Account
+        </button>
+
+    </div>
 
     <div id="success-message" class="alert alert-success" style="display: none;">
         Profile updated successfully!
@@ -14,8 +27,7 @@
         An error occurred while updating the profile. Please try again.
     </div>
 
-
-    <form id="editProfileForm">
+    <form id="editProfileForm" enctype="multipart/form-data">
         {{ csrf_field() }}
         @include('partials.editProfileForm', ['user' => $user])
 
@@ -36,7 +48,3 @@
     </form>
 </div>
 @endsection
-
-@section('scripts')
-@endsection
-
