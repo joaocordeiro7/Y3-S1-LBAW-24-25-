@@ -5,6 +5,12 @@
 @section('content')
 <div class="profile-container">
     <h1>{{ $user->username }}'s Profile</h1>
+    <img 
+        id="profile-picture-display" 
+        src="{{ asset('storage/' . $user->image->path) }}" 
+        alt="Profile Picture" 
+        style="max-width: 150px;">
+    </img>
     <p>Email: {{ $user->email }}</p>
     <p>Reputation: {{ $user->reputation }}</p>
 
