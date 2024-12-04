@@ -27,6 +27,10 @@
             <p>{{$post->owner->username}} - Published at {{$post->created_at->format('d M Y H:i')}}</p>
             
         </div>
+        <article class="post" id="post{{ $post->post_id }}">
+            <h4 class="qtd-likes">{{ $post->upvotes }}</h4>
+            <button class="button-like" onclick="like({{ $post->post_id }})">Like!</button>
+        </article>
         <div id="postComments">
             <h3>Comments</h3>
             <p>The comments will be displayed here</p>

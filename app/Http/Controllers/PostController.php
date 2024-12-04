@@ -121,7 +121,7 @@ class PostController extends Controller
                 ->orWhere('body', 'ILIKE', '%' . $search . '%')
                 ->paginate(10);
         } else {
-            // Retorna todos os posts caso não haja busca
+            // Retorna todos os posts caso não haja 
             $posts = DB::table('posts')->paginate(10);
         }
 
@@ -136,7 +136,16 @@ class PostController extends Controller
         return view('pages.user_posts', compact('user', 'posts'));
     }
 
+    public function like (Request $request) {
+      
+        $post = Post::find($request->id);
+        $this->authorize('like', Post::class);
     
+        PostLike::insert([
+            'user_id' => Auth::user()->id,
+            'post_id' => $post->id,
+        ]);
+    }
 
 
 }

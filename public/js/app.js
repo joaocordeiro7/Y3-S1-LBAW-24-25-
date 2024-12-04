@@ -427,3 +427,17 @@ function handleCreateUser(event) {
 
 
 
+function like(postId) {
+  let post = document.querySelector('#post' + postId);
+  let likeCounter = post.querySelector('.qtd-likes').innerText;
+  let likeButton = post.querySelector('.button-like');
+
+  // Update like counter
+  post.querySelector('.qtd-likes').innerText = parseInt(likeCounter) + 1;
+
+  // Send server request
+  sendAjaxRequest('post', '../post/like', {id: post_id});
+
+  // Remove like button
+  likeButton.remove();
+}

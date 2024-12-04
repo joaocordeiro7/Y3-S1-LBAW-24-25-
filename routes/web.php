@@ -55,10 +55,9 @@ Route::controller(PostController::class)->group(function (){
     Route::post('/api/createPosts','store')->name('publish');
     Route::post('/post/edit/{id}','update');
     Route::get('/', 'index')->name('home');
-    Route::get('/posts', 'index')->name('posts.index');
     Route::post('/deletePost/{id}','destroy');
     Route::get('/user/{id}/posts', 'showUserPosts')->name('user.posts');
-    Route::delete('/post/{id}', 'destroy')->middleware('auth')->name('post.delete');
+    Route::post('post/like', 'like');
 });
 
 
