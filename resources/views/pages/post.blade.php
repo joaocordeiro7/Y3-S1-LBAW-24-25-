@@ -4,8 +4,7 @@
     <article class="post" data-id="{{ $post->post_id }}">
         @if((Auth::check() && Auth::user()->user_id == $post->owner->user_id) || (Auth::check() && Auth::user()->isAdmin()))
             <button class="editButton">Edit</button>
-            <button class="deleteButton">Delete</button>
-            <span class="error"></span>
+            
         @endif
         <header class="newsTitle">
             <h2>{{$post->title}}</h2>
@@ -24,7 +23,7 @@
             </span>
         </div>
         <div id="postDetails">
-            <p>{{$post->owner->username}} - Published at {{$post->created_at->format('d M Y H:i')}}</p>
+            <p><a href="/users/{{$post->owner->user_id}}">{{$post->owner->username}}</a> - Published at {{$post->created_at->format('d M Y H:i')}}</p>
             
         </div>
         <article class="post" id="post{{ $post->post_id }}">

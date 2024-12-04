@@ -23,9 +23,12 @@
             <header>
                 <h1><a href="{{ url('/home') }}">The Bulletin</a></h1>
                 @if (Auth::check())
-                <a class="button" href="{{ url('/createPosts') }}"> Post News </a> <a class="button" href="{{ url('/logout') }}"> Logout </a> <span>{{ Auth::user()->username }}</span>
+                <a class="button" href="{{ url('/createPosts') }}"> Post News </a> <a class="button" href="{{ url('/logout') }}"> Logout </a> <a href="{{url('/users/'.Auth::user()->user_id)}}">{{ Auth::user()->username }}</a>
                 @else
                 <a class="button" href="{{ url('/login') }}"> Login </a> <a class="button" href="{{ url('/register') }}"> Register </a>
+                @endif
+                @if (Auth::check() && Auth::user()->isAdmin())
+                <a class="button" href="{{route('adminDashboard')}}">Dashboard</a>
                 @endif
             </header>
             <section id="content">
