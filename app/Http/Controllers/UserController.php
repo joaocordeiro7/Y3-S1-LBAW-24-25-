@@ -126,15 +126,16 @@ class UserController extends Controller
             $file = $request->file('image');
             $path = $file->store('images/profile', 'public');
     
-            $image = $user->image;
-            if ($image) {
-                Storage::disk('public')->delete($image->path);
-                $image->update(['path' => $path]);
+            if ($user->image && $user->image->path !== 'images/profile/default.png') {
+                Storage::disk('public')->delete($user->image->path);
+            }
+    
+            if ($user->image) {
+                $user->image->update(['path' => $path]);
             } else {
                 $user->image()->create(['path' => $path]);
             }
         }
-    
         return response()->json([
             'success' => true,
             'username' => $user->username,

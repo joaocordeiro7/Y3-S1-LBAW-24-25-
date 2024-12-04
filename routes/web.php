@@ -1,11 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
 
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ImageController;
+use App\Http\Controllers\Auth\PasswordResetController;
 
 
 use App\Http\Controllers\Auth\LoginController;
@@ -88,4 +91,9 @@ Route::controller(ImageController:: class)->group(function () {
     Route::delete('/image/delete/{id}', 'delete')->name('image.delete');
 });
 
-
+Route::controller(PasswordResetController:: class)->group(function () {
+    Route::get('password/reset', 'showResetRequestForm')->name('password.request');
+    Route::post('password/reset', 'sendResetLink')->name('password.email');
+    Route::post('api/password/reset/{token}', 'resetPassword')->name('password.update');
+    Route::get('password/reset/{token}', 'showResetForm')->name('password.reset');
+});
