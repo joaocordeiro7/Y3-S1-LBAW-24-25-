@@ -82,10 +82,8 @@ class ImageController extends Controller
     {
         $image = Image::findOrFail($imageId);
 
-        // Delete the image file
         Storage::disk('public')->delete($image->path);
 
-        // Remove the image record
         $image->delete();
 
         return response()->json(['success' => true, 'message' => 'Image deleted successfully']);

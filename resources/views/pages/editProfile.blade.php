@@ -12,8 +12,8 @@
             alt="Profile Picture" 
             style="max-width: 150px;">
         </img>
-        <button type="button" id="deleteAccount" class="btn btn-danger" 
-            data-delete-url="{{ route('deleteAccount', ['id' => $user->user_id]) }}">
+        <button type="button" id="deleteAccount" class="btn btn-danger delete-account" 
+            data-delete-url="{{ Auth::user()->isAdmin() ? route('adminDeleteAccount', ['id' => $user->user_id]) : route('deleteAccount', ['id' => $user->user_id])  }}">
             Delete Account
         </button>
 

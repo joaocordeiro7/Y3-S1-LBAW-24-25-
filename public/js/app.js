@@ -38,9 +38,11 @@ function addEventListeners() {
         createUserButton.addEventListener('click', handleCreateUser);
     }
 
-    let deleteAccountButton = document.getElementById('deleteAccount');
-    if(deleteAccountButton) {
-      deleteAccountButton.addEventListener('click', handleDeleteAccount);
+    let deleteAccountButtons = document.querySelectorAll('button.delete-account');
+    if (deleteAccountButtons) {
+        deleteAccountButtons.forEach(button => {
+            button.addEventListener('click', handleDeleteAccount);
+        });
     }
   }
   
@@ -261,11 +263,19 @@ function handleCreateUser(event) {
                   <td>${data.username}</td>
                   <td>${data.email}</td>
                   <td>
-                      <a href="/users/${data.user_id}/edit" class="btn btn-sm btn-primary">Edit</a>
-                      <button class="btn btn-sm btn-danger" disabled>Delete (Coming Soon)</button>
+                        <a href="/users/${data.user_id}" class="btn btn-sm btn-primary">View</a>
+                        <button type="button" class="btn btn-danger delete-account"
+                            data-delete-url="/admin/delete/${data.user_id}"
+                            data-context="admin">
+                            Delete
+                        </button>
                   </td>
               `;
               usersTable.appendChild(newRow);
+
+              const deleteButton = newRow.querySelector('.delete-account');
+              deleteButton.addEventListener('click', handleDeleteAccount);
+  
 
               form.reset();
 
@@ -289,37 +299,41 @@ function handleCreateUser(event) {
 }
 
 function handleDeleteAccount(event) {
-  const deleteUrl = event.target.dataset.deleteUrl;
+    const deleteUrl = event.target.dataset.deleteUrl;
+    const context = event.target.dataset.context;
 
-  // Show confirmation prompt
-  if (!confirm('Are you sure you want to delete your account? This action is irreversible.')) {
-      return;
-  }
+    if (!confirm('Are you sure you want to delete your account? This action is irreversible.')) {
+        return;
+    }
 
-  // Send AJAX request to delete account
-  fetch(deleteUrl, {
-      method: 'DELETE', // Use DELETE method here
-      headers: {
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-          'Content-Type': 'application/json'
-      },
-  })
-      .then((response) => {
-          if (!response.ok) {
-              throw new Error('Failed to delete account.');
-          }
-          return response.json();
-      })
-      .then((data) => {
-          alert(data.message || 'Account deleted successfully.');
+    console.log('Delete URL:', deleteUrl);
 
-          // Redirect to homepage
-          window.location.href = '/';
-      })
-      .catch((error) => {
-          console.error('Error:', error);
-          alert('An error occurred while deleting the account. Please try again.');
-      });
+    fetch(deleteUrl, {
+        method: 'DELETE', 
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json'
+        },
+    })
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error('Failed to delete account.');
+        }
+        return response.json();
+    })
+    .then((data) => {
+            alert(data.message || 'Account deleted successfully.');
+
+            if (context !== 'admin') {
+                window.location.href = '/';
+            } else {
+                event.target.closest('tr').remove();
+            }
+        })
+    .catch((error) => {
+        console.error('Error:', error);
+        alert('An error occurred while deleting the account. Please try again.');
+    });
 }
 
 

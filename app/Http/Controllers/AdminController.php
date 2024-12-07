@@ -8,6 +8,8 @@ use App\Models\User;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -39,11 +41,15 @@ class AdminController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $defaultProfilePicturePath = 'images/profile/default.png';
+        $user->image()->create(['path' => $defaultProfilePicturePath]);    
+
         return response()->json([
             'success' => true,
             'user_id' => $user->user_id,
             'username' => $user->username,
             'email' => $user->email,
+            'image_path' => $defaultProfilePicturePath,
         ]);
     }
 
@@ -55,6 +61,7 @@ class AdminController extends Controller
             'username' => 'required|string|max:250|unique:users,username,' . $user->user_id . ',user_id', 
             'email' => 'required|email|max:250|unique:users,email,' . $user->user_id . ',user_id',
             'password' => 'nullable|string|min:8|confirmed',
+            'image' => 'nullable|mimes:png,jpeg,jpg|max:2048'
         ]);
     
         $user->username = $request->input('username');
@@ -65,11 +72,27 @@ class AdminController extends Controller
         }
     
         $user->save();
+        
+        if ($request->file('image')) {
+            $file = $request->file('image');
+            $path = $file->store('images/profile', 'public');
     
+            if ($user->image && $user->image->path !== 'images/profile/default.png') {
+                Storage::disk('public')->delete($user->image->path);
+            }
+    
+            if ($user->image) {
+                $user->image->update(['path' => $path]);
+            } else {
+                $user->image()->create(['path' => $path]);
+            }
+        }
+
         return response()->json([
             'success' => true,
             'username' => $user->username,
             'email' => $user->email,
+            'image_path' => $user->image ? asset('storage/' . $user->image->path) : asset('storage/images/profile/default.png'),
         ]);
     }   
 
@@ -121,4 +144,35 @@ class AdminController extends Controller
     {
         //
     }
+
+    public function adminDeleteAccount(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        
+    
+        if ((Auth::check() && Auth::user()->user_id !== $user->user_id) && !Auth::user()->isAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+    
+        DB::transaction(function () use ($user) {
+            DB::statement('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
+            
+            //updates  
+            DB::table('comments')
+                ->where('ownerid', $user->user_id)->update(['ownerid' => 1]);
+    
+            DB::table('posts')
+                ->where('ownerid', $user->user_id)->update(['ownerid' => 1]);
+            
+            //deletes
+     
+            $user->delete();
+        });
+        
+        return response()->json([
+            'success' => true, 
+            'message' => 'User account deleted successfully.'
+        ]);
+    } 
+    
 }

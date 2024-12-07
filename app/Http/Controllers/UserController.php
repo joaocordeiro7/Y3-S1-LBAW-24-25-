@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+
 
 
 class UserController extends Controller
@@ -32,36 +34,32 @@ class UserController extends Controller
     public function deleteAccount(Request $request, $id)
     {
         $user = User::findOrFail($id);
+        
     
-        // Ensure the user is authorized to delete this account
-        if (Auth::user()->user_id !== $id && !Auth::user()->isAdmin()) {
+        if ((Auth::check() && Auth::user()->user_id !== $user->user_id) && !Auth::user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
     
         DB::transaction(function () use ($user) {
-            // Use SERIALIZABLE isolation level
             DB::statement('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
+            
+            //updates  
+            DB::table('comments')
+                ->where('ownerid', $user->user_id)->update(['ownerid' => 1]);
     
-            // Delete votes on posts and comments
-            DB::table('InterationPosts')->where('userId', $user->user_id)->delete();
-            DB::table('InterationComments')->where('userId', $user->user_id)->delete();
-    
-            // Transfer ownership of posts and comments to the anonymous user
-            DB::table('Posts')->where('ownerId', $user->user_id)->update(['ownerId' => 1]);
-            DB::table('Comments')->where('ownerId', $user->user_id)->update(['ownerId' => 1]);
-    
-            // Remove follower relationships
-            DB::table('follwed_users')->where('userId1', $user->user_id)->orWhere('userId2', $user->user_id)->delete();
-    
-            // Delete the user
+            DB::table('posts')
+                ->where('ownerid', $user->user_id)->update(['ownerid' => 1]);
+            
+            //deletes
+     
             $user->delete();
         });
-    
+        
         return response()->json([
             'success' => true, 
             'message' => 'User account deleted successfully.'
         ]);
-    }
+    } 
     
 
     /**
@@ -136,6 +134,7 @@ class UserController extends Controller
                 $user->image()->create(['path' => $path]);
             }
         }
+        
         return response()->json([
             'success' => true,
             'username' => $user->username,

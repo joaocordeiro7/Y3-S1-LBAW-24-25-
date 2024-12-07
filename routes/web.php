@@ -76,7 +76,7 @@ Route::controller(UserController::class)->group(function () {
     Route::get('/users/{id}/edit', 'editUser')->name('editProfile');
     Route::post('/api/users/{id}/edit', 'edit')->name('updateProfile');
     Route::get('/search', 'search')->name('user.search');
-    Route::delete('/users/{id}', 'deleteAccount')->name('deleteAccount');  
+    Route::delete('/users/delete/{id}', 'deleteAccount')->name('deleteAccount');  
 });
 
 // Admin
@@ -84,6 +84,7 @@ Route::controller(AdminController:: class)->group(function () {
     Route::get('/admin', 'index')->name('adminDashboard');
     Route::post('/admin/create', 'createUser')->name('createUser');
     Route::post('/api/admin/edit/{id}',  'adminUpdateUser')->name('adminUpdateUser');
+    Route::delete('/admin/delete/{id}', 'adminDeleteAccount')->name('adminDeleteAccount');
 });
 
 Route::controller(ImageController:: class)->group(function () {

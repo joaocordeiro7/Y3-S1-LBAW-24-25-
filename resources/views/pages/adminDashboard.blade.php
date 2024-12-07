@@ -7,31 +7,35 @@
     <h1>Admin Dashboard</h1>
 
     <h2>Users</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($users as $user)
+    <div class="container">
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>{{ $user->user_id }}</td>
-                    <td>{{ $user->username }}</td>
-                    <td>{{ $user->email }}</td>
-                    <td>
-                        <a href="{{ route('profile', $user->user_id) }}" class="btn btn-sm btn-primary">View</a>
-                        
-                        <button class="btn btn-sm btn-danger" disabled>Delete (Coming Soon)</button>
-                    </td>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Actions</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
-
+            </thead>
+            <tbody>
+                @foreach ($users as $user)
+                    <tr>
+                        <td>{{ $user->user_id }}</td>
+                        <td>{{ $user->username }}</td>
+                        <td>{{ $user->email }}</td>
+                        <td>
+                            <a href="{{ route('profile', $user->user_id) }}" class="btn btn-sm btn-primary">View</a>
+                            <button type="button" id="deleteAccount" class="btn btn-danger delete-account"
+                                data-delete-url="{{ route('adminDeleteAccount', ['id' => $user->user_id]) }}"
+                                data-context="admin">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
     <h2>Create New User</h2>
     <div id="userCreatedMessage" class="alert alert-success" style="display: none;">
         User created successfully!
@@ -67,5 +71,3 @@
 </div>
 @endsection
 
-@section('scripts')
-@endsection
