@@ -30,6 +30,7 @@
                                 data-context="admin">
                                 Delete
                             </button>
+                            @include('partials.blockUserButton', ['user' => $user])
                         </td>
                     </tr>
                 @endforeach

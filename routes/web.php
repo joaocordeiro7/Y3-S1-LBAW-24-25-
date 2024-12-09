@@ -46,7 +46,7 @@ Route::controller(PostController::class)->group(function (){
 
 
 Route::controller(PostController::class)->group(function (){
-    Route::get('/createPosts','create')->name('createPosts');
+    Route::get('/createPosts','create')->middleware('checkIfBlocked')->name('createPosts');
     Route::post('/api/createPosts','store')->name('publish');
     Route::post('/post/edit/{id}','update');
     Route::get('/', 'index')->name('home');
@@ -85,6 +85,8 @@ Route::controller(AdminController:: class)->group(function () {
     Route::post('/admin/create', 'createUser')->name('createUser');
     Route::post('/api/admin/edit/{id}',  'adminUpdateUser')->name('adminUpdateUser');
     Route::delete('/admin/delete/{id}', 'adminDeleteAccount')->name('adminDeleteAccount');
+    Route::post('/admin/block/{id}', 'blockUser')->name('blockUser');
+    Route::delete('/admin/unblock/{id}', 'unblockUser')->name('unblockUser');
 });
 
 Route::controller(ImageController:: class)->group(function () {

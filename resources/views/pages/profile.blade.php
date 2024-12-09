@@ -11,6 +11,9 @@
         alt="Profile Picture" 
         style="max-width: 150px;">
     </img>
+    @if ($canAdminEdit)
+        @include('partials.blockUserButton', ['user' => $user])
+    @endif
     <p>Email: {{ $user->email }}</p>
     <p>Reputation: {{ $user->reputation }}</p>
 

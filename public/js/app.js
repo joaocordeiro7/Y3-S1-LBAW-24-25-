@@ -44,6 +44,20 @@ function addEventListeners() {
             button.addEventListener('click', handleDeleteAccount);
         });
     }
+
+    let blockUserButtons = document.querySelectorAll('.block-user');
+    if(blockUserButtons) {
+        blockUserButtons.forEach(button => {
+            button.addEventListener('click', handleBlockUser);
+        });
+    }
+
+    let unblockUserButtons = document.querySelectorAll('.unblock-user');
+    if(unblockUserButtons) {
+        unblockUserButtons.forEach(button => {
+            button.addEventListener('click', handleUnblockUser);
+        });
+    }
   }
   
   
@@ -306,8 +320,6 @@ function handleDeleteAccount(event) {
         return;
     }
 
-    console.log('Delete URL:', deleteUrl);
-
     fetch(deleteUrl, {
         method: 'DELETE', 
         headers: {
@@ -336,4 +348,61 @@ function handleDeleteAccount(event) {
     });
 }
 
+function handleBlockUser(event) {
+    const blockUrl = event.target.dataset.blockUrl;
+
+    console.log('Block URL:', blockUrl);
+
+    if(!confirm('Are you sure you want to block this user?')) {
+        return;
+    }
+
+    fetch(blockUrl, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to block user.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert(data.message);
+        location.reload(); 
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while blocking the user.');
+    });
+}
+
+function handleUnblockUser(event) {
+    const unblockUrl = event.target.dataset.unblockUrl;
+
+    fetch(unblockUrl, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to unblock user.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert(data.message);
+        location.reload(); 
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while unblocking the user.');
+    });
+}
 

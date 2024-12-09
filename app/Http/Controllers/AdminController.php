@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Blocked;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -130,19 +131,41 @@ class AdminController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Unblock a user.
      */
-    public function update(Request $request, Admin $admin)
+    public function unblockUser(Request $request, $id)
     {
-        //
+        $user = User::findOrFail($id);
+    
+        DB::table('blocked')->where('blocked_id', $id)->delete();
+    
+        return response()->json([
+            'success' => true,
+            'message' => "{$user->username} has been unblocked.",
+        ]);
     }
+    
 
     /**
-     * Remove the specified resource from storage.
+     * Block a user.
      */
-    public function destroy(Admin $admin)
+    public function blockUser(Request $request, $id)
     {
-        //
+        $user = User::findOrFail($id);
+    
+        if ($user->isAdmin()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Admins cannot be blocked.',
+            ], 403);
+        }
+    
+        DB::table('blocked')->insert(['blocked_id' => $id]);
+    
+        return response()->json([
+            'success' => true,
+            'message' => "{$user->username} has been blocked.",
+        ]);
     }
 
     public function adminDeleteAccount(Request $request, $id)

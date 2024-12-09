@@ -79,4 +79,9 @@ class User extends Authenticatable
     {
         return $this->image ? asset('images/profile/' . $this->image->path) : asset('images/profile/default.png');
     }
+
+    public function blocked()
+    {
+        return $this->hasOne(Blocked::class, 'blocked_id', 'user_id');
+    }
 }
