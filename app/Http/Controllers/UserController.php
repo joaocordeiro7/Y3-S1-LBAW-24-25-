@@ -34,32 +34,29 @@ class UserController extends Controller
     public function deleteAccount(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        
     
-        if ((Auth::check() && Auth::user()->user_id !== $user->user_id) && !Auth::user()->isAdmin()) {
+        if (Auth::user()->user_id !== $user->user_id) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
     
         DB::transaction(function () use ($user) {
             DB::statement('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
-            
-            //updates  
-            DB::table('comments')
-                ->where('ownerid', $user->user_id)->update(['ownerid' => 1]);
     
-            DB::table('posts')
-                ->where('ownerid', $user->user_id)->update(['ownerid' => 1]);
-            
-            //deletes
-     
-            $user->delete();
+            $user->username = "deleted{$user->user_id}";
+            $user->email = "deleted{$user->user_id}@user.com";
+            $user->password = null; 
+            $user->remember_token = null; 
+            $user->save();
+    
         });
-        
+    
+        Auth::logout(); 
+    
         return response()->json([
-            'success' => true, 
-            'message' => 'User account deleted successfully.'
+            'success' => true,
+            'message' => 'Your account has been deleted successfully.'
         ]);
-    } 
+    }
     
 
     /**

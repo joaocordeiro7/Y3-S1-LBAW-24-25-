@@ -31,15 +31,6 @@
         {{ csrf_field() }}
         @include('partials.editProfileForm', ['user' => $user])
 
-        @if (Auth::user()->isAdmin() && Auth::user()->user_id != $user->user_id && !$user->isAdmin())
-            <div class="form-group">
-                <label>Make Admin: (coming soon)</label>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="makeAdmin" disabled>
-                </div>
-            </div>
-        @endif
-
         <button type="button" id="saveChanges" class="btn btn-primary" 
             data-update-url="{{ Auth::user()->isAdmin() ? route('adminUpdateUser', ['id' => $user->user_id]) : route('updateProfile', ['id' => $user->user_id]) }}">
             Save Changes

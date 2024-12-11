@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\StaticPageController;
 
 
 use App\Http\Controllers\Auth\LoginController;
@@ -32,10 +33,11 @@ use App\Http\Controllers\PostController;
 Route::redirect('/', '/login');
 
 
+Route::view('/features', 'static.features')->name('features');
 
+Route::view('/contacts', 'static.contacts')->name('contacts');
 
-
-
+Route::post('/contacts/feedback', [StaticPageController::class, 'submitFeedback'])->name('feedback.submit');
 
 
 Route::controller(PostController::class)->group(function (){
@@ -68,7 +70,7 @@ Route::controller(LoginController::class)->group(function () {
 
 Route::controller(RegisterController::class)->group(function () {
     Route::get('/register', 'showRegistrationForm')->name('register');
-    Route::post('/register', 'register');
+    Route::post('/register', 'register')->middleware('blacklist');
 });
 
 Route::controller(UserController::class)->group(function () {

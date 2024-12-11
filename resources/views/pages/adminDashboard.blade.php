@@ -18,7 +18,8 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($users as $user)
+            @foreach ($users as $user)
+                @if (!str_starts_with($user->username, 'deleted')) <!-- Exclude deleted -->
                     <tr>
                         <td>{{ $user->user_id }}</td>
                         <td>{{ $user->username }}</td>
@@ -33,7 +34,8 @@
                             @include('partials.blockUserButton', ['user' => $user])
                         </td>
                     </tr>
-                @endforeach
+                @endif
+            @endforeach
             </tbody>
         </table>
     </div>

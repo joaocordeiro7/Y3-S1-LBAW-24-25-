@@ -171,31 +171,28 @@ class AdminController extends Controller
     public function adminDeleteAccount(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        
     
-        if ((Auth::check() && Auth::user()->user_id !== $user->user_id) && !Auth::user()->isAdmin()) {
+        if (!Auth::user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
     
         DB::transaction(function () use ($user) {
             DB::statement('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
-            
-            //updates  
-            DB::table('comments')
-                ->where('ownerid', $user->user_id)->update(['ownerid' => 1]);
     
-            DB::table('posts')
-                ->where('ownerid', $user->user_id)->update(['ownerid' => 1]);
-            
-            //deletes
-     
-            $user->delete();
+            DB::table('blacklist')->insert(['email' => $user->email]);
+    
+            // Anonymize the user data
+            $user->username = "deleted{$user->user_id}";
+            $user->email = "deleted{$user->user_id}@deleted.com";
+            $user->password = null;
+            $user->remember_token = null;
+            $user->save();
         });
-        
+    
         return response()->json([
-            'success' => true, 
+            'success' => true,
             'message' => 'User account deleted successfully.'
         ]);
-    } 
+    }
     
 }

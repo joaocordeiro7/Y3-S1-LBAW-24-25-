@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+
+    @if(session('error'))
+            <p>{{ session('error') }}</p>
+    @endif
+
     <!-- Barra de Pesquisa -->
     <form method="GET" action="{{ route('home') }}" class="mb-4 d-flex align-items-center gap-2">
         <div class="form-group">
@@ -25,11 +30,6 @@
             <a href="{{ route('home') }}" class="btn btn-secondary">Clear</a>
         </div>
     </form>
-
-    @if(session('error'))
-        <p>{{ session('error') }}</p>
-    @endif
-
 
     <!-- Exibição dos Posts -->
     <div class="container">
