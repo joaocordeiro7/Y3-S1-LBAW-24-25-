@@ -146,31 +146,26 @@ class PostController extends Controller
         $post = Post::findOrFail($request->post_id); 
         
         $this->authorize('like', Post::class);
-        /*
-        $newlike= new InteractionPosts();
-
-        $this->authorize('like',$newlike);
-
-        $newlike->postid=$post->post_id;
-        $newlike->userid=Auth::user()->user_id;
-        $newlike->liked=true;
-        $newlike->save();
-        */
-
-        
+                
         $existingLike = InteractionPosts::where('userid', Auth::user()->user_id)
                                         ->where('postid', $post->post_id)
                                         ->where('liked', true)
                                         ->first();
         
+        $success = true;
+        $error = "";
+
         if (!$existingLike) {
-            // Registrar o like
+            // Gravar o like
             
             InteractionPosts::insert([
                 'userid' => Auth::user()->user_id,
                 'postid' => $post->post_id,
                 'liked' => true,
             ]);
+        } else {
+            $success = false;
+            $error = "Like já existe";
         }
 
         
@@ -178,8 +173,9 @@ class PostController extends Controller
                                         
         // Retornar o número atualizado de likes
         return response()->json([
+            'success' => $success,
             'likes' => $postLikes->count(),
-            
+            'error' => $error,
         ]);
     }
 

@@ -300,15 +300,13 @@ function like(postId) {
   if (likeButton) {
       likeButton.remove();
   }
-
   sendAjaxRequest('post', '/post/like', { post_id: postId }, (response) => {
       try {
-        console.log(response);
           const data = JSON.parse(response.target.responseText);
           if (data.success) {
-              likeCounter.innerText = data.likesCount;
+              likeCounter.innerText = data.likes;
           } else {
-              console.error("Erro ao registrar o like:", data.error);
+              console.error("Erro ao gravar o like:", data.error);
           }
       } catch (e) {
           console.error("Erro ao processar a resposta do servidor:", e);
