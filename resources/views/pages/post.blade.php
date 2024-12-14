@@ -26,10 +26,13 @@
             <p><a href="/users/{{$post->owner->user_id}}">{{$post->owner->username}}</a> - Published at {{$post->created_at->format('d M Y H:i')}}</p>
             
         </div>
-        <article class="post" id="post{{ $post->post_id }}">
-            <h4 class="qtd-likes">{{ $post->upvotes }}</h4>
-            <button class="button-like" onclick="like({{ $post->post_id }})">Like!</button>
-        </article>
+        <div id="upvotes">
+            <h4 class="qtd-likes">{{ $post->likes()->count() }}</h4>
+            @if (!$hasLiked)
+                <button class="button-like" onclick="like({{ $post->post_id }})">like!</button>
+                
+            @endif
+        </div>
         <div id="postComments">
             <h3>Comments</h3>
             <p>The comments will be displayed here</p>

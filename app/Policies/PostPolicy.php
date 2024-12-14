@@ -64,4 +64,10 @@ class PostPolicy
     {
         //
     }
+
+    public function like(User $user): bool
+    {
+        return Auth::check();
+    }
+
 }

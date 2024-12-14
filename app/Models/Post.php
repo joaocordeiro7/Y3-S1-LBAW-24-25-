@@ -31,5 +31,9 @@ class Post extends Model
       $user =User::findOrFail($this->owner())->name;
       return $user;
     }
+
+    public function likes() {
+      return $this->hasMany(InteractionPosts::class, 'postid')->where('liked', true);
+    }
     
 }

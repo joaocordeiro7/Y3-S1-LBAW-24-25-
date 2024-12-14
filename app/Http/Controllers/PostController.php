@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\InteractionPosts;
 use Illuminate\Http\Request;
 
 use Illuminate\Http\RedirectResponse;
@@ -50,7 +51,10 @@ class PostController extends Controller
     public function show(string $id): View
     {
         $post = Post::findOrFail($id);
-        return view('pages.post',['post'=>$post]);
+        $hasLiked = Post::where('ownerid', Auth::user()->user_id)
+                        ->where('post_id', $post->post_id)
+                        ->exists();
+        return view('pages.post', ['post'=>$post, 'hasLiked' => $hasLiked,]);
     }
 
     /**
@@ -137,17 +141,47 @@ class PostController extends Controller
     }
 
     public function like (Request $request) {
-      
-        $post = Post::find($request->id);
+
+        
+        $post = Post::findOrFail($request->post_id); 
+        
         $this->authorize('like', Post::class);
-    
-        PostLike::insert([
-            'user_id' => Auth::user()->id,
-            'post_id' => $post->id,
+        /*
+        $newlike= new InteractionPosts();
+
+        $this->authorize('like',$newlike);
+
+        $newlike->postid=$post->post_id;
+        $newlike->userid=Auth::user()->user_id;
+        $newlike->liked=true;
+        $newlike->save();
+        */
+
+        
+        $existingLike = InteractionPosts::where('userid', Auth::user()->user_id)
+                                        ->where('postid', $post->post_id)
+                                        ->where('liked', true)
+                                        ->first();
+        
+        if (!$existingLike) {
+            // Registrar o like
+            
+            InteractionPosts::insert([
+                'userid' => Auth::user()->user_id,
+                'postid' => $post->post_id,
+                'liked' => true,
+            ]);
+        }
+
+        
+        $postLikes = InteractionPosts::where('postid', $post->post_id);
+                                        
+        // Retornar o número atualizado de likes
+        return response()->json([
+            'likes' => $postLikes->count(),
+            
         ]);
     }
 
 
 }
-
-

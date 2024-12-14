@@ -281,16 +281,37 @@ function handleCreateUser(event) {
 
 
 function like(postId) {
-  let post = document.querySelector('#post' + postId);
-  let likeCounter = post.querySelector('.qtd-likes').innerText;
+  let post = document.querySelector(`[data-id="${postId}"]`);
+  if (!post) {
+      console.error("Post não encontrado para o ID:", postId);
+      return;
+  }
+
+  let likeCounter = post.querySelector('.qtd-likes');
+  if (!likeCounter) {
+      console.error("Contador de likes não encontrado no post.");
+      return;
+  }
+
+  let likeCount = parseInt(likeCounter.innerText) || 0;
+  likeCounter.innerText = likeCount;
+
   let likeButton = post.querySelector('.button-like');
+  if (likeButton) {
+      likeButton.remove();
+  }
 
-  // Update like counter
-  post.querySelector('.qtd-likes').innerText = parseInt(likeCounter) + 1;
-
-  // Send server request
-  sendAjaxRequest('post', '../post/like', {id: post_id});
-
-  // Remove like button
-  likeButton.remove();
+  sendAjaxRequest('post', '/post/like', { post_id: postId }, (response) => {
+      try {
+        console.log(response);
+          const data = JSON.parse(response.target.responseText);
+          if (data.success) {
+              likeCounter.innerText = data.likesCount;
+          } else {
+              console.error("Erro ao registrar o like:", data.error);
+          }
+      } catch (e) {
+          console.error("Erro ao processar a resposta do servidor:", e);
+      }
+  });
 }

@@ -49,7 +49,8 @@ Route::controller(PostController::class)->group(function (){
     Route::get('/', 'index')->name('home');
     Route::post('/deletePost/{id}','destroy');
     Route::get('/user/{id}/posts', 'showUserPosts')->name('user.posts');
-    Route::post('post/like', 'like');
+    Route::post('/post/like', 'like');
+    //postman
 });
 
 
