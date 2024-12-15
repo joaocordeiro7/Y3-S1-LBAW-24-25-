@@ -142,40 +142,73 @@ class PostController extends Controller
 
     public function like (Request $request) {
 
-        
         $post = Post::findOrFail($request->post_id); 
+        $simnao = $request->liked; 
+    
+        $liked = true;
+
+        if ($simnao == 0) {
+            $liked = false;
+        }
         
         $this->authorize('like', Post::class);
                 
-        $existingLike = InteractionPosts::where('userid', Auth::user()->user_id)
+        $existing = InteractionPosts::where('userid', Auth::user()->user_id)
                                         ->where('postid', $post->post_id)
-                                        ->where('liked', true)
                                         ->first();
         
         $success = true;
         $error = "";
 
-        if (!$existingLike) {
+        if (!$existing) {
             // Gravar o like
             
             InteractionPosts::insert([
                 'userid' => Auth::user()->user_id,
                 'postid' => $post->post_id,
-                'liked' => true,
+                'liked' => $liked,
             ]);
         } else {
-            $success = false;
-            $error = "Like já existe";
+            if ($existing->liked == true){
+                if ($liked){
+                    $existing->delete();
+                } else {
+                    $existing->liked = false;
+                    $existing->save();
+                }
+            } else {
+                if (!$liked){
+                    $existing->delete();
+                } else {
+                    $existing->liked = true;
+                    $existing->save();
+                }
+            }
+            /*
+            if ($existing->liked !== $liked) {
+                // Update para o oposto
+                $existing->liked = $liked;
+                $existing->save();
+            } else {
+                // delete
+                $existing->delete();
+            }
+            */
         }
 
         
-        $postLikes = InteractionPosts::where('postid', $post->post_id);
+        $postLikes = InteractionPosts::where('postid', $post->post_id)
+                                     ->where('liked', true);
+        
+        $postDeslikes = InteractionPosts::where('postid', $post->post_id)
+                                         ->where('liked', false);
                                         
         // Retornar o número atualizado de likes
         return response()->json([
             'success' => $success,
             'likes' => $postLikes->count(),
-            'error' => $error,
+            'deslikes' => $postDeslikes->count(),
+            'error' => $error
         ]);
     }
 

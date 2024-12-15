@@ -32,8 +32,4 @@ class Post extends Model
       return $user;
     }
 
-    public function likes() {
-      return $this->hasMany(InteractionPosts::class, 'postid')->where('liked', true);
-    }
-    
 }

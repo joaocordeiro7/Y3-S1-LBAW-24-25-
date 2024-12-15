@@ -280,7 +280,7 @@ function handleCreateUser(event) {
 
 
 
-function like(postId) {
+function like(postId, alike) {
   let post = document.querySelector(`[data-id="${postId}"]`);
   if (!post) {
       console.error("Post não encontrado para o ID:", postId);
@@ -293,18 +293,25 @@ function like(postId) {
       return;
   }
 
+  let deslikeCounter = post.querySelector('.qtd-deslikes');
+  if (!deslikeCounter) {
+      console.error("Contador de deslikes não encontrado no post.");
+      return;
+  }
+
   let likeCount = parseInt(likeCounter.innerText) || 0;
   likeCounter.innerText = likeCount;
 
-  let likeButton = post.querySelector('.button-like');
-  if (likeButton) {
-      likeButton.remove();
-  }
-  sendAjaxRequest('post', '/post/like', { post_id: postId }, (response) => {
+  let deslikeCount = parseInt(deslikeCounter.innerText) || 0;
+  deslikeCounter.innerText = deslikeCount;
+
+
+  sendAjaxRequest('post', '/post/like', { "post_id": postId, "liked": alike }, (response) => {
       try {
           const data = JSON.parse(response.target.responseText);
           if (data.success) {
               likeCounter.innerText = data.likes;
+              deslikeCounter.innerText = data.deslikes;
           } else {
               console.error("Erro ao gravar o like:", data.error);
           }

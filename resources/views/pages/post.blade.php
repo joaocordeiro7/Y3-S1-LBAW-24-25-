@@ -27,11 +27,12 @@
             
         </div>
         <div id="upvotes">
-            <h4 class="qtd-likes">{{ $post->likes()->count() }}</h4>
+            <h4 class="qtd-likes">{{ $post->upvotes }}</h4>
             @if (!$hasLiked)
-                <button class="button-like" onclick="like({{ $post->post_id }})">like!</button>
-                
+                <button class="button-like" onclick="like({{ $post->post_id }} , 1)">Upvote</button>
+                <button class="button-deslike" onclick="like({{ $post->post_id }} , 0)">Downvote</button>
             @endif
+            <h4 class="qtd-deslikes">{{ $post->downvotes }}</h4>
         </div>
         <div id="postComments">
             <h3>Comments</h3>
