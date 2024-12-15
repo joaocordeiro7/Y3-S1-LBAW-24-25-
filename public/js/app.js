@@ -18,6 +18,13 @@ function addEventListeners() {
     if(newsEditSaveButton != null)
       newsEditSaveButton.addEventListener('click',sendUpdatePostRequest);
     
+    let followButton = document.querySelector('div.profile-container button.follow');
+    if(followButton != null)
+      followButton.addEventListener('click',sendFollowRequest);
+
+    let unfollowButton = document.querySelector('div.profile-container button.unfollow');
+    if(unfollowButton != null)
+      unfollowButton.addEventListener('click',sendUnfollowRequest);
 
     let saveChangesButton = document.getElementById('saveChanges');
     if (saveChangesButton) {
@@ -136,6 +143,56 @@ function addEventListeners() {
     
   }
 
+  function sendFollowRequest(event){
+    let id = this.getAttribute('data-id');
+    sendAjaxRequest('post','/api/follow/'+id,null,followHandler)
+    event.preventDefault();
+  }
+
+  function followHandler(){
+    let res = JSON.parse(this.responseText);
+    
+    let button=document.querySelector('div.profile-container .follow');
+    if(res.fail){
+      //adicionar msg de erro
+    }
+    else{
+      
+      button.classList.add('unfollow');
+      button.classList.remove('follow');
+      button.innerHTML="unfollow";
+      button.removeEventListener('click', sendFollowRequest);
+      button.addEventListener('click',sendUnfollowRequest);
+    }
+    
+    
+  }
+
+
+  function sendUnfollowRequest(event){
+    let id = this.getAttribute('data-id');
+    sendAjaxRequest('post','/api/unfollow/'+id,null,unfollowHandler)
+    event.preventDefault();
+  }
+
+  function unfollowHandler(){
+    let res = JSON.parse(this.responseText);
+    
+    let button=document.querySelector('div.profile-container .unfollow');
+    if(res.fail){
+      //adicionar msg de erro
+    }
+    else{
+      
+      button.classList.add('follow');
+      button.classList.remove('unfollow');
+      button.innerHTML="follow";
+      button.removeEventListener('click', sendUnfollowRequest);
+      button.addEventListener('click',sendFollowRequest);
+    }
+    
+    
+  }
   
   addEventListeners();
   

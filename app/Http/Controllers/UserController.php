@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -38,7 +39,7 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::find($id);
-    
+        //change to profileOwner
         $currentUser = Auth::check() && Auth::id() == $user->user_id;
     
         $canAdminEdit = Auth::check() && Auth::user()->isAdmin();
@@ -127,6 +128,39 @@ class UserController extends Controller
         } else {
             return redirect()->back()->with('error', 'No user found.');
         }
+    }
+
+    public function follow(int $userToFollow){
+        //$this->authorize('canFollow',$userToFollow);
+
+        if(User::alreadyFollows($userToFollow) || !Auth::check() || Auth::id()===$userToFollow){
+
+            return response()->json(['fail' => 'cant follow' ]);
+        }
+        
+        
+        DB::table('follwed_users')->insert([
+            'userid1' => Auth::id(),
+            'userid2' => $userToFollow
+        ]);
+
+        return response()->json(['success' => 'users now follow']);
+        
+    }
+
+    public function unfollow(int $userToUnfollow){
+        //$this->authorize('canFollow',$userToFollow);
+
+        if(!User::alreadyFollows($userToUnfollow)){
+
+            return response()->json(['fail' => 'dont follow' ]);
+        }
+        
+        
+        DB::table('follwed_users') ->where('userid1', Auth::id()) ->where('userid2', $userToUnfollow) ->delete();
+
+        return response()->json(['success' => 'users now follow']);
+        
     }
 
 }

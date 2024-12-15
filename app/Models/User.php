@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 // Added to define Eloquent relationships.
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -53,13 +55,8 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    /**
-     * Get the cards for a user.
-     */
-    public function cards(): HasMany
-    {
-        return $this->hasMany(Card::class);
-    }
+    
+    
 
     public function posts(): HasMany{
         return $this->hasMany(Post::class,'ownerid');
@@ -67,6 +64,20 @@ class User extends Authenticatable
 
     public function isAdmin(): bool {
         return $this->hasOne(Admin::class, 'admin_id', 'user_id')->exists();
+    }
+
+    // the convetion is userId1 follows userId2 
+    public function follows(): HasMany{
+        return $this->hasMany(User::class,"followed_users",'userid1');
+    }
+
+    
+    public function followedBy(): HasMany{
+        return $this->hasMany(User::class,"followed_users",'userid2');
+    }
+
+    public static function alreadyFollows($user2): bool{
+        return DB::table('follwed_users')->where('userid1',"=",Auth::id())->where('userid2',"=",$user2)->exists();
     }
 
 }

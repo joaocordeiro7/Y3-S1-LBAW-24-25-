@@ -73,6 +73,8 @@ Route::controller(UserController::class)->group(function () {
     Route::get('/users/{id}/edit', 'editUser')->name('editProfile');
     Route::post('/api/users/{id}/edit', 'edit')->name('updateProfile');
     Route::get('/search', 'search')->name('user.search');
+    Route::post('/api/follow/{userToFollow}','follow');
+    Route::post('/api/unfollow/{userToUnfollow}','unfollow');
 });
 
 // Admin
