@@ -475,7 +475,7 @@ CREATE FUNCTION update_reputation_posts_removed_like() RETURNS TRIGGER AS
 $BODY$
     BEGIN
         IF OLD.liked THEN UPDATE Posts SET upvotes = upvotes - 1 WHERE post_id = OLD.postId; UPDATE Users SET reputation = reputation-1 WHERE user_id=OLD.userId;
-        ELSE UPDATE Post SET downvotes = downvotes - 1 WHERE post_id = OLD.postId; UPDATE Users SET reputation = reputation + 1 WHERE user_id=OLD.userId;
+        ELSE UPDATE Posts SET downvotes = downvotes - 1 WHERE post_id = OLD.postId; UPDATE Users SET reputation = reputation + 1 WHERE user_id=OLD.userId;
         END IF;
         RETURN OLD;
     END
