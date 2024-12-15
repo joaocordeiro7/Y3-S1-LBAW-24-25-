@@ -58,6 +58,21 @@ function addEventListeners() {
             button.addEventListener('click', handleUnblockUser);
         });
     }
+
+    let acceptProposalButtons = document.querySelectorAll('.accept-proposal');
+    if (acceptProposalButtons) {
+        acceptProposalButtons.forEach(button => {
+            button.addEventListener('click', handleAcceptProposal);
+        });
+    }
+
+    let discardProposalButtons = document.querySelectorAll('.discard-proposal');
+    if (discardProposalButtons) {
+        discardProposalButtons.forEach(button => {
+            button.addEventListener('click', handleDiscardProposal);
+        });
+    }
+
   }
   
   
@@ -406,3 +421,78 @@ function handleUnblockUser(event) {
     });
 }
 
+function openProposalForm() {
+    const modal = document.getElementById('proposalModal');
+    if (modal) {
+        modal.style.display = 'block'; 
+    }
+}
+
+function closeProposalForm() {
+    const modal = document.getElementById('proposalModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function handleAcceptProposal(event) {
+    const acceptUrl = event.target.dataset.acceptUrl;
+
+    console.log('Accept URL:', acceptUrl);
+
+    if (!confirm('Are you sure you want to accept this topic?')) {
+        return;
+    }
+
+    fetch(acceptUrl, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        },
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to accept the proposal.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message);
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while accepting the proposal.');
+        });
+}
+
+function handleDiscardProposal(event) {
+    const discardUrl = event.target.dataset.discardUrl;
+
+    console.log('Discard URL:', discardUrl);
+
+    if (!confirm('Are you sure you want to discard this topic?')) {
+        return;
+    }
+
+    fetch(discardUrl, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        },
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to discard the proposal.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message);
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while discarding the proposal.');
+        });
+}

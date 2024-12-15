@@ -39,38 +39,36 @@
             </tbody>
         </table>
     </div>
-    <h2>Create New User</h2>
-    <div id="userCreatedMessage" class="alert alert-success" style="display: none;">
-        User created successfully!
+
+    <h2>Manage Topic Proposals</h2>
+    <div class="container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach ($proposals as $proposal)
+                <tr>
+                    <td>{{ $proposal->proposal_id }}</td>
+                    <td>{{ $proposal->title }}</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-success accept-proposal" 
+                            data-accept-url="{{ route('acceptTopicProposal', ['id' => $proposal->proposal_id]) }}">
+                            Accept
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger discard-proposal"
+                            data-discard-url="{{ route('discardTopicProposal', ['id' => $proposal->proposal_id]) }}">
+                            Discard
+                        </button>
+                    </td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
     </div>
-    <form id="adminCreateUser">
-        {{ csrf_field() }}
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" name="username" id="username" value="{{ old('username') }}" class="form-control">            
-            <span class="error"></span>
-        </div>
-
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" name="email" id="email" class="form-control">
-            <span class="error"></span>
-        </div>
-
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" class="form-control">
-            <span class="error"></span>
-        </div>
-
-        <div class="form-group">
-            <label for="password_confirmation">Confirm Password</label>
-            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
-            <span class="error"></span>
-        </div>
-
-        <button type="button" id="generateUser" data-action-url="{{ route('createUser') }}">Create User</button>
-    </form>
 </div>
 @endsection
-

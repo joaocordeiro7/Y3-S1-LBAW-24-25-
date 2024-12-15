@@ -5,17 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Tag extends Model
+class TopicProposal extends Model
 {
     use HasFactory;
 
     public $timestamps = false;
 
-    protected $table = 'tag';
+    protected $table = 'topic_proposal';
 
-    protected $primaryKey = 'tag_id';
+    protected $primaryKey = 'proposal_id';
     
-    protected $fillable = [
-        'name',
-    ];
 }

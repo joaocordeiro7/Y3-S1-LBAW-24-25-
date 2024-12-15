@@ -32,6 +32,7 @@ DROP TABLE IF EXISTS UpvoteOnPostNotification CASCADE;
 DROP TABLE IF EXISTS UpvoteOnCommentNotification CASCADE;
 DROP TABLE IF EXISTS CommentNotification CASCADE;
 DROP TABLE IF EXISTS blacklist CASCADE;
+DROP TABLE IF EXISTS topic_proposal CASCADE;
 
 CREATE TABLE Users(
     user_id SERIAL PRIMARY KEY NOT NULL,
@@ -211,6 +212,10 @@ CREATE TABLE blacklist(
     email TEXT UNIQUE NOT NULL
 );
 
+CREATE TABLE topic_proposal(
+    proposal_id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL
+);
 
 CREATE INDEX comment_notification_date ON CommentNotification USING btree (created_at);
 CLUSTER CommentNotification USING comment_notification_date;

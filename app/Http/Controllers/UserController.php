@@ -144,13 +144,20 @@ class UserController extends Controller
     
 
     /**
-     * Update the specified resource in storage.
+     * Show the form for editing the specified resource.
      */
-    public function update(Request $request, $id)
+    public function proposeTopic(Request $request)
     {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
 
+        DB::table('topic_proposal')->insert([
+            'title' => $validated['title'],
+        ]);
+
+        return redirect()->back()->with('success', 'Topic proposed successfully!');
     }
-
     /**
      * Remove the specified resource from storage.
      */

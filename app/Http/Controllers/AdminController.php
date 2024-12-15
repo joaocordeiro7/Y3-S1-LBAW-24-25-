@@ -6,6 +6,9 @@ use App\Models\Admin;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Blocked;
+use App\Models\TopicProposal;
+use App\Models\Tag;
+
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -24,8 +27,9 @@ class AdminController extends Controller
         }
 
         $users = User::paginate(10);
+        $proposals = DB::table('topic_proposal')->get();
 
-        return view('pages.adminDashboard', compact('users'));
+        return view('pages.adminDashboard', compact('users', 'proposals'));
     }
 
     public function createUser(Request $request)
@@ -99,13 +103,55 @@ class AdminController extends Controller
 
 
     /**
-     * Show the form for creating a new resource.
+     * Accept topic proposal.
      */
-    public function create()
+    public function acceptTopicProposal($id)
     {
-        //
-    }
+        $proposal = TopicProposal::findOrFail($id);
+    
+        if (!$proposal) {
+            return response()->json(['error' => 'Proposal not found'], 404);
+        }
+    
+        $existingTag = Tag::where('name', $proposal->title)->first();
+        if ($existingTag) {
+            $proposal->delete();
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Topic proposal already exists as a tag and has been removed from the proposals.',
+            ]);
+        }
+    
+        $tag = Tag::create([
+            'name' => $proposal->title,
+        ]);
 
+    
+        $proposal->delete();
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Topic accepted and added as a new tag.',
+        ]);
+    }
+    
+
+    /**
+     * Discard topic proposal.
+     */
+    public function discardTopicProposal($id)
+    {
+        $proposal = TopicProposal::findOrFail($id);
+        
+        if (!$proposal) {
+            return response()->json(['error' => 'Proposal not found'], 404);
+        }
+
+        $proposal->delete();
+
+        return response()->json(['success' => true, 'message' => 'Topic proposal discarded']);
+    }
     /**
      * Store a newly created resource in storage.
      */
@@ -181,9 +227,8 @@ class AdminController extends Controller
     
             DB::table('blacklist')->insert(['email' => $user->email]);
     
-            // Anonymize the user data
             $user->username = "deleted{$user->user_id}";
-            $user->email = "deleted{$user->user_id}@deleted.com";
+            $user->email = "deleted{$user->user_id}@user.com";
             $user->password = null;
             $user->remember_token = null;
             $user->save();
