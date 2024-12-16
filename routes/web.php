@@ -79,7 +79,7 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/api/users/{id}/edit', 'edit')->name('updateProfile');
     Route::get('/search', 'search')->name('user.search');
     Route::delete('/users/delete/{id}', 'deleteAccount')->name('deleteAccount');  
-    Route::post('/user/propose-topic', 'proposeTopic')->name('proposeTopic');
+    Route::post('/user/propose-topic', 'proposeTopic')->middleware('auth')->name('proposeTopic')    ;
 });
 
 // Admin

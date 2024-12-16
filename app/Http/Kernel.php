@@ -69,5 +69,6 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'checkIfBlocked' => \App\Http\Middleware\CheckIfBlocked::class,
         'blacklist' => \App\Http\Middleware\CheckBlacklist::class,
+        'auth' => \App\Http\Middleware\Authenticate::class,
     ];
 }
