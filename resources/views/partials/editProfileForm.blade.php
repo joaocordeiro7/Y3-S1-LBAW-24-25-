@@ -1,3 +1,16 @@
+<style>
+    .form-group {
+        max-width: 500px;
+        margin: auto;
+    }
+    .form-control {
+        font-size: 1.2em;
+    }
+    label {
+        font-size: 1.2em;
+    }
+</style>
+
 <div class="form-group">
     <label for="username">Username:</label>
     <input type="text" name="username" id="username" value="{{ old('username', $user->username) }}" class="form-control">
