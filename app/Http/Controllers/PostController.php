@@ -197,7 +197,6 @@ class PostController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            // Tratar exceções e garantir que uma resposta JSON seja sempre retornada
             return response()->json([
                 'success' => false,
                 'error' => 'Erro inesperado: ' . $e->getMessage(),
@@ -219,5 +218,22 @@ class PostController extends Controller
 
         return redirect()->back();
     }
+
+    public function updateComment(Request $request, $id) {
+        $request->validate([
+            'body' => 'required|string|max:1000',
+        ]);
+    
+        $comment = Comment::findOrFail($id);
+    
+        if ($comment->ownerid != Auth::user()->user_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+    
+        $comment->body = $request->input('body');
+        $comment->save();
+    
+        return redirect()->back();
+    }    
 
 }

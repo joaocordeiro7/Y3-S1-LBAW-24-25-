@@ -47,8 +47,18 @@
             @else
                 <section id="comments" aria-labelledby="comments-title" role="region">
                     @foreach ($comments as $comment)
-                        <article class="comment">
-                            <p>{{ $comment->body }}</p>
+                        <article class="comment" data-comment-id="{{ $comment->comment_id }}">
+                            <p id="comment-body-{{ $comment->comment_id }}">{{ $comment->body }}</p>
+                            @if (Auth::check() && Auth::user()->user_id == $comment->owner->user_id)
+                                <button class="edit-comment-btn" onclick="editComment({{ $comment->comment_id }})">Edit</button>
+                                <form id="edit-comment-form-{{ $comment->comment_id }}" class="hidden" method="POST" action="{{ route('comments.update', $comment->comment_id) }}">
+                                    @csrf
+                                    @method('PUT')
+                                    <textarea name="body" required>{{ $comment->body }}</textarea>
+                                    <button type="submit">Save Changes</button>
+                                    <button type="button" onclick="cancelEdit({{ $comment->comment_id }})">Cancel</button>
+                                </form>
+                            @endif
                             <p><a href="/users/{{$comment->owner->user_id}}">{{$comment->owner->username}}</a> - Published at {{$comment->created_at->format('d M Y H:i')}}</p>
                         </article>
                     @endforeach

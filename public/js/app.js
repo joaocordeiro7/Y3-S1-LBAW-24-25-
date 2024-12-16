@@ -311,3 +311,30 @@ function like(postId, alike) {
       }
   });
 }
+
+
+function editComment(commentId) {
+    console.log(commentId);
+    let commentBody = document.getElementById('comment-body-' + commentId);
+    let editForm = document.getElementById('edit-comment-form-' + commentId);
+    console.log(commentBody);
+    console.log(editForm);
+    if (!commentBody || !editForm) {
+        console.error("Comentário ou formulário não encontrados.");
+        return;
+    }
+    commentBody.classList.add('hidden');
+    editForm.classList.remove('hidden');
+}
+
+function cancelEdit(commentId) {
+    let commentBody = document.getElementById('comment-body-' + commentId);
+    let editForm = document.getElementById('edit-comment-form-' + commentId);
+    if (!commentBody || !editForm) {
+        console.error("Comentário ou formulário não encontrados.");
+        return;
+    }
+
+    editForm.classList.add('hidden');
+    commentBody.classList.remove('hidden');
+}

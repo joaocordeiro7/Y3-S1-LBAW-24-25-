@@ -46,6 +46,7 @@ Route::controller(PostController::class)->group(function (){
     Route::get('/user/{id}/posts', 'showUserPosts')->name('user.posts');
     Route::post('/post/like', 'like');
     Route::post('/post/{id}/comment', 'storeComment')->name('comments.store');
+    Route::put('/comments/{id}', 'updateComment')->name('comments.update');
 });
 
 
