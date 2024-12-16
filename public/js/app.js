@@ -314,11 +314,8 @@ function like(postId, alike) {
 
 
 function editComment(commentId) {
-    console.log(commentId);
-    let commentBody = document.getElementById('comment-body-' + commentId);
-    let editForm = document.getElementById('edit-comment-form-' + commentId);
-    console.log(commentBody);
-    console.log(editForm);
+    const commentBody = document.getElementById(`comment-body-${commentId}`);
+    const editForm = document.getElementById(`edit-comment-form-${commentId}`);
     if (!commentBody || !editForm) {
         console.error("Comentário ou formulário não encontrados.");
         return;
@@ -328,8 +325,8 @@ function editComment(commentId) {
 }
 
 function cancelEdit(commentId) {
-    let commentBody = document.getElementById('comment-body-' + commentId);
-    let editForm = document.getElementById('edit-comment-form-' + commentId);
+    const commentBody = document.getElementById(`comment-body-${commentId}`);
+    const editForm = document.getElementById(`edit-comment-form-${commentId}`);
     if (!commentBody || !editForm) {
         console.error("Comentário ou formulário não encontrados.");
         return;
@@ -411,4 +408,76 @@ function saveEditedComment(commentId) {
         }
     })
     .catch(error => console.error('Error:', error));
+}
+
+
+function toggleReplyForm(commentId) {
+    const replyForm = document.getElementById(`reply-form-${commentId}`);
+    if (replyForm) {
+        replyForm.classList.toggle('hidden');
+    }
+}
+
+function postReply(parentCommentId) {
+    const form = document.getElementById(`reply-form-${parentCommentId}`);
+    const body = form.querySelector('textarea[name="body"]').value;
+
+    fetch('/comments/reply', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ body: body, reply_to: parentCommentId }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                addReplyToDOM(data.reply, parentCommentId);
+                form.reset();
+                toggleReplyForm(parentCommentId);
+            } else {
+                console.error('Error:', data.error);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function addReplyToDOM(reply, parentCommentId) {
+    const parentComment = document.querySelector(`.comment[data-comment-id="${parentCommentId}"]`);
+    const repliesSection = parentComment.querySelector('.replies');
+
+    const newReply = `
+        <article class="reply" data-reply-id="${reply.comment_id}">
+            <p>${reply.body}</p>
+            <p><a href="/users/${reply.owner.user_id}">${reply.owner.username}</a> - Published at just now</p>
+        </article>
+    `;
+
+    if (repliesSection) {
+        repliesSection.insertAdjacentHTML('beforeend', newReply);
+    } else {
+        const repliesDiv = `<div class="replies">${newReply}</div>`;
+        parentComment.insertAdjacentHTML('beforeend', repliesDiv);
+    }
+}
+
+function editReply(replyId) {
+    const replyBody = document.getElementById(`reply-body-${replyId}`);
+    const editForm = document.getElementById(`edit-reply-form-${replyId}`);
+    
+    if (replyBody && editForm) {
+        replyBody.classList.add('hidden');
+        editForm.classList.remove('hidden');
+    }
+}
+
+function cancelEditReply(replyId) {
+    const replyBody = document.getElementById(`reply-body-${replyId}`);
+    const editForm = document.getElementById(`edit-reply-form-${replyId}`);
+    
+    if (replyBody && editForm) {
+        editForm.classList.add('hidden');
+        replyBody.classList.remove('hidden');
+    }
 }

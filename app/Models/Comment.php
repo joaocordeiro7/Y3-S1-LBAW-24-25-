@@ -8,13 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Comment extends Model
 {
     use HasFactory;
-    
+
     public $timestamps  = true;
 
     protected $table = 'comments';
 
     protected $primaryKey = 'comment_id';
-
 
     protected $fillable = ['body','updated_at','upvotes','downvotes','post', 'reply_to', 'ownerid'];
 
@@ -22,9 +21,7 @@ class Comment extends Model
 
 
     public function owner() {
-
         return $this->belongsTo(User::class,'ownerid');
-      
     }
 
     public function ownerName() {
@@ -32,8 +29,16 @@ class Comment extends Model
       return $user;
     }
 
-    public function post()
-    {
+    public function post() {
         return $this->belongsTo(Post::class, 'post', 'post_id');
     }
+
+    public function replies() {
+        return $this->hasMany(Comment::class, 'reply_to');
+    }
+
+    public function parent() {
+        return $this->belongsTo(Comment::class, 'reply_to');
+    }
+
 }

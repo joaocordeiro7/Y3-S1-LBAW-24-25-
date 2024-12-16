@@ -204,8 +204,7 @@ class PostController extends Controller
         }
     }
 
-    public function storeComment(Request $request)
-    {
+    public function storeComment(Request $request) {
         $request->validate([
             'body' => 'required|string|max:1000', 
             'post_id' => 'required|exists:posts,post_id', 
@@ -224,8 +223,7 @@ class PostController extends Controller
     }
        
 
-    public function updateComment(Request $request, $id)
-    {
+    public function updateComment(Request $request, $id) {
         $request->validate(['body' => 'required|string|max:1000']);
     
         $comment = Comment::findOrFail($id);
@@ -238,6 +236,26 @@ class PostController extends Controller
         $comment->save();
     
         return response()->json(['success' => true]);
-    }    
+    }   
+    
+    
+    public function replyToComment(Request $request) {
+        $request->validate([
+            'body' => 'required|string|max:1000',
+            'reply_to' => 'required|exists:comments,comment_id',
+        ]);
+
+        $reply = Comment::create([
+            'body' => $request->body,
+            'reply_to' => $request->reply_to,
+            'ownerid' => Auth::user()->user_id,
+            'post' => Comment::findOrFail($request->reply_to)->post,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'reply' => $reply->load('owner'),
+        ]);
+    }
 
 }
