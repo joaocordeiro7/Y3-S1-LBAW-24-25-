@@ -30,11 +30,6 @@ Route::redirect('/', '/login');
 
 
 
-
-
-
-
-
 Route::controller(PostController::class)->group(function (){
     Route::get('/post/{id}','show');
     Route::get('/home', 'list');
@@ -50,10 +45,8 @@ Route::controller(PostController::class)->group(function (){
     Route::post('/deletePost/{id}','destroy');
     Route::get('/user/{id}/posts', 'showUserPosts')->name('user.posts');
     Route::post('/post/like', 'like');
-    //postman
+    Route::post('/post/{id}/comment', 'storeComment')->name('comments.store');
 });
-
-
 
 
 

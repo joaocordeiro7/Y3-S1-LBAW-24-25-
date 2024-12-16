@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\InteractionPosts;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 
 use Illuminate\Http\RedirectResponse;
@@ -51,10 +52,11 @@ class PostController extends Controller
     public function show(string $id): View
     {
         $post = Post::findOrFail($id);
+        $comments = $post->comments;
         $hasLiked = Post::where('ownerid', Auth::user()->user_id)
                         ->where('post_id', $post->post_id)
                         ->exists();
-        return view('pages.post', ['post'=>$post, 'hasLiked' => $hasLiked,]);
+        return view('pages.post', ['post'=>$post, 'hasLiked' => $hasLiked, 'comments' => $comments,]);
     }
 
     /**
@@ -202,4 +204,20 @@ class PostController extends Controller
             ], 500);
         }
     }
+
+    public function storeComment(Request $request){
+        $request->validate([
+            'body' => 'required|string|max:1000', 
+            'post_id' => 'required|exists:posts,post_id', 
+        ]);
+
+        Comment::insert([
+            'ownerid' => Auth::user()->user_id,
+            'post' => $request->post_id,
+            'body' => $request->body,
+        ]);
+
+        return redirect()->back();
+    }
+
 }

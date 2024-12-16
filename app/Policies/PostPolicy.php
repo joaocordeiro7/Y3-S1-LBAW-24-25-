@@ -69,5 +69,9 @@ class PostPolicy
     {
         return Auth::check();
     }
-
+    
+    public function comment(User $user): bool
+    {
+        return Auth::check();
+    }
 }
