@@ -204,36 +204,40 @@ class PostController extends Controller
         }
     }
 
-    public function storeComment(Request $request){
+    public function storeComment(Request $request)
+    {
         $request->validate([
             'body' => 'required|string|max:1000', 
             'post_id' => 'required|exists:posts,post_id', 
         ]);
-
-        Comment::insert([
+    
+        $comment = Comment::create([
             'ownerid' => Auth::user()->user_id,
             'post' => $request->post_id,
             'body' => $request->body,
         ]);
-
-        return redirect()->back();
-    }
-
-    public function updateComment(Request $request, $id) {
-        $request->validate([
-            'body' => 'required|string|max:1000',
+    
+        return response()->json([
+            'success' => true,
+            'comment' => $comment,  
         ]);
+    }
+       
+
+    public function updateComment(Request $request, $id)
+    {
+        $request->validate(['body' => 'required|string|max:1000']);
     
         $comment = Comment::findOrFail($id);
     
         if ($comment->ownerid != Auth::user()->user_id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+            return response()->json(['success' => false, 'error' => 'Unauthorized'], 403);
         }
     
         $comment->body = $request->input('body');
         $comment->save();
     
-        return redirect()->back();
+        return response()->json(['success' => true]);
     }    
 
 }

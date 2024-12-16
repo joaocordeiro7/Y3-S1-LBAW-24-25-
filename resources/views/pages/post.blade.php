@@ -36,7 +36,7 @@
         </div>
         <div id="postComments" class="container">
             <h3 id="comments-title">Comments ({{ count($comments) }})</h3>
-            <form action="{{ route('comments.store', $post->post_id) }}" method="POST">
+            <form id="post-comment-form" method="POST">
                 @csrf
                 <input type="hidden" name="post_id" value="{{ $post->post_id }}">
                 <textarea name="body" required></textarea>
@@ -55,7 +55,7 @@
                                     @csrf
                                     @method('PUT')
                                     <textarea name="body" required>{{ $comment->body }}</textarea>
-                                    <button type="submit">Save Changes</button>
+                                    <button type="button" onclick="saveEditedComment({{ $comment->comment_id }})">Save</button>
                                     <button type="button" onclick="cancelEdit({{ $comment->comment_id }})">Cancel</button>
                                 </form>
                             @endif

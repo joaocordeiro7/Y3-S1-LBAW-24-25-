@@ -338,3 +338,77 @@ function cancelEdit(commentId) {
     editForm.classList.add('hidden');
     commentBody.classList.remove('hidden');
 }
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const postCommentForm = document.getElementById('post-comment-form');
+
+    if (postCommentForm) {
+        postCommentForm.addEventListener('submit', function (event) {
+            event.preventDefault(); 
+
+            const formData = new FormData(postCommentForm);  
+            const url = '/comments/store'; 
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,  
+                },
+                body: formData  
+            })
+            .then(response => response.json())  
+            .then(data => {
+                if (data.success) {
+                    addNewCommentToDOM(data.comment);  
+                    postCommentForm.reset();  
+                } else {
+                    console.error('Error:', data.error);  
+                }
+            })
+            .catch(error => console.error('Error:', error));  
+        });
+    }
+});
+
+function addNewCommentToDOM(comment) {
+    const commentsSection = document.getElementById('comments');
+    const newComment = `
+        <article class="comment" data-comment-id="${comment.comment_id}">
+            <p id="comment-body-${comment.comment_id}">${comment.body}</p>
+            <button class="edit-comment-btn" onclick="editComment(${comment.comment_id})">Edit</button>
+            <form id="edit-comment-form-${comment.comment_id}" class="hidden" method="POST">
+                <textarea name="body" required>${comment.body}</textarea>
+                <button type="button" onclick="saveEditedComment(${comment.comment_id})">Save</button>
+                <button type="button" onclick="cancelEdit(${comment.comment_id})">Cancel</button>
+            </form>
+            <p>Published just now</p>
+        </article>
+    `;
+    commentsSection.insertAdjacentHTML('beforeend', newComment); 
+}
+
+
+function saveEditedComment(commentId) {
+    const form = document.querySelector(`#edit-comment-form-${commentId}`);
+    const body = form.querySelector('textarea[name="body"]').value;
+
+    fetch(`/comments/update/${commentId}`, {
+        method: 'PUT',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ body: body })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.querySelector(`#comment-body-${commentId}`).innerText = body;
+            cancelEdit(commentId);
+        } else {
+            console.error('Error:', data.error);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
