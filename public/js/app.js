@@ -278,8 +278,6 @@ function handleCreateUser(event) {
       });
 }
 
-
-
 function like(postId, alike) {
   let post = document.querySelector(`[data-id="${postId}"]`);
   if (!post) {
@@ -298,13 +296,6 @@ function like(postId, alike) {
       console.error("Contador de deslikes não encontrado no post.");
       return;
   }
-
-  let likeCount = parseInt(likeCounter.innerText) || 0;
-  likeCounter.innerText = likeCount;
-
-  let deslikeCount = parseInt(deslikeCounter.innerText) || 0;
-  deslikeCounter.innerText = deslikeCount;
-
 
   sendAjaxRequest('post', '/post/like', { "post_id": postId, "liked": alike }, (response) => {
       try {
