@@ -5,7 +5,7 @@
     @if(session('error'))
             <p>{{ session('error') }}</p>
     @endif
-    <div class="content" style="max-width: 1715px;">    
+    <div class="content" style="max-width: 215px;">    
         <div class="d-flex flex-column h-100">
             <h3>Topics</h3>
                 <ul class="list-group mb-4">
@@ -38,12 +38,10 @@
         </div>
     </div>
     <!-- Barra de Pesquisa -->
-    <div class="search" style="margin: 0 auto; padding: 1em; max-width: 20em; border: 1px solid #d2afe7;position: absolute;top: 10em;right: 50em;width: 25%;">
-        <form method="GET" action="{{ route('home') }}" class="mb-4 d-flex align-items-center gap-2" style="border-bottom: 1em;">
-            <div class="form-group">
-                <label for="search" class="visually-hidden">Looking for a news?</label>
-                <input type="text" name="search" id="search" class="form-control" placeholder="Search posts" value="{{ request('search') }}">
-            </div>
+    <div class="search" style="margin: 0 auto; padding: 1em; max-width: 20em; border: 1px solid #d2afe7; position: absolute; top: 10em; right: 50em; width: 25%;">
+        <form method="GET" action="{{ route('home') }}" class="mb-4 d-flex flex-column align-items-center gap-2" style="border-bottom: 1em;">
+            <label for="search" class="visually-hidden">Looking for a news?</label>
+            <input type="text" name="search" id="search" placeholder="Search posts" value="{{ request('search') }}" required>
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Search</button>
             </div>
@@ -52,7 +50,7 @@
             </div>
         </form>
 
-        <form action="{{ route('user.search') }}" method="GET">
+        <form action="{{ route('user.search') }}" method="GET" class="mb-4 d-flex flex-column gap-2" style="border-bottom: 1em;">
             <label for="search" class="visually-hidden">Looking for someone?</label>
             <input type="text" name="username" placeholder="Search for a username" required>
             <div class="form-group">

@@ -10,7 +10,7 @@
             id="profile-picture-display" 
             src="{{ asset('storage/' . $user->image->path) }}" 
             alt="Profile Picture" 
-            style="max-width: 150px;"
+            style="max-width: 150px; border: 2px solid #000;"
             class="align-self-center rounded-circle">
         </img>
        

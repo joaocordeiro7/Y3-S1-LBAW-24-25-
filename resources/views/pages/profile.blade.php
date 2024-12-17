@@ -10,19 +10,20 @@
             src="{{ asset('storage/' . $user->image->path) }}" 
             alt="Profile Picture" 
             class="align-self-center rounded-circle"
-            style="max-width: 180px;">
+            style="max-width: 180px; border: 2px solid #000;">
         </img>
     </div>
-    <h1>
-        {{ $user->username }}
-        @if ($currentUser || $canAdminEdit)
-            <a href="{{ route('editProfile', ['id' => $user->user_id]) }}" class="ml-2 h1">[edit]</a>
+    <div class="d-flex justify-content-between">
+        <h1>
+            {{ $user->username }}
+            @if ($currentUser || $canAdminEdit)
+                <a href="{{ route('editProfile', ['id' => $user->user_id]) }}" class="ml-2 h1">[edit]</a>
+            @endif
+        </h1>
+        @if ($canAdminEdit)
+            @include('partials.blockUserButton', ['user' => $user])
         @endif
-    </h1>
-    @if ($canAdminEdit)
-        @include('partials.blockUserButton', ['user' => $user])
-    @endif
-    
+    </div>
     <div class="d-flex flex-row justify-content-center align-items-center border-top border-bottom py-4">
         <a href="{{ route('user.posts', ['id' => $user->user_id]) }}" class="btn w-200 text-center mx-5 position-relative">
             <i class="fa-solid fa-newspaper fa-7x"></i>
