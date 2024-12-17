@@ -34,9 +34,23 @@
                     <label for="message">Your Message:</label>
                     <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary mt-3">Send Message</button>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary mt-3" style="font-size: 1.3rem;">Send Message</button>
+                </div>
             </form>
         </div>
     </div>
 </div>
+
+<style>
+    .card-header {
+        font-size: 1.5em;
+    }
+    .form-control {
+        font-size: 1.2em;
+    }
+    label {
+        font-size: 1.2em;
+    }
+</style>
 @endsection
