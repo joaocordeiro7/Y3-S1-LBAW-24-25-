@@ -424,14 +424,19 @@ function handleUnblockUser(event) {
 function openProposalForm() {
     const modal = document.getElementById('proposalModal');
     if (modal) {
-        modal.style.display = 'block'; 
+        modal.style.display = 'block';
+        modal.style.opacity = '1';
+        modal.style.transition = 'opacity 0.3s ease';
     }
 }
 
 function closeProposalForm() {
     const modal = document.getElementById('proposalModal');
     if (modal) {
-        modal.style.display = 'none';
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300); 
     }
 }
 
