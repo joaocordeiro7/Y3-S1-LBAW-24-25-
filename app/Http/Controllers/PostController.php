@@ -174,8 +174,7 @@ class PostController extends Controller
             } else {
                 if ($existing->liked !== $liked) {
                     // Update para o oposto
-                    $existing->liked = $liked;
-                    $existing->save();
+                    InteractionPosts::where('id', $existing->id)->update(['liked' => $liked]);
                 } else {
                     // delete
                     $existing->delete();
