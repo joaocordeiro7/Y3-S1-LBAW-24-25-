@@ -10,7 +10,7 @@
             <h2>{{$post->title}}</h2>
         </header>
         <div class="newsBody">
-            <p>{{$post->body}}</p>
+            <pre>{{$post->body}}</pre>
         </div>
         <div id="interactions">
             <span id="upvotes">

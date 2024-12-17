@@ -113,7 +113,7 @@ function addEventListeners() {
     let post = JSON.parse(this.responseText);
     
     document.querySelector('article.post header.newsTitle h2').innerHTML=post.title;
-    document.querySelector('article.post div.newsBody p').innerHTML=post.body;
+    document.querySelector('article.post div.newsBody pre').innerHTML=post.body;
 
     document.querySelector('article.post').classList.remove('hidden');
     document.querySelector('section.postEditForm').classList.add('hidden');

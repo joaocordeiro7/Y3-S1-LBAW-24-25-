@@ -40,9 +40,13 @@ article.post {
   padding: 1em;
   margin: 1em;
 }
-article.post div.newsBody p{
+article.post div.newsBody pre{
   overflow-wrap: break-word;
   max-width: calc(100vw - 4em);
+  background-color: white;
+  font-family: inherit;
+  border-left: none;
+  white-space: pre-wrap;
 }
 article.post .editButton{
   grid-row: 1;
