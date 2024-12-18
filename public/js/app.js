@@ -777,4 +777,4 @@ function handleDiscardProposal(event) {
             console.error('Error:', error);
             alert('An error occurred while discarding the proposal.');
         });
-
+}
