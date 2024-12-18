@@ -803,3 +803,60 @@ function handleDiscardProposal(event) {
             alert('An error occurred while discarding the proposal.');
         });
 }
+
+
+function deleteComment(commentId) {
+    fetch(`/comments/delete/${commentId}`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const commentElement = document.querySelector(`[data-comment-id="${commentId}"]`);
+            if (commentElement) {
+                commentElement.remove();
+            } else {
+                console.warn(`Comment element with ID ${commentId} not found in the DOM.`);
+            }
+        } else {
+            console.error('Error:', data.error);
+            alert(data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Request failed:', error);
+        alert('An error occurred while deleting the comment.');
+    });
+}
+
+function deleteReply(commentId) {
+    fetch(`/comments/delete/${commentId}`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const commentElement = document.querySelector(`[data-reply-id="${commentId}"]`);
+            if (commentElement) {
+                commentElement.remove();
+            } else {
+                console.warn(`Comment element with ID ${commentId} not found in the DOM.`);
+            }
+        } else {
+            console.error('Error:', data.error);
+            alert(data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Request failed:', error);
+        alert('An error occurred while deleting the comment.');
+    });
+}

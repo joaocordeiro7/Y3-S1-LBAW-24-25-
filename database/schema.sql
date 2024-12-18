@@ -156,7 +156,7 @@ CREATE TABLE UserReport(
 
 CREATE TABLE CommentReport(
     rID INT REFERENCES Report (report_id) ON UPDATE CASCADE,
-    reported_comment INT REFERENCES Comments (comment_id) ON UPDATE CASCADE,
+    reported_comment INT REFERENCES Comments (comment_id) ON UPDATE CASCADE ON DELETE CASCADE,
     PRIMARY KEY (rID)
     
 );
@@ -194,7 +194,7 @@ CREATE TABLE UpvoteOnCommentNotification(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP CHECK(created_at<=CURRENT_TIMESTAMP),
     emitter INT REFERENCES Users (user_id) ON UPDATE CASCADE,
     receiver INT REFERENCES Users (user_id) ON UPDATE CASCADE,
-    liked_comment INT REFERENCES Comments (comment_id) ON UPDATE CASCADE
+    liked_comment INT REFERENCES Comments (comment_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 
@@ -204,7 +204,7 @@ CREATE TABLE CommentNotification(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP CHECK(created_at<=CURRENT_TIMESTAMP),
     emitter INT REFERENCES Users (user_id) ON UPDATE CASCADE,
     receiver INT REFERENCES Users (user_id) ON UPDATE CASCADE,
-    comment INT REFERENCES Comments (comment_id) ON UPDATE CASCADE
+    comment INT REFERENCES Comments (comment_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE blacklist(

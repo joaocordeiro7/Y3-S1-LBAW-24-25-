@@ -324,4 +324,35 @@ class PostController extends Controller
         ]);
     }
 
+
+    public function deleteComment(Request $request, $id) {
+        try {
+            $comment = Comment::findOrFail($id);
+
+            // Verifica autorização
+            if (Auth::user()->user_id !== $comment->ownerid && !Auth::user()->isAdmin()) {
+                return response()->json(['success' => false, 'error' => 'You are not authorized to delete this comment.'], 403);
+            }
+
+            // Verifica se há replies
+            $hasReplies = Comment::where('reply_to', $id)->exists();
+            if ($hasReplies) {
+                return response()->json(['success' => false, 'error' => 'You cannot delete a comment that has replies.']);
+            }
+
+            // Verifica se há upvotes ou downvotes
+            $hasVotes = InteractionComments::where('comment_id', $id)->exists();
+            if ($hasVotes) {
+                return response()->json(['success' => false, 'error' => 'You cannot delete a comment with upvotes or downvotes.']);
+            }
+
+            // Deleta o comentário
+            $comment->delete();
+
+            return response()->json(['success' => true, 'message' => 'Comment deleted successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => 'An unexpected error occurred: ' . $e->getMessage()], 500);
+        }
+    }
+
 }
