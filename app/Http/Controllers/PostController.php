@@ -54,10 +54,7 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
         $comments = $post->comments;
-        $hasLiked = Post::where('ownerid', Auth::user()->user_id)
-                        ->where('post_id', $post->post_id)
-                        ->exists();
-        return view('pages.post', ['post'=>$post, 'hasLiked' => $hasLiked, 'comments' => $comments,]);
+        return view('pages.post', ['post'=>$post, 'comments' => $comments,]);
     }
 
     /**

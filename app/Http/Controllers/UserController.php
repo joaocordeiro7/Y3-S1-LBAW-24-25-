@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Post;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -44,8 +45,8 @@ class UserController extends Controller
     
         $canAdminEdit = Auth::check() && Auth::user()->isAdmin();
 
-        $upvotes = Post::where('ownerid', $id)->sum('upvotes');
-        $downvotes = Post::where('ownerid', $id)->sum('downvotes');
+        $upvotes = Post::where('ownerid', $id)->sum('upvotes') + Comment::where('ownerid', $id)->sum('upvotes');
+        $downvotes = Post::where('ownerid', $id)->sum('downvotes') + Comment::where('ownerid', $id)->sum('downvotes');
     
         return view('pages.profile', [
             'user' => $user,
