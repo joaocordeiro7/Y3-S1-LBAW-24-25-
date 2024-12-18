@@ -68,13 +68,14 @@ class User extends Authenticatable
     }
 
     // the convetion is userId1 follows userId2 
-    public function follows(): HasMany{
-        return $this->hasMany(User::class,"followed_users",'userid1');
+    public function follows(): HasMany
+    {
+        return $this->hasMany(FollowedUser::class, 'userid1', 'user_id');
     }
-
     
-    public function followedBy(): HasMany{
-        return $this->hasMany(User::class,"followed_users",'userid2');
+    public function followedBy(): HasMany
+    {
+        return $this->hasMany(FollowedUser::class, 'userid2', 'user_id');
     }
 
     public static function alreadyFollows($user2): bool{

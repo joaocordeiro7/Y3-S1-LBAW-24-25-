@@ -33,18 +33,24 @@
             <div class="mt-2" style="font-size: 1.2em;">POSTED NEWS</div>
         </a>
 
-        <a href="#" class="btn w-200 text-center mx-5">
+        <a href="#" class="btn w-200 text-center mx-5 position-relative">
             <i class="fa-regular fa-hashtag fa-7x"></i>
             <div class="mt-2" style="font-size: 1.2em;">FOLLOWED TAGS</div>
         </a>
 
-        <a href="#" class="btn w-200 text-center mx-5">
+        <a href="#" class="btn w-200 text-center mx-5 position-relative">
             <i class="fa-duotone fa-solid fa-users fa-7x"></i>
+            <span class="position-absolute top-0 start-10 translate-middle-x badge rounded-pill bg-primary" style="font-size: 1.5em;">
+            {{ $user->followedBy()->count() }}
+            </span>
             <div class="mt-2" style="font-size: 1.2em;">FOLLOWERS</div>
         </a>
 
-        <a href="#" class="btn w-200 text-center mx-5">
+        <a href="#" class="btn w-200 text-center mx-5 position-relative">
             <i class="fa-duotone fa-solid fa-users fa-7x"></i>
+            <span class="position-absolute top-0 start-10 translate-middle-x badge rounded-pill bg-primary" style="font-size: 1.5em;">
+            {{ $user->follows()->count() }}
+            </span>
             <div class="mt-2" style="font-size: 1.2em;">FOLLOWING</div>
         </a>
     </div>
@@ -52,12 +58,6 @@
 
     <p>Reputation: {{ $user->reputation }}</p>
 
-    @if ($currentUser)
-        <a href="{{ route('editProfile', ['id' => $user->user_id]) }}" class="btn btn-primary">Edit Profile</a>
-    @elseif ($canAdminEdit)
-        <a href="{{ route('editProfile', ['id' => $user->user_id]) }}" class="btn btn-primary">Edit as Admin</a>
-    @endif
-    <a href="{{ route('user.posts', ['id' => $user->user_id]) }}" class="btn btn-primary">View All Posts</a>
     @if(!$currentUser && Auth::user()->alreadyFollows($user->user_id))
         <button class="unfollow" data-id="{{$user->user_id}}">unFollow</button>
     @endif
