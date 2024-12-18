@@ -227,10 +227,12 @@ class AdminController extends Controller
     
             DB::table('blacklist')->insert(['email' => $user->email]);
     
-            $user->username = "deleted{$user->user_id}";
+            $user->username = "[Deleted Account]";
             $user->email = "deleted{$user->user_id}@user.com";
             $user->password = null;
             $user->remember_token = null;
+            $user->image()->delete();
+            $user->image()->create(['path' => 'images/profile/default.png']);    
             $user->save();
         });
     

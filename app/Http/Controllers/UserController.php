@@ -42,13 +42,16 @@ class UserController extends Controller
         DB::transaction(function () use ($user) {
             DB::statement('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
     
-            $user->username = "deleted{$user->user_id}";
+            $user->username = "[Deleted Account]";
             $user->email = "deleted{$user->user_id}@user.com";
             $user->password = null; 
             $user->remember_token = null; 
             $user->save();
     
         });
+
+        $user->image()->delete();
+        $user->image()->create(['path' => 'images/profile/default.png']);
     
         Auth::logout(); 
     
