@@ -57,6 +57,15 @@
 
 
     <p>Reputation: {{ $user->reputation }}</p>
+    <div class="vote-bar">
+        <div class="upvotes" style="flex: {{ $upvotes }};">
+            {{ $upvotes }}
+        </div>
+        <div class="downvotes" style="flex: {{ $downvotes }};">
+            {{ $downvotes }}
+        </div>
+    </div>
+
 
     @if(!$currentUser && Auth::user()->alreadyFollows($user->user_id))
         <button class="unfollow" data-id="{{$user->user_id}}">unFollow</button>

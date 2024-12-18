@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Tag;
+use App\Models\InteractionPosts;
+use App\Models\InteractionComments;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 
 use Illuminate\Http\RedirectResponse;
@@ -51,7 +54,8 @@ class PostController extends Controller
     public function show(string $id): View
     {
         $post = Post::findOrFail($id);
-        return view('pages.post',['post'=>$post]);
+        $comments = $post->comments;
+        return view('pages.post', ['post'=>$post, 'comments' => $comments,]);
     }
 
     /**
@@ -124,7 +128,7 @@ class PostController extends Controller
                 ->orWhere('body', 'ILIKE', '%' . $search . '%')
                 ->paginate(10);
         } else {
-            // Retorna todos os posts caso não haja busca
+            // Retorna todos os posts caso não haja 
             $posts = DB::table('posts')->paginate(10);
         }
 
@@ -141,9 +145,183 @@ class PostController extends Controller
         return view('pages.user_posts', compact('user', 'posts'));
     }
 
-    
+    public function like (Request $request) {
 
+        try {
+            $post = Post::findOrFail($request->post_id); 
+            $simnao = $request->liked; 
+        
+            $liked = true;
+
+            if ($simnao == 0) {
+                $liked = false;
+            }
+            
+            $this->authorize('like', Post::class);
+                    
+            $existing = InteractionPosts::where('userid', Auth::user()->user_id)
+                                            ->where('postid', $post->post_id)
+                                            ->first();
+            
+            $success = true;
+            $error = "";
+
+            if (!$existing) {
+                // Gravar o like
+                
+                InteractionPosts::insert([
+                    'userid' => Auth::user()->user_id,
+                    'postid' => $post->post_id,
+                    'liked' => $liked,
+                ]);
+            } else {
+                if ($existing->liked !== $liked) {
+                    // Update para o oposto
+                    InteractionPosts::where('id', $existing->id)->update(['liked' => $liked]);
+                } else {
+                    // delete
+                    $existing->delete();
+                }
+            }
+            
+            $postLikes = InteractionPosts::where('postid', $post->post_id)
+                                        ->where('liked', true);
+            
+            $postDeslikes = InteractionPosts::where('postid', $post->post_id)
+                                            ->where('liked', false);
+                                            
+            // Retornar o número atualizado de likes
+            return response()->json([
+                'success' => $success,
+                "likes" => $postLikes->count(),
+                "deslikes" => $postDeslikes->count(),
+                "error" => $error
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Erro inesperado: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+    public function voteComment(Request $request) {
+        try {
+            $comment = Comment::findOrFail($request->comment_id); 
+            $simnao = $request->liked; 
+        
+            $liked = true;
+
+            if ($simnao == 0) {
+                $liked = false;
+            }
+            
+            $this->authorize('voteComment', Post::class);
+                    
+            $existing = InteractionComments::where('userid', Auth::user()->user_id)
+                                            ->where('comment_id', $comment->comment_id)
+                                            ->first();
+            
+            $success = true;
+            $error = "";
+
+            if (!$existing) {
+                // Gravar o like
+                
+                InteractionComments::insert([
+                    'userid' => Auth::user()->user_id,
+                    'comment_id' => $comment->comment_id,
+                    'liked' => $liked,
+                ]);
+            } else {
+                if ($existing->liked !== $liked) {
+                    // Update para o oposto
+                    InteractionComments::where('id', $existing->id)->update(['liked' => $liked]);
+                } else {
+                    // delete
+                    $existing->delete();
+                }
+            }
+            
+            $commentLikes = InteractionComments::where('comment_id', $comment->comment_id)
+                                        ->where('liked', true);
+            
+            $commentDeslikes = InteractionComments::where('comment_id', $comment->comment_id)
+                                            ->where('liked', false);
+                                            
+            // Retornar o número atualizado de likes
+            return response()->json([
+                'success' => $success,
+                "upvotes" => $commentLikes->count(),
+                "downvotes" => $commentDeslikes->count(),
+                "error" => $error
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Erro inesperado: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+
+
+    public function storeComment(Request $request) {
+        $request->validate([
+            'body' => 'required|string|max:1000', 
+            'post_id' => 'required|exists:posts,post_id', 
+        ]);
+    
+        $comment = Comment::create([
+            'ownerid' => Auth::user()->user_id,
+            'post' => $request->post_id,
+            'body' => $request->body,
+        ]);
+    
+        return response()->json([
+            'success' => true,
+            'comment' => $comment,  
+        ]);
+    }
+       
+
+    public function updateComment(Request $request, $id) {
+        $request->validate(['body' => 'required|string|max:1000']);
+    
+        $comment = Comment::findOrFail($id);
+    
+        if ($comment->ownerid != Auth::user()->user_id) {
+            return response()->json(['success' => false, 'error' => 'Unauthorized'], 403);
+        }
+    
+        $comment->body = $request->input('body');
+        $comment->save();
+    
+        return response()->json(['success' => true]);
+    }   
+    
+    
+    public function replyToComment(Request $request) {
+        $request->validate([
+            'body' => 'required|string|max:1000',
+            'reply_to' => 'required|exists:comments,comment_id',
+        ]);
+
+        $reply = Comment::create([
+            'body' => $request->body,
+            'reply_to' => $request->reply_to,
+            'ownerid' => Auth::user()->user_id,
+            'post' => Comment::findOrFail($request->reply_to)->post,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'reply' => $reply->load('owner'),
+        ]);
+    }
 
 }
-
-

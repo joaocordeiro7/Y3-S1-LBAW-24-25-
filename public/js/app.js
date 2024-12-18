@@ -384,7 +384,227 @@ function handleCreateUser(event) {
       });
 }
 
-function handleDeleteAccount(event) {
+function like(postId, alike) {
+    let post = document.querySelector(`[data-id="${postId}"]`);
+    if (!post) {
+        console.error("Post não encontrado para o ID:", postId);
+        return;
+    }
+  
+    let likeCounter = post.querySelector('.qtd-likes');
+    if (!likeCounter) {
+        console.error("Contador de likes não encontrado no post.");
+        return;
+    }
+  
+    let deslikeCounter = post.querySelector('.qtd-deslikes');
+    if (!deslikeCounter) {
+        console.error("Contador de deslikes não encontrado no post.");
+        return;
+    }
+  
+    sendAjaxRequest('post', '/post/like', { "post_id": postId, "liked": alike }, (response) => {
+        try {
+            const data = JSON.parse(response.target.responseText);
+            if (data.success) {
+                likeCounter.innerText = data.likes;
+                deslikeCounter.innerText = data.deslikes;
+            } else {
+                console.error("Erro ao gravar o like:", data.error);
+            }
+        } catch (e) {
+            console.error("Erro ao processar a resposta do servidor:", e);
+        }
+    });
+  }
+  
+  
+  function voteComment(commentId, liked) {
+      sendAjaxRequest('post', '/comment/vote', { comment_id: commentId, liked: liked }, (response) => {
+          try {
+              const data = JSON.parse(response.target.responseText);
+              if (data.success) {
+                  document.getElementById(`upvotes-${commentId}`).innerText = data.upvotes;
+                  document.getElementById(`downvotes-${commentId}`).innerText = data.downvotes;
+              } else {
+                  console.error('Error:', data.error);
+              }
+          } catch (e) {
+              console.error('Invalid JSON response:', response.target.responseText);
+          }
+      });
+  }
+  
+  
+  function editComment(commentId) {
+      const commentBody = document.getElementById(`comment-body-${commentId}`);
+      const editForm = document.getElementById(`edit-comment-form-${commentId}`);
+      if (!commentBody || !editForm) {
+          console.error("Comentário ou formulário não encontrados.");
+          return;
+      }
+      commentBody.classList.add('hidden');
+      editForm.classList.remove('hidden');
+  }
+  
+  function cancelEdit(commentId) {
+      const commentBody = document.getElementById(`comment-body-${commentId}`);
+      const editForm = document.getElementById(`edit-comment-form-${commentId}`);
+      if (!commentBody || !editForm) {
+          console.error("Comentário ou formulário não encontrados.");
+          return;
+      }
+  
+      editForm.classList.add('hidden');
+      commentBody.classList.remove('hidden');
+  }
+  
+  
+  document.addEventListener('DOMContentLoaded', function () {
+      const postCommentForm = document.getElementById('post-comment-form');
+  
+      if (postCommentForm) {
+          postCommentForm.addEventListener('submit', function (event) {
+              event.preventDefault(); 
+  
+              const formData = new FormData(postCommentForm);  
+              const url = '/comments/store'; 
+  
+              fetch(url, {
+                  method: 'POST',
+                  headers: {
+                      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,  
+                  },
+                  body: formData  
+              })
+              .then(response => response.json())  
+              .then(data => {
+                  if (data.success) {
+                      addNewCommentToDOM(data.comment);  
+                      postCommentForm.reset();  
+                  } else {
+                      console.error('Error:', data.error);  
+                  }
+              })
+              .catch(error => console.error('Error:', error));  
+          });
+      }
+  });
+  
+  function addNewCommentToDOM(comment) {
+      const commentsSection = document.getElementById('comments');
+      const newComment = `
+          <article class="comment" data-comment-id="${comment.comment_id}">
+              <p id="comment-body-${comment.comment_id}">${comment.body}</p>
+              <button class="edit-comment-btn" onclick="editComment(${comment.comment_id})">Edit</button>
+              <form id="edit-comment-form-${comment.comment_id}" class="hidden" method="POST">
+                  <textarea name="body" required>${comment.body}</textarea>
+                  <button type="button" onclick="saveEditedComment(${comment.comment_id})">Save</button>
+                  <button type="button" onclick="cancelEdit(${comment.comment_id})">Cancel</button>
+              </form>
+              <p>Published just now</p>
+          </article>
+      `;
+      commentsSection.insertAdjacentHTML('beforeend', newComment); 
+  }
+  
+  
+  function saveEditedComment(commentId) {
+      const form = document.querySelector(`#edit-comment-form-${commentId}`);
+      const body = form.querySelector('textarea[name="body"]').value;
+  
+      fetch(`/comments/update/${commentId}`, {
+          method: 'PUT',
+          headers: {
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ body: body })
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              document.querySelector(`#comment-body-${commentId}`).innerText = body;
+              cancelEdit(commentId);
+          } else {
+              console.error('Error:', data.error);
+          }
+      })
+      .catch(error => console.error('Error:', error));
+  }
+  
+  
+  function toggleReplyForm(commentId) {
+      const replyForm = document.getElementById(`reply-form-${commentId}`);
+      if (replyForm) {
+          replyForm.classList.toggle('hidden');
+      }
+  }
+  
+  function postReply(parentCommentId) {
+      const form = document.getElementById(`reply-form-${parentCommentId}`);
+      const body = form.querySelector('textarea[name="body"]').value;
+  
+      fetch('/comments/reply', {
+          method: 'POST',
+          headers: {
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ body: body, reply_to: parentCommentId }),
+      })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  addReplyToDOM(data.reply, parentCommentId);
+                  form.reset();
+                  toggleReplyForm(parentCommentId);
+              } else {
+                  console.error('Error:', data.error);
+              }
+          })
+          .catch(error => console.error('Error:', error));
+  }
+  
+  function addReplyToDOM(reply, parentCommentId) {
+      const parentComment = document.querySelector(`.comment[data-comment-id="${parentCommentId}"]`);
+      const repliesSection = parentComment.querySelector('.replies');
+  
+      const newReply = `
+          <article class="reply" data-reply-id="${reply.comment_id}">
+              <p>${reply.body}</p>
+              <p><a href="/users/${reply.owner.user_id}">${reply.owner.username}</a> - Published at just now</p>
+          </article>
+      `;
+  
+      if (repliesSection) {
+          repliesSection.insertAdjacentHTML('beforeend', newReply);
+      } else {
+          const repliesDiv = `<div class="replies">${newReply}</div>`;
+          parentComment.insertAdjacentHTML('beforeend', repliesDiv);
+      }
+  }
+  
+  function editReply(replyId) {
+      const replyBody = document.getElementById(`reply-body-${replyId}`);
+      const editForm = document.getElementById(`edit-reply-form-${replyId}`);
+      
+      if (replyBody && editForm) {
+          replyBody.classList.add('hidden');
+          editForm.classList.remove('hidden');
+      }
+  }
+  
+  function cancelEditReply(replyId) {
+      const replyBody = document.getElementById(`reply-body-${replyId}`);
+      const editForm = document.getElementById(`edit-reply-form-${replyId}`);
+      
+      if (replyBody && editForm) {
+          editForm.classList.add('hidden');
+          replyBody.classList.remove('hidden');
+      }
+  }
+  function handleDeleteAccount(event) {
     const deleteUrl = event.target.dataset.deleteUrl;
     const context = event.target.dataset.context;
 
@@ -557,4 +777,4 @@ function handleDiscardProposal(event) {
             console.error('Error:', error);
             alert('An error occurred while discarding the proposal.');
         });
-}
+
