@@ -9,15 +9,15 @@
         <input type="hidden" name="email" value="{{ $email }}">
 
         <label for="password">New Password</label>
-        <input type="password" name="password" id="password" class="form-control" required>
+        <input type="password" name="password" id="password" class="form-control" style="font-size:1.2rem; max-width: 400px;" required>
         @if ($errors->has('password'))
             <span class="error">{{ $errors->first('password') }}</span>
         @endif
 
         <label for="password_confirmation">Confirm Password</label>
-        <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
+        <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" style="font-size:1.2rem; max-width: 400px;" required>
 
-        <button type="submit" class="btn btn-primary mt-2">Reset Password</button>
+        <button type="submit" class="btn btn-primary w-90 mt-2" style="font-size: 1.3rem;">Reset Password</button>
     </form>
 </div>
 @endsection
