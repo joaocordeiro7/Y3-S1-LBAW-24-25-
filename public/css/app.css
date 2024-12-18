@@ -369,7 +369,7 @@ textarea {
 
 .vote-bar {
   display: flex;
-  width: 100%; /* Largura máxima */
+  width: 100%;
   height: 20px;
   margin-top: 20px;
 }
@@ -380,23 +380,22 @@ textarea {
   align-items: center;
   font-weight: bold;
   color: black;
-  min-width: 30px; /* Garante visibilidade mínima */
+  min-width: 30px;
 }
 
 .upvotes {
-  background-color: #d4e8d4; /* Verde */
-  flex: 1; /* Responsividade automática */
+  background-color: #d4e8d4; 
+  flex: 1;
 }
 
 .downvotes {
-  background-color: #d4b4b4; /* Vermelho */
-  flex: 1; /* Responsividade automática */
+  background-color: #d4b4b4;
+  flex: 1;
 }
 
-/* Responsividade para telas pequenas */
 @media (max-width: 600px) {
   .vote-bar {
-      height: 15px; /* Reduz altura */
-      font-size: 12px; /* Texto menor */
+      height: 15px;
+      font-size: 12px;
   }
 }

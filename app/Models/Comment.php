@@ -41,4 +41,12 @@ class Comment extends Model
         return $this->belongsTo(Comment::class, 'reply_to');
     }
 
+    public function upvotes() {
+        return $this->hasMany(InteractionComments::class, 'comment_id')->where('liked', true);
+    }
+
+    public function downvotes() {
+        return $this->hasMany(InteractionComments::class, 'comment_id')->where('liked', false);
+    }
+
 }

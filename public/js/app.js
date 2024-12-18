@@ -313,6 +313,23 @@ function like(postId, alike) {
 }
 
 
+function voteComment(commentId, liked) {
+    sendAjaxRequest('post', '/comment/vote', { comment_id: commentId, liked: liked }, (response) => {
+        try {
+            const data = JSON.parse(response.target.responseText);
+            if (data.success) {
+                document.getElementById(`upvotes-${commentId}`).innerText = data.upvotes;
+                document.getElementById(`downvotes-${commentId}`).innerText = data.downvotes;
+            } else {
+                console.error('Error:', data.error);
+            }
+        } catch (e) {
+            console.error('Invalid JSON response:', response.target.responseText);
+        }
+    });
+}
+
+
 function editComment(commentId) {
     const commentBody = document.getElementById(`comment-body-${commentId}`);
     const editForm = document.getElementById(`edit-comment-form-${commentId}`);

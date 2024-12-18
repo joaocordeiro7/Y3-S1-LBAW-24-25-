@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\InteractionPosts;
+use App\Models\InteractionComments;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 
@@ -202,6 +203,70 @@ class PostController extends Controller
             ], 500);
         }
     }
+
+
+    public function voteComment(Request $request) {
+        try {
+            $comment = Comment::findOrFail($request->comment_id); 
+            $simnao = $request->liked; 
+        
+            $liked = true;
+
+            if ($simnao == 0) {
+                $liked = false;
+            }
+            
+            $this->authorize('voteComment', Post::class);
+                    
+            $existing = InteractionComments::where('userid', Auth::user()->user_id)
+                                            ->where('comment_id', $comment->comment_id)
+                                            ->first();
+            
+            $success = true;
+            $error = "";
+
+            if (!$existing) {
+                // Gravar o like
+                
+                InteractionComments::insert([
+                    'userid' => Auth::user()->user_id,
+                    'comment_id' => $comment->comment_id,
+                    'liked' => $liked,
+                ]);
+            } else {
+                if ($existing->liked !== $liked) {
+                    // Update para o oposto
+                    InteractionComments::where('id', $existing->id)->update(['liked' => $liked]);
+                } else {
+                    // delete
+                    $existing->delete();
+                }
+            }
+            
+            $commentLikes = InteractionComments::where('comment_id', $comment->comment_id)
+                                        ->where('liked', true);
+            
+            $commentDeslikes = InteractionComments::where('comment_id', $comment->comment_id)
+                                            ->where('liked', false);
+                                            
+            // Retornar o número atualizado de likes
+            return response()->json([
+                'success' => $success,
+                "upvotes" => $commentLikes->count(),
+                "downvotes" => $commentDeslikes->count(),
+                "error" => $error
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Erro inesperado: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+
 
     public function storeComment(Request $request) {
         $request->validate([

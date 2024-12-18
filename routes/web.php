@@ -45,6 +45,7 @@ Route::controller(PostController::class)->group(function (){
     Route::post('/deletePost/{id}','destroy');
     Route::get('/user/{id}/posts', 'showUserPosts')->name('user.posts');
     Route::post('/post/like', 'like');
+    Route::post('/comment/vote', 'voteComment')->name('comment.vote');
     Route::post('/comments/store', 'storeComment')->name('comments.store');
     Route::put('/comments/update/{id}', 'updateComment')->name('comments.update');
     Route::post('/comments/reply', 'replyToComment')->middleware('auth');

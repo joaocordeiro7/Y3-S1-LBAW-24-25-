@@ -12,16 +12,6 @@
         <div class="newsBody">
             <p>{{$post->body}}</p>
         </div>
-        <div id="interactions">
-            <span id="upvotes">
-                <img src="" alt="image for upvotes" id="upvotesLogo" class="interationLogo">
-                <span id="numberOfUpvotes" class="numberOfInterations">{{$post->upvotes}}</span>
-            </span>
-            <span id="downvotes">
-                <img src="" alt="image for downvotes" id="downvotesLogo" class="interationLogo">
-                <span id="numberOfDownvotes" class="numberOfInterations">{{$post->downvotes}}</span>
-            </span>
-        </div>
         <div id="postDetails">
             <p><a href="/users/{{$post->owner->user_id}}">{{$post->owner->username}}</a> - Published at {{$post->created_at->format('d M Y H:i')}}</p>
             
@@ -59,6 +49,13 @@
                                         <button type="button" onclick="saveEditedComment({{ $comment->comment_id }})">Save</button>
                                         <button type="button" onclick="cancelEdit({{ $comment->comment_id }})">Cancel</button>
                                     </form>
+                                @else
+                                    <div class="comment-votes">
+                                        <button onclick="voteComment({{ $comment->comment_id }}, 1)">Upvote</button>
+                                        <span id="upvotes-{{ $comment->comment_id }}">{{ $comment->upvotes ?? 0 }}</span>
+                                        <button onclick="voteComment({{ $comment->comment_id }}, 0)">Downvote</button>
+                                        <span id="downvotes-{{ $comment->comment_id }}">{{ $comment->downvotes ?? 0 }}</span>
+                                    </div>
                                 @endif
                                 <p><a href="/users/{{$comment->owner->user_id}}">{{$comment->owner->username}}</a> - Published at {{$comment->created_at->format('d M Y H:i')}}</p>
                                 <button class="reply-comment-btn" onclick="toggleReplyForm({{ $comment->comment_id }})">Reply</button>
@@ -82,6 +79,13 @@
                                                         <button type="button" onclick="saveEditedReply({{ $reply->comment_id }})">Save</button>
                                                         <button type="button" onclick="cancelEditReply({{ $reply->comment_id }})">Cancel</button>
                                                     </form>
+                                                @else
+                                                    <div class="comment-votes">
+                                                        <button onclick="voteComment({{ $reply->comment_id }}, 1)">Upvote</button>
+                                                        <span id="upvotes-{{ $reply->comment_id }}">{{ $reply->upvotes ?? 0 }}</span>
+                                                        <button onclick="voteComment({{ $reply->comment_id }}, 0)">Downvote</button>
+                                                        <span id="downvotes-{{ $reply->comment_id }}">{{ $reply->downvotes ?? 0 }}</span>
+                                                    </div>
                                                 @endif
                                                 <p><a href="/users/{{ $reply->owner->user_id }}">{{ $reply->owner->username }}</a> - Published at {{ $reply->created_at->format('d M Y H:i') }}</p>
                                             </article>
