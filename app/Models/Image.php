@@ -11,16 +11,18 @@ class Image extends Model
 
     public $timestamps  = false;
 
-    protected $table = 'Images';
+    protected $table = 'images';
 
     protected $primaryKey = 'image_id';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
+        'user_id',
         'path',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
+    }
 }
+

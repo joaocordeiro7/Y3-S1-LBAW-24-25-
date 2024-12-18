@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 
 use Illuminate\Http\RedirectResponse;
@@ -105,9 +106,11 @@ class PostController extends Controller
     {
         // Obter todos os posts com título e corpo
         $posts = Post::all(['post_id', 'title', 'body']);
+        
+        $tags = Tag::all();
 
         // Passar os dados para a view
-        return view('pages.home', ['posts' => $posts]);
+        return view('pages.home', ['posts' => $posts], ['tags' => $tags]);
     }
 
     public function index(Request $request)
@@ -125,7 +128,9 @@ class PostController extends Controller
             $posts = DB::table('posts')->paginate(10);
         }
 
-        return view('pages.home', ['posts' => $posts]);
+        $tags = Tag::all();
+
+        return view('pages.home', ['posts' => $posts], ['tags' => $tags]);
     }
 
     public function showUserPosts($id)

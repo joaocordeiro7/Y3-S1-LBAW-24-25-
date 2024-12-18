@@ -361,3 +361,19 @@ main > header form.mb-4.d-flex a {
   }
 }
 
+.custom-table th, .custom-table td {
+  padding: 5px; 
+}
+
+.custom-table thead {
+  background-color: #f8f9fa; 
+  color: #343a40; 
+}
+
+.custom-table td, .table th {
+  vertical-align: middle !important; 
+}
+
+.btn {
+  padding: 5px 10px !important; 
+}

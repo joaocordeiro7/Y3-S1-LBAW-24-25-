@@ -31,13 +31,14 @@ DROP TABLE IF EXISTS Block_appeal CASCADE;
 DROP TABLE IF EXISTS UpvoteOnPostNotification CASCADE;
 DROP TABLE IF EXISTS UpvoteOnCommentNotification CASCADE;
 DROP TABLE IF EXISTS CommentNotification CASCADE;
-
+DROP TABLE IF EXISTS blacklist CASCADE;
+DROP TABLE IF EXISTS topic_proposal CASCADE;
 
 CREATE TABLE Users(
     user_id SERIAL PRIMARY KEY NOT NULL,
     username TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
+    password TEXT,
     reputation INT DEFAULT 0 NOT NULL,
     remember_token VARCHAR(100)
 );
@@ -206,6 +207,15 @@ CREATE TABLE CommentNotification(
     comment INT REFERENCES Comments (comment_id) ON UPDATE CASCADE
 );
 
+CREATE TABLE blacklist(
+    id SERIAL PRIMARY KEY,
+    email TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE topic_proposal(
+    proposal_id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL
+);
 
 CREATE INDEX comment_notification_date ON CommentNotification USING btree (created_at);
 CLUSTER CommentNotification USING comment_notification_date;
