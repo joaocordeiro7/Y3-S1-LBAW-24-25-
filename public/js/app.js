@@ -594,6 +594,31 @@ function like(postId, alike) {
           editForm.classList.remove('hidden');
       }
   }
+
+  function saveEditedReply(commentId) {
+    const form = document.querySelector(`#edit-reply-form-${commentId}`);
+    const body = form.querySelector('textarea[name="body"]').value;
+
+    fetch(`/comments/reply/update/${commentId}`, {
+        method: 'PUT',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ body: body })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.querySelector(`#reply-body-${commentId}`).innerText = body;
+            cancelEditReply(commentId);
+        } else {
+            console.error('Error:', data.error);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+  }
+
   
   function cancelEditReply(replyId) {
       const replyBody = document.getElementById(`reply-body-${replyId}`);
