@@ -35,6 +35,8 @@ Route::redirect('/', '/login');
 
 Route::view('/features', 'static.features')->name('features');
 
+Route::view('/aboutUs', 'static.aboutUs')->name('aboutUs');
+
 Route::view('/contacts', 'static.contacts')->name('contacts');
 
 Route::post('/contacts/feedback', [StaticPageController::class, 'submitFeedback'])->name('feedback.submit');
