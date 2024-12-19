@@ -30,6 +30,13 @@
                 @if (Auth::check() && Auth::user()->isAdmin())
                 <a class="button" href="{{route('adminDashboard')}}">Dashboard</a>
                 @endif
+                @if (Auth::check())
+                    <span class="dropdown">notf</span>
+                    @php
+                        $notfs = \App\Http\Controllers\UserController::userNotf();
+                    @endphp
+                    @include('partials.notf',['notfs'=>$notfs])
+                @endif
             </header>
             <section id="content">
                 @yield('content')

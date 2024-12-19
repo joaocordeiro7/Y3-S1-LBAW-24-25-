@@ -36,7 +36,7 @@ Route::redirect('/', '/login');
 
 
 Route::controller(PostController::class)->group(function (){
-    Route::get('/post/{id}','show');
+    Route::get('/post/{id}','show')->name('post');
     Route::get('/home', 'list');
 
 });
@@ -75,6 +75,8 @@ Route::controller(UserController::class)->group(function () {
     Route::get('/search', 'search')->name('user.search');
     Route::post('/api/follow/{userToFollow}','follow');
     Route::post('/api/unfollow/{userToUnfollow}','unfollow');
+    Route::post('/api/checkNotf','getNewNotf')->name('checkForNewNotfs');
+    Route::post('/api/readNotf','readNotf');
 });
 
 // Admin
@@ -83,3 +85,6 @@ Route::controller(AdminController:: class)->group(function () {
     Route::post('/admin/create', 'createUser')->name('createUser');
     Route::post('/api/admin/edit/{id}',  'adminUpdateUser')->name('adminUpdateUser');
 });
+
+
+Route::get('/notf',[UserController::class,'shownotf'])->name('notf');

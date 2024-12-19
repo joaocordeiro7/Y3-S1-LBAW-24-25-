@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+use App\Notifications\UpvoteOnPostNotification;
+use Illuminate\View\View;
+
 class UserController extends Controller
 {
     /**
@@ -161,6 +164,26 @@ class UserController extends Controller
 
         return response()->json(['success' => 'users now follow']);
         
+    }
+
+
+    public function shownotf(): View
+    {
+        $notfs=UpvoteOnPostNotification::getNotif();
+        return view('pages.notf',['notfs'=>$notfs]);
+    }
+
+    public function getNewNotf(Request $request){
+        $newN = UpvoteOnPostNotification::getNewNotifs($request);
+        return response()->json($newN);
+    }
+
+    public static function userNotf(){
+        return UpvoteOnPostNotification::getNotif();
+    }
+
+    public function readNotf(Request $request){
+        UpvoteOnPostNotification::readNotf($request);
     }
 
 }

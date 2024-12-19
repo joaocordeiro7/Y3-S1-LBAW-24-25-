@@ -180,7 +180,7 @@ CREATE TABLE Block_appeal(
 CREATE TABLE UpvoteOnPostNotification(
     notfId SERIAL PRIMARY KEY,
     is_read BOOLEAN DEFAULT false NOT NULL,
-    created_at TIMESTAMP CHECK(created_at<=CURRENT_TIMESTAMP),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP CHECK(created_at<=CURRENT_TIMESTAMP),
     emitter INT REFERENCES Users (user_id) ON UPDATE CASCADE,
     receiver INT REFERENCES Users (user_id) ON UPDATE CASCADE,
     post INT REFERENCES Posts (post_id) ON UPDATE CASCADE

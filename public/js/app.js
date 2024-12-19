@@ -26,6 +26,9 @@ function addEventListeners() {
     if(unfollowButton != null)
       unfollowButton.addEventListener('click',sendUnfollowRequest);
 
+    let notfMeunuButton = document.querySelector('span.dropdown');
+    notfMeunuButton.addEventListener('click',openNotfMenu);
+
     let saveChangesButton = document.getElementById('saveChanges');
     if (saveChangesButton) {
         saveChangesButton.addEventListener('click', (event) => {
@@ -62,6 +65,23 @@ function addEventListeners() {
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     request.addEventListener('load', handler);
     request.send(encodeForAjax(data));
+  }
+
+
+  function openNotfMenu(){
+    let notfs=document.getElementById('notfs');
+    console.log(notfs);
+    notfs.classList.add('visible');
+    console.log(notfs);
+    this.removeEventListener('click', openNotfMenu);
+    this.addEventListener('click',closeNotfMenu);
+  }
+
+  function closeNotfMenu(){
+    let notfs=document.getElementById('notfs');
+    notfs.classList.remove('visible');
+    this.removeEventListener('click', closeNotfMenu);
+    this.addEventListener('click',openNotfMenu);
   }
 
   function deleteNews(event){
@@ -195,6 +215,104 @@ function addEventListeners() {
   }
   
   addEventListeners();
+
+  let lastIdChecked=0;
+  notfList=document.querySelector('ol#notfs');
+  lastNotf=document.querySelector('ol#notfs :first-child');
+
+  notfs = document.querySelectorAll('ol#notfs li button');
+  [].forEach.call(notfs,function(notf){
+    notf.addEventListener('click',readNews);
+  })
+
+  function readNews(event){
+    nid = this.getAttribute('data-id');
+    ntype = this.getAttribute('data-type');
+    console.log(nid);
+    console.log(ntype);
+
+    sendAjaxRequest('post','/api/readNotf',{id: nid,type: ntype },readHandler(nid,ntype));
+    event.preventDefault();
+  }
+
+  function readHandler(id,type){
+    notfs=document.querySelector('ol#notfs');
+    read_ntof = notfs.querySelector(`button[data-id="${id}"][data-type="${type}"]`).parentElement;
+    notfs.removeChild(read_ntof);
+  }
+  
+  lastIdChecked=lastNotf.getAttribute('data-id');
+
+  function checkForNotf(){
+    sendAjaxRequest('post','/api/checkNotf',{lastId: lastIdChecked},NotfUpdate);
+    console.log({lastId: lastIdChecked});
+  }
+
+  function NotfUpdate(){
+    let res = JSON.parse(this.responseText);
+
+    if(res.length>0){
+      for (let index = 0; index < res.length; index++) {
+        const notf = res[index];
+        // add to list
+        lentry=document.createElement('li');
+        lentry.setAttribute('data-id', notf.created_at);
+        read_button=document.createElement('button');
+        let par = document.createElement('p');
+        read_button.addEventListener('click',readNews);
+
+        if(notf.post){
+          link = document.createElement('a');
+          link.innerHTML='see';
+          link.href='/post/'+notf.post;
+
+          par = document.createElement('p')
+          par.innerHTML=notf.emitter+' liked one of your posts '+link;
+
+          read_button.setAttribute('data-type','like_post');
+          read_button.setAttribute('data-id',notf.notfid);
+
+          lentry.appendChild(par);
+          lentry.appendChild(read_button);
+          
+
+        }
+
+        if(notf.liked_comment){
+          
+          
+          par.innerHTML='A user liked one of your comments';
+          read_button.setAttribute('data-type','like_comment');
+          read_button.setAttribute('data-id',notf.notfid);
+          
+          
+          lentry.appendChild(par);
+          lentry.appendChild(read_button);
+        }
+
+        if(notf.comment){
+          
+
+          par.innerHTML='A user comment on one of your posts';
+          read_button.setAttribute('data-type','comment');
+          read_button.setAttribute('data-id',notf.notfid);
+          
+          
+          lentry.appendChild(par);
+          lentry.appendChild(read_button);
+        }
+        
+        notfList.insertBefore(lentry,notfList.firstChild);
+        
+        
+      }
+      lastIdChecked=res[0].created_at;
+      //give warning
+    }
+    
+    console.log(res);
+  }
+  setInterval(checkForNotf,10000);
   
   function updateUserProfile(event, formId, successMessageId, errorMessageId, updateUrl) {
     console.log("Save Changes button clicked!");
