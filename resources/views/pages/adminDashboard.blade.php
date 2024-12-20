@@ -19,20 +19,21 @@
             </thead>
             <tbody>
             @foreach ($users as $user)
-                @if (!str_starts_with($user->username, 'deleted')) 
+                @if (!str_starts_with($user->username, '[Deleted')) 
                     <tr>
                         <td>{{ $user->user_id }}</td>
                         <td>{{ $user->username }}</td>
                         <td>{{ $user->email }}</td>
-                        <td class=>
-                            <a href="{{ route('profile', $user->user_id) }}" class="btn btn-lg mb-2" style="font-size: 1.55rem; font-weight: 700; color: blue; margin-right: 10px;">[view]</a>
-                            <button type="button" id="deleteAccount" class="btn delete-account mb-2"
-                                data-delete-url="{{ route('adminDeleteAccount', ['id' => $user->user_id]) }}"
-                                data-context="admin"
-                                style="height:45px; background-color: black; color:white; font-size: 1.25rem; margin-right: 10px;">
-                                Delete
-                            </button>
-                            @include('partials.blockUserButton', ['user' => $user])
+                        <td class="align-middle">
+                            <div id="users-table">
+                                <a href="{{ route('profile', $user->user_id) }}" class="view-link mx-2">[view]</a>
+                                <button type="button" id="deleteAccount" class="px-3 ms-2 black-button"
+                                    data-delete-url="{{ route('adminDeleteAccount', ['id' => $user->user_id]) }}"
+                                    data-context="admin">
+                                    Delete
+                                </button>
+                                @include('partials.blockUserButton', ['user' => $user])
+                            </div>
                         </td>
                     </tr>
                 @endif
@@ -57,14 +58,12 @@
                     <td>{{ $proposal->proposal_id }}</td>
                     <td>{{ $proposal->title }}</td>
                     <td>
-                        <button type="button" class="btn btn-success mb-2 ms-2 accept-proposal" 
-                            data-accept-url="{{ route('acceptTopicProposal', ['id' => $proposal->proposal_id]) }}"
-                            style="font-size: 1.25rem; margin-right: 10px;">
+                        <button type="button" class="accept-discard btn btn-success mb-2 ms-2 accept-proposal" 
+                            data-accept-url="{{ route('acceptTopicProposal', ['id' => $proposal->proposal_id]) }}">
                             Accept
                         </button>
-                        <button type="button" class="btn btn-danger mb-2 discard-proposal"
-                            data-discard-url="{{ route('discardTopicProposal', ['id' => $proposal->proposal_id]) }}"
-                            style="font-size: 1.25rem;">
+                        <button type="button" class="accept-discard btn btn-danger mb-2 discard-proposal"
+                            data-discard-url="{{ route('discardTopicProposal', ['id' => $proposal->proposal_id]) }}">
                             Discard
                         </button>
                     </td>
@@ -75,26 +74,8 @@
     </div>
 </div>
 
-<div>
-    <style>
-        .form-container {
-            border: 2px solid #ccc;
-            padding-top: 30px;
-            max-width: 350px;
-            margin: auto;
-        }
-        .form-group {
-            max-width: 500px;
-            margin: auto;
-        }
-        .form-control {
-            font-size: 1.2em;
-        }
-        label {
-            font-size: 1.2em;
-        }
-    </style>
-    <h2 style="margin-left:28px;">Create New User</h2>
+<div class="container">
+    <h2>Create New User</h2>
     <div id="userCreatedMessage" class="alert alert-success" style="display: none;">
         User created successfully!
     </div>
@@ -125,7 +106,7 @@
                 <span class="error"></span>
             </div>
             <div class="align-self-center">
-                <button type="button" id="generateUser" data-action-url="{{ route('createUser') }}">Create User</button>
+                <button class="black-button"type="button" id="generateUser" data-action-url="{{ route('createUser') }}">Create User</button>
             </div>    
         </form>
     </div>

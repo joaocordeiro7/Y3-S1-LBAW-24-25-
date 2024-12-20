@@ -9,8 +9,7 @@
             id="profile-picture-display" 
             src="{{ asset('storage/' . $user->image->path) }}" 
             alt="Profile Picture" 
-            class="align-self-center rounded-circle"
-            style="max-width: 180px; border: 2px solid #000;">
+            class="profilepic align-self-center rounded-circle">
         </img>
     </div>
     <div class="d-flex justify-content-between">
@@ -20,49 +19,51 @@
                 <a href="{{ route('editProfile', ['id' => $user->user_id]) }}" class="ml-2 h1">[edit]</a>
             @endif
         </h1>
-        @if ($canAdminEdit)
-            @include('partials.blockUserButton', ['user' => $user])
+        @if(!$currentUser && Auth::user()->alreadyFollows($user->user_id))
+            <button class="unfollow btn btn-lg p-4" 
+            data-id="{{$user->user_id}}">unFollow</button>
+        @endif
+        @if (!$currentUser && !Auth::user()->alreadyFollows($user->user_id))
+            <button class="follow btn btn-lg p-4"
+            data-id="{{$user->user_id}}">Follow</button>
         @endif
     </div>
     <div class="d-flex flex-row justify-content-center align-items-center border-top border-bottom py-4">
         <a href="{{ route('user.posts', ['id' => $user->user_id]) }}" class="btn w-200 text-center mx-5 position-relative">
             <i class="fa-solid fa-newspaper fa-7x"></i>
-            <span class="position-absolute top-0 start-10 translate-middle-x badge rounded-pill bg-primary" style="font-size: 1.5em;">
+            <span class="icon position-absolute top-0 start-10 translate-middle-x badge rounded-pill bg-primary">
             {{ $user->posts->count() }}
             </span>
-            <div class="mt-2" style="font-size: 1.2em;">POSTED NEWS</div>
+            <div class="icon-text-under mt-3">POSTED NEWS</div>
         </a>
 
         <a href="#" class="btn w-200 text-center mx-5 position-relative">
             <i class="fa-regular fa-hashtag fa-7x"></i>
-            <div class="mt-2" style="font-size: 1.2em;">FOLLOWED TAGS</div>
+            <div class="icon-text-under mt-3">FOLLOWED TAGS</div>
         </a>
 
         <a href="#" class="btn w-200 text-center mx-5 position-relative">
             <i class="fa-duotone fa-solid fa-users fa-7x"></i>
-            <span class="position-absolute top-0 start-10 translate-middle-x badge rounded-pill bg-primary" style="font-size: 1.5em;">
+            <span class="icon position-absolute top-0 start-10 translate-middle-x badge rounded-pill bg-primary">
             {{ $user->followedBy()->count() }}
             </span>
-            <div class="mt-2" style="font-size: 1.2em;">FOLLOWERS</div>
+            <div class="icon-text-under mt-3">FOLLOWERS</div>
         </a>
 
         <a href="#" class="btn w-200 text-center mx-5 position-relative">
             <i class="fa-duotone fa-solid fa-users fa-7x"></i>
-            <span class="position-absolute top-0 start-10 translate-middle-x badge rounded-pill bg-primary" style="font-size: 1.5em;">
+            <span class="icon position-absolute top-0 start-10 translate-middle-x badge rounded-pill bg-primary">
             {{ $user->follows()->count() }}
             </span>
-            <div class="mt-2" style="font-size: 1.2em;">FOLLOWING</div>
+            <div class="icon-text-under mt-3">FOLLOWING</div>
         </a>
     </div>
 
 
     <p>Reputation: {{ $user->reputation }}</p>
 
-    @if(!$currentUser && Auth::user()->alreadyFollows($user->user_id))
-        <button class="unfollow" data-id="{{$user->user_id}}">unFollow</button>
-    @endif
-    @if (!$currentUser && !Auth::user()->alreadyFollows($user->user_id))
-        <button class="follow" data-id="{{$user->user_id}}">Follow</button>
+    @if ($canAdminEdit)
+            @include('partials.blockUserButton', ['user' => $user])
     @endif
 
 </div>

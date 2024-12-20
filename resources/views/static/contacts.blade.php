@@ -22,35 +22,24 @@
         <div class="card-body">
             <form method="POST" action="{{ route('feedback.submit') }}">
                 @csrf
-                <div class="form-group">
+                <div class="form-group" id="contact-us-form">
                     <label for="name">Your Name:</label>
                     <input type="text" class="form-control" id="name" name="name" required>
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="contact-us-form">
                     <label for="email">Your Email:</label>
                     <input type="email" class="form-control" id="email" name="email" required>
                 </div>
-                <div class="form-group">
+                <div class="form-group mw-100" id="contact-us-form">
                     <label for="message">Your Message:</label>
-                    <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                    <textarea class="form-control h-100 w-100" id="message" name="message" rows="4" required></textarea>
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary mt-3" style="font-size: 1.3rem;">Send Message</button>
+                    <button type="submit" class="blue-button btn mt-3">Send Message</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<style>
-    .card-header {
-        font-size: 1.5em;
-    }
-    .form-control {
-        font-size: 1.2em;
-    }
-    label {
-        font-size: 1.2em;
-    }
-</style>
 @endsection

@@ -7,11 +7,10 @@
     <div class="d-flex justify-content-between flex-column align-items-start mb-3">
         <h1 id="title">Edit {{ $user->username }}'s Profile</h1>
         <img 
-            id="profile-picture-display" 
+            id="editprofile-picture-display" 
             src="{{ asset('storage/' . $user->image->path) }}" 
             alt="Profile Picture" 
-            style="max-width: 150px; border: 2px solid #000;"
-            class="align-self-center rounded-circle">
+            class="profilepic align-self-center rounded-circle">
         </img>
        
 
@@ -28,17 +27,17 @@
     <form id="editProfileForm" enctype="multipart/form-data">
         {{ csrf_field() }}
         @include('partials.editProfileForm', ['user' => $user])
-        <div class="d-flex justify-content-center align-items-start mt-3" style="max-width: 200px; margin: 0 auto;">
-            <button type="button" id="saveChanges" style="background-color: #000000; color: white; margin-right: 20px; margin-left: -220px;" 
+        <div class="form-group d-flex me-auto mt-4">
+            <button class="black-button m-auto" type="button" id="saveChanges" 
             data-update-url="{{ Auth::user()->isAdmin() ? route('adminUpdateUser', ['id' => $user->user_id]) : route('updateProfile', ['id' => $user->user_id]) }}">
             Save Changes
             </button>
-            <a href="{{ route('profile', ['id' => $user->user_id]) }}" style="background-color: #a9a9a9; color: black; padding: 0.4em; padding-left: 1.5em; padding-right: 1.5em; border-radius: 0.300em;">Cancel</a>
+            <button type="button" class="gray-button m-auto" onclick="window.location.href='{{ route('profile', ['id' => $user->user_id]) }}'">Cancel</button>
         </div>
     </form>
 
     <div class="d-flex align-items-center justify-content-center mt-3">
-        <button type="button" id="deleteAccount" class="px-5 btn btn-danger delete-account" style="font-weight: 700;"
+        <button type="button" id="deleteAccount" class="red-button px-5 btn btn-danger delete-account"
             data-delete-url="{{ Auth::user()->isAdmin() ? route('adminDeleteAccount', ['id' => $user->user_id]) : route('deleteAccount', ['id' => $user->user_id])  }}">
             Delete Account
         </button>
