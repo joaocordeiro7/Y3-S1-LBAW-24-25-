@@ -107,7 +107,17 @@ class UserController extends Controller
         $user = User::findOrFail($id);
     
         $request->validate([
-            'username' => 'required|string|max:250|unique:users,username,' . $user->user_id . ',user_id',
+            'username' => [
+                'required',
+                'string',
+                'max:250',
+                'unique:users,username,' . $user->user_id . ',user_id',
+                function ($attribute, $value, $fail) {
+                    if (str_starts_with($value, '[Deleted')) {
+                        $fail('The username cannot start with "[Deleted".');
+                    }
+                },
+            ],
             'email' => 'required|email|max:250|unique:users,email,' . $user->user_id . ',user_id',
             'password' => 'nullable|string|min:8|confirmed',
             'image' => 'nullable|mimes:png,jpeg,jpg|max:2048' 

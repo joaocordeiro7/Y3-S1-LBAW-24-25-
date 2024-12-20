@@ -470,3 +470,7 @@ label {
   margin: 0 !important;
 }
 
+.form-group .error{
+  color: red;
+  font-size: smaller;
+}

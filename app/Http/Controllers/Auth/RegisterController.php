@@ -28,7 +28,16 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:250',
+            'name' => [
+                'required',
+                'string',
+                'max:250',
+                function ($attribute, $value, $fail) {
+                    if (str_starts_with($value, '[Deleted')) {
+                        $fail('The username cannot start with "[Deleted".');
+                    }
+                },
+            ],
             'email' => 'required|email|max:250|unique:users',
             'password' => 'required|min:8|confirmed',
         ]);

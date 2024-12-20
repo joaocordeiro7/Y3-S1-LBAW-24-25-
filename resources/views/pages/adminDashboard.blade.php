@@ -82,7 +82,7 @@
     <div class="form-container">
         <form id="adminCreateUser" class="d-flex flex-column">
             {{ csrf_field() }}
-            <div class="form-group">
+            <div class="form-group mw-75">
                 <label for="username">Username</label>
                 <input type="text" name="username" id="username" value="{{ old('username') }}" class="form-control">            
                 <span class="error"></span>
