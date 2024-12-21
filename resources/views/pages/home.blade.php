@@ -8,13 +8,13 @@
     <div class="content" style="max-width: 215px;">    
         <div class="d-flex flex-column h-100">
             <h3>Topics</h3>
-                <ul class="list-group mb-4">
-                    @foreach ($tags as $tag)
-                        <li class="list-group-item">
-                            <a href="{{ route('home', ['tag' => $tag->name]) }}">{{ $tag->name }}</a>
-                        </li>
-                    @endforeach
-                </ul>
+            <ul class="list-group mb-4">
+                @foreach ($tags as $tag)
+                    <li class="list-group-item">
+                        <a href="{{ route('home', ['tag' => $tag->name]) }}">{{ $tag->name }}</a>
+                    </li>
+                @endforeach
+            </ul>
                 <div class="mt-auto">
                 <button style="font-size: 1.25rem; margin-left: 30px"type="button" class="btn btn-primary w-90" id="proposeTopicButton" onclick="openProposalForm()">Propose a Topic</button>            </div>
         </div>

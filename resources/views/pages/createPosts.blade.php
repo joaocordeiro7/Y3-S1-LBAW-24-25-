@@ -17,6 +17,15 @@
         @if($errors->has('newsBody'))
             <span class="error">{{$errors->first('newsBody')}}</span>
         @endif
+        <label for="tags">Select Tags</label>
+        <div id="tags">
+            @foreach ($tags as $tag)
+                <div>
+                    <input type="checkbox" id="tag{{ $tag->tag_id }}" name="tags[]" value="{{ $tag->tag_id }}">
+                    <label for="tag{{ $tag->tag_id }}">{{ $tag->name }}</label>
+                </div>
+            @endforeach
+        </div>
         <button type="submit">Publish</button>
     </form>
 </section>

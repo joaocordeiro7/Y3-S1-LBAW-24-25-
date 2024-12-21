@@ -419,3 +419,18 @@ textarea {
       font-size: 12px;
   }
 }
+
+#tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#tags div {
+  display: flex;
+  align-items: center;
+}
+
+#tags input[type="checkbox"] {
+  margin-right: 5px;
+}

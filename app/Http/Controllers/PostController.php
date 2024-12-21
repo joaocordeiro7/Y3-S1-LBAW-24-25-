@@ -13,7 +13,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
-
 use Illuminate\View\View;
 
 use Illuminate\Support\Facades\DB;
@@ -26,37 +25,46 @@ class PostController extends Controller
      */
     public function create()
     {
-        $this->authorize('create',Post::class);
-        return view('pages.createPosts');
+        $this->authorize('create', Post::class);
+        $tags = Tag::all();
+        return view('pages.createPosts', ['tags' => $tags]);
     }
+    
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request): RedirectResponse
     {
-        $validatedRequest=$request->validate(['newsTitle'=>'required','newsBody'=>'required']);
-        $newPost= new Post();
-
-        $this->authorize('store',$newPost);
-
-        $newPost->title=$validatedRequest['newsTitle'];
-        $newPost->body=$validatedRequest['newsBody'];
-        $newPost->ownerid=Auth::user()->user_id;
+        $validatedRequest = $request->validate(['newsTitle' => 'required', 'newsBody' => 'required', 'tags' => 'array']);
+        $newPost = new Post();
+    
+        $this->authorize('store', $newPost);
+    
+        $newPost->title = $validatedRequest['newsTitle'];
+        $newPost->body = $validatedRequest['newsBody'];
+        $newPost->ownerid = Auth::user()->user_id;
         $newPost->save();
-        $postPage='/post/'.strval($newPost->post_id);
+    
+        if ($request->has('tags')) {
+            $newPost->tags()->attach($request->input('tags'));
+        }
+    
+        $postPage = '/post/' . strval($newPost->post_id);
         return redirect()->intended($postPage);
     }
+    
 
     /**
      * Display the specified resource.
      */
     public function show(string $id): View
     {
-        $post = Post::findOrFail($id);
+        $post = Post::with('tags')->findOrFail($id);
         $comments = $post->comments;
-        return view('pages.post', ['post'=>$post, 'comments' => $comments,]);
+        return view('pages.post', ['post' => $post, 'comments' => $comments]);
     }
+    
 
     /**
      * Show the form for editing the specified resource.
