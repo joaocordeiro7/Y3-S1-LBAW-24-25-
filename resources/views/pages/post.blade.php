@@ -12,6 +12,12 @@
         <div class="newsBody">
             <pre>{{$post->body}}</pre>
         </div>
+        <div class="post-tags">
+            <h4>Tags:</h4>
+            @foreach ($post->tags as $tag)
+                <span>{{ $tag->name }}</span>
+            @endforeach
+        </div>
         <div id="postDetails">
             <p><a href="/users/{{$post->owner->user_id}}">{{$post->owner->username}}</a> - Published at {{$post->created_at->format('d M Y H:i')}}</p>
             
