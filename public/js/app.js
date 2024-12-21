@@ -318,14 +318,16 @@ function addEventListeners() {
     }
     setInterval(checkForNotf,10000);
   }
-  function getMore(route,page,handler){
-    sendAjaxRequest('post',route,{page: page},handler);
+  function getMore(route,rbody,handler){
+    sendAjaxRequest('post',route,rbody,handler);
   }
   //infinite scrolling for posts
 
   let page = 0;
+  let pageResults = 0;
   let loading = false;
   let posts = document.querySelector('section#posts');
+  let search= document.querySelector('input#search');
   console.log(posts);
 
   function MorePostsHandler(){
@@ -376,15 +378,26 @@ function addEventListeners() {
 
   function loadMorePosts(){
     loading=true;
-    getMore('/api/getMorePosts',page,MorePostsHandler);
-    page++;
+    let searchValue = search.value;
+    if(searchValue==""){
+      getMore('/api/getMorePosts',{page: page,search:searchValue},MorePostsHandler);
+      page++;
+    }
+    else{
+      console.log(searchValue)
+      getMore('/api/getMorePosts',{page: pageResults,search:searchValue},MorePostsHandler);
+      pageResults++;
+    }
+    
+    
   }
 
   if(posts != null){
+    
     window.addEventListener('scroll',function(){
       
       if((window.innerHeight + window.scrollY) >= (document.body.offsetHeight-2) && !loading){
-        //loadMorePosts();
+        loadMorePosts();
       }
     })
     

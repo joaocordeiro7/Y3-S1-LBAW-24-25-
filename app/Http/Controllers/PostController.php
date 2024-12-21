@@ -104,7 +104,7 @@ class PostController extends Controller
     public function list(): View
     {
         // Obter todos os posts com título e corpo
-        $posts = Post::select(['post_id', 'title', 'body'])->paginate(6);
+        $posts = Post::select(['post_id', 'title', 'body'])->orderBy('created_at','desc')->orderBy('upvotes','desc')->paginate(6);
 
         // Passar os dados para a view
         return view('pages.home', ['posts' => $posts]);
@@ -119,7 +119,8 @@ class PostController extends Controller
             $posts = DB::table('posts')
                 ->where('title', 'ILIKE', '%' . $search . '%')
                 ->orWhere('body', 'ILIKE', '%' . $search . '%')
-                ->paginate(10);
+                ->orderBy('created_at','desc')->orderBy('upvotes','desc')
+                ->paginate(6);
         } else {
             // Retorna todos os posts caso não haja busca
             $posts = DB::table('posts')->paginate(6);
@@ -136,9 +137,25 @@ class PostController extends Controller
         return view('pages.user_posts', compact('user', 'posts'));
     }
 
+    public static function getMoreResulsts($page,$search){
+        $posts = DB::table('posts')
+                ->where('title', 'ILIKE', '%' . $search . '%')
+                ->orWhere('body', 'ILIKE', '%' . $search . '%')
+                ->orderBy('created_at','desc')->orderBy('upvotes','desc')
+                ->paginate(6,['*'],'page',$page);
+        
+        return $posts;
+    }
+
     public function getMorePosts(Request $request){
         $page = $request['page']+2;
-        $posts = Post::select(['post_id', 'title', 'body'])->paginate(6,['*'],'page',$page);
+        
+        if($request['search']!=""){
+            $posts = PostController::getMoreResulsts($page,$request['search']);
+        }
+        else{
+            $posts = Post::select(['post_id', 'title', 'body'])->orderBy('created_at','desc')->orderBy('upvotes','desc')->paginate(6,['*'],'page',$page);
+        }
 
         return response()->json($posts);
     }
