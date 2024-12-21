@@ -19,13 +19,15 @@
                 <a href="{{ route('editProfile', ['id' => $user->user_id]) }}" class="ml-2 h1">[edit]</a>
             @endif
         </h1>
-        @if(!$currentUser && Auth::user()->alreadyFollows($user->user_id))
+        @if (Auth::check())
+            @if(!$currentUser && Auth::user()->alreadyFollows($user->user_id))
             <button class="unfollow btn btn-lg p-4" 
             data-id="{{$user->user_id}}">unFollow</button>
-        @endif
-        @if (!$currentUser && !Auth::user()->alreadyFollows($user->user_id))
+            @endif
+            @if (!$currentUser && !Auth::user()->alreadyFollows($user->user_id))
             <button class="follow btn btn-lg p-4"
             data-id="{{$user->user_id}}">Follow</button>
+            @endif
         @endif
     </div>
     <div class="d-flex flex-row justify-content-center align-items-center border-top border-bottom py-4">
