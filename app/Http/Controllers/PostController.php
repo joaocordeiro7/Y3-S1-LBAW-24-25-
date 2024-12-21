@@ -104,7 +104,7 @@ class PostController extends Controller
     public function list(): View
     {
         // Obter todos os posts com título e corpo
-        $posts = Post::all(['post_id', 'title', 'body']);
+        $posts = Post::select(['post_id', 'title', 'body'])->paginate(6);
 
         // Passar os dados para a view
         return view('pages.home', ['posts' => $posts]);
@@ -122,7 +122,7 @@ class PostController extends Controller
                 ->paginate(10);
         } else {
             // Retorna todos os posts caso não haja busca
-            $posts = DB::table('posts')->paginate(10);
+            $posts = DB::table('posts')->paginate(6);
         }
 
         return view('pages.home', ['posts' => $posts]);
@@ -136,7 +136,12 @@ class PostController extends Controller
         return view('pages.user_posts', compact('user', 'posts'));
     }
 
-    
+    public function getMorePosts(Request $request){
+        $page = $request['page']+2;
+        $posts = Post::select(['post_id', 'title', 'body'])->paginate(6,['*'],'page',$page);
+
+        return response()->json($posts);
+    }
 
 
 }

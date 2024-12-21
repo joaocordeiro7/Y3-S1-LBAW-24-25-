@@ -26,7 +26,7 @@ use App\Http\Controllers\PostController;
 */
 
 // Home
-Route::redirect('/', '/login');
+Route::redirect('/', '/home');
 
 
 
@@ -50,6 +50,7 @@ Route::controller(PostController::class)->group(function (){
     Route::get('/posts', 'index')->name('posts.index');
     Route::post('/deletePost/{id}','destroy');
     Route::get('/user/{id}/posts', 'showUserPosts')->name('user.posts');
+    Route::post('/api/getMorePosts','getMorePosts');
 });
 
 
