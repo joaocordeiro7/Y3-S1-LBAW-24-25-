@@ -276,11 +276,15 @@ article.hidden , section.hidden{
 
 #notfs.visible {
   display: block;
-  top: 12%;
+  top: 12vh;
   right: 0;
+  position:fixed;
 }
 
-#notfs li { padding: 8px 16px; border-bottom: 1px solid #ddd; }
+#notfs li { 
+  padding: 8px 16px; 
+  border-bottom: 1px solid #ddd;
+}
 
 #content {
   padding: 2em;
