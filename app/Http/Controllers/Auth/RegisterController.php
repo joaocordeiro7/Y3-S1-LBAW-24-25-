@@ -28,19 +28,32 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:250',
+            'name' => [
+                'required',
+                'string',
+                'max:250',
+                function ($attribute, $value, $fail) {
+                    if (str_starts_with($value, '[Deleted')) {
+                        $fail('The username cannot start with "[Deleted".');
+                    }
+                },
+            ],
             'email' => 'required|email|max:250|unique:users',
-            'password' => 'required|min:8|confirmed'
+            'password' => 'required|min:8|confirmed',
         ]);
 
-        User::create([
+        $user = User::create([
             'username' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password)
         ]);
 
+        $defaultPath = 'images/profile/default.png';    
+        $user->image()->create(['path' => $defaultPath]);
+
         $credentials = $request->only('email', 'password');
         Auth::attempt($credentials);
+
         $request->session()->regenerate();
         return redirect()->route('home')
             ->withSuccess('You have successfully registered & logged in!');

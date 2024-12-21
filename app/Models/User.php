@@ -17,6 +17,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+
     // Don't add create and update timestamps in database.
     public $timestamps  = false;
 
@@ -67,17 +68,32 @@ class User extends Authenticatable
     }
 
     // the convetion is userId1 follows userId2 
-    public function follows(): HasMany{
-        return $this->hasMany(User::class,"follwed_users",'userid1');
+    public function follows(): HasMany
+    {
+        return $this->hasMany(FollowedUser::class, 'userid1', 'user_id');
     }
-
     
-    public function followedBy(): HasMany{
-        return $this->hasMany(User::class,"follwed_users",'userid2');
+    public function followedBy(): HasMany
+    {
+        return $this->hasMany(FollowedUser::class, 'userid2', 'user_id');
     }
 
     public static function alreadyFollows($user2): bool{
         return DB::table('follwed_users')->where('userid1',"=",Auth::id())->where('userid2',"=",$user2)->exists();
     }
 
+    public function image()
+    {
+        return $this->hasOne(Image::class, 'user_id', 'user_id');
+    }
+
+    public function getProfileImagePath()
+    {
+        return $this->image ? asset('images/profile/' . $this->image->path) : asset('images/profile/default.png');
+    }
+
+    public function blocked()
+    {
+        return $this->hasOne(Blocked::class, 'blocked_id', 'user_id');
+    }
 }

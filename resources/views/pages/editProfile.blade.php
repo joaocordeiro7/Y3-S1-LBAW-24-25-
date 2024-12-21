@@ -4,7 +4,17 @@
 
 @section('content')
 <div class="container">
-    <h1 id="title">Edit {{ $user->username }}'s Profile</h1>
+    <div class="d-flex justify-content-between flex-column align-items-start mb-3">
+        <h1 id="title">Edit {{ $user->username }}'s Profile</h1>
+        <img 
+            id="editprofile-picture-display" 
+            src="{{ asset('storage/' . $user->image->path) }}" 
+            alt="Profile Picture" 
+            class="profilepic align-self-center rounded-circle">
+        </img>
+       
+
+    </div>
 
     <div id="success-message" class="alert alert-success" style="display: none;">
         Profile updated successfully!
@@ -14,29 +24,23 @@
         An error occurred while updating the profile. Please try again.
     </div>
 
-
-    <form id="editProfileForm">
+    <form id="editProfileForm" enctype="multipart/form-data">
         {{ csrf_field() }}
         @include('partials.editProfileForm', ['user' => $user])
-
-        @if (Auth::user()->isAdmin() && Auth::user()->user_id != $user->user_id && !$user->isAdmin())
-            <div class="form-group">
-                <label>Make Admin: (coming soon)</label>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="makeAdmin" disabled>
-                </div>
-            </div>
-        @endif
-
-        <button type="button" id="saveChanges" class="btn btn-primary" 
+        <div class="form-group d-flex me-auto mt-4">
+            <button class="black-button m-auto" type="button" id="saveChanges" 
             data-update-url="{{ Auth::user()->isAdmin() ? route('adminUpdateUser', ['id' => $user->user_id]) : route('updateProfile', ['id' => $user->user_id]) }}">
             Save Changes
-        </button>
-        <a href="{{ route('profile', ['id' => $user->user_id]) }}" class="btn btn-secondary">Cancel</a>
+            </button>
+            <button type="button" class="gray-button m-auto" onclick="window.location.href='{{ route('profile', ['id' => $user->user_id]) }}'">Cancel</button>
+        </div>
     </form>
+
+    <div class="d-flex align-items-center justify-content-center mt-3">
+        <button type="button" id="deleteAccount" class="red-button px-5 btn btn-danger delete-account"
+            data-delete-url="{{ Auth::user()->isAdmin() ? route('adminDeleteAccount', ['id' => $user->user_id]) : route('deleteAccount', ['id' => $user->user_id])  }}">
+            Delete Account
+        </button>
+    </div>
 </div>
 @endsection
-
-@section('scripts')
-@endsection
-

@@ -7,65 +7,109 @@
     <h1>Admin Dashboard</h1>
 
     <h2>Users</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($users as $user)
+    <div class="container">
+        <table class="table table-striped table-bordered table-sm custom-table">
+            <thead class>
                 <tr>
-                    <td>{{ $user->user_id }}</td>
-                    <td>{{ $user->username }}</td>
-                    <td>{{ $user->email }}</td>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach ($users as $user)
+                @if (!str_starts_with($user->username, '[Deleted')) 
+                    <tr>
+                        <td>{{ $user->user_id }}</td>
+                        <td>{{ $user->username }}</td>
+                        <td>{{ $user->email }}</td>
+                        <td class="align-middle">
+                            <div id="users-table">
+                                <a href="{{ route('profile', $user->user_id) }}" class="view-link mx-2">[view]</a>
+                                <button type="button" id="deleteAccount" class="px-3 ms-2 black-button"
+                                    data-delete-url="{{ route('adminDeleteAccount', ['id' => $user->user_id]) }}"
+                                    data-context="admin">
+                                    Delete
+                                </button>
+                                @include('partials.blockUserButton', ['user' => $user])
+                            </div>
+                        </td>
+                    </tr>
+                @endif
+            @endforeach
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Manage Topic Proposals</h2>
+    <div class="container">
+        <table class="table table-striped table-bordered table-sm custom-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach ($proposals as $proposal)
+                <tr>
+                    <td>{{ $proposal->proposal_id }}</td>
+                    <td>{{ $proposal->title }}</td>
                     <td>
-                        <a href="{{ route('profile', $user->user_id) }}" class="btn btn-sm btn-primary">View</a>
-                        
-                        <button class="btn btn-sm btn-danger" disabled>Delete (Coming Soon)</button>
+                        <button type="button" class="accept-discard btn btn-success mb-2 ms-2 accept-proposal" 
+                            data-accept-url="{{ route('acceptTopicProposal', ['id' => $proposal->proposal_id]) }}">
+                            Accept
+                        </button>
+                        <button type="button" class="accept-discard btn btn-danger mb-2 discard-proposal"
+                            data-discard-url="{{ route('discardTopicProposal', ['id' => $proposal->proposal_id]) }}">
+                            Discard
+                        </button>
                     </td>
                 </tr>
             @endforeach
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
+</div>
 
+<div class="container">
     <h2>Create New User</h2>
     <div id="userCreatedMessage" class="alert alert-success" style="display: none;">
         User created successfully!
     </div>
-    <form id="adminCreateUser">
-        {{ csrf_field() }}
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" name="username" id="username" value="{{ old('username') }}" class="form-control">            
-            <span class="error"></span>
-        </div>
+    <div class="form-container">
+        <form id="adminCreateUser" class="d-flex flex-column">
+            {{ csrf_field() }}
+            <div class="form-group mw-75">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" value="{{ old('username') }}" class="form-control">            
+                <span class="error"></span>
+            </div>
 
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" name="email" id="email" class="form-control">
-            <span class="error"></span>
-        </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" class="form-control">
+                <span class="error"></span>
+            </div>
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" class="form-control">
-            <span class="error"></span>
-        </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" class="form-control">
+                <span class="error"></span>
+            </div>
 
-        <div class="form-group">
-            <label for="password_confirmation">Confirm Password</label>
-            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
-            <span class="error"></span>
-        </div>
-
-        <button type="button" id="generateUser" data-action-url="{{ route('createUser') }}">Create User</button>
-    </form>
+            <div class="form-group">
+                <label for="password_confirmation">Confirm Password</label>
+                <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
+                <span class="error"></span>
+            </div>
+            <div class="align-self-center">
+                <button class="black-button"type="button" id="generateUser" data-action-url="{{ route('createUser') }}">Create User</button>
+            </div>    
+        </form>
+    </div>
 </div>
-@endsection
 
-@section('scripts')
 @endsection

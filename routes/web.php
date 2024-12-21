@@ -1,11 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
 
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ImageController;
+use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\StaticPageController;
 
 
 use App\Http\Controllers\Auth\LoginController;
@@ -29,10 +33,11 @@ use App\Http\Controllers\PostController;
 Route::redirect('/', '/home');
 
 
+Route::view('/features', 'static.features')->name('features');
 
+Route::view('/contacts', 'static.contacts')->name('contacts');
 
-
-
+Route::post('/contacts/feedback', [StaticPageController::class, 'submitFeedback'])->name('feedback.submit');
 
 
 Route::controller(PostController::class)->group(function (){
@@ -43,7 +48,7 @@ Route::controller(PostController::class)->group(function (){
 
 
 Route::controller(PostController::class)->group(function (){
-    Route::get('/createPosts','create')->name('createPosts');
+    Route::get('/createPosts','create')->middleware('checkIfBlocked')->name('createPosts');
     Route::post('/api/createPosts','store')->name('publish');
     Route::post('/post/edit/{id}','update');
     Route::get('/', 'index')->name('home');
@@ -66,7 +71,7 @@ Route::controller(LoginController::class)->group(function () {
 
 Route::controller(RegisterController::class)->group(function () {
     Route::get('/register', 'showRegistrationForm')->name('register');
-    Route::post('/register', 'register');
+    Route::post('/register', 'register')->middleware('blacklist');
 });
 
 Route::controller(UserController::class)->group(function () {
@@ -78,6 +83,8 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/api/unfollow/{userToUnfollow}','unfollow');
     Route::post('/api/checkNotf','getNewNotf')->name('checkForNewNotfs');
     Route::post('/api/readNotf','readNotf');
+    Route::delete('/users/delete/{id}', 'deleteAccount')->name('deleteAccount');  
+    Route::post('/user/propose-topic', 'proposeTopic')->middleware('auth')->name('proposeTopic')    ;
 });
 
 // Admin
@@ -85,7 +92,21 @@ Route::controller(AdminController:: class)->group(function () {
     Route::get('/admin', 'index')->name('adminDashboard');
     Route::post('/admin/create', 'createUser')->name('createUser');
     Route::post('/api/admin/edit/{id}',  'adminUpdateUser')->name('adminUpdateUser');
+    Route::delete('/admin/delete/{id}', 'adminDeleteAccount')->name('adminDeleteAccount');
+    Route::post('/admin/block/{id}', 'blockUser')->name('blockUser');
+    Route::delete('/admin/unblock/{id}', 'unblockUser')->name('unblockUser');
+    Route::post('/admin/proposals/{id}/accept', 'acceptTopicProposal')->name('acceptTopicProposal');
+    Route::delete('/admin/proposals/{id}/discard', 'discardTopicProposal')->name('discardTopicProposal');
 });
 
+Route::controller(ImageController:: class)->group(function () {
+    Route::post('/image/update', 'update')->name('image.update');
+    Route::delete('/image/delete/{id}', 'delete')->name('image.delete');
+});
 
-Route::get('/notf',[UserController::class,'shownotf'])->name('notf');
+Route::controller(PasswordResetController:: class)->group(function () {
+    Route::get('password/reset', 'showResetRequestForm')->name('password.request');
+    Route::post('password/reset', 'sendResetLink')->name('password.email');
+    Route::post('api/password/reset/{token}', 'resetPassword')->name('password.update');
+    Route::get('password/reset/{token}', 'showResetForm')->name('password.reset');
+});

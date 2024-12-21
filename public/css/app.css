@@ -386,3 +386,116 @@ main > header form.mb-4.d-flex a {
   }
 }
 
+.custom-table th, .custom-table td {
+  padding: 5px; 
+}
+
+.custom-table thead {
+  background-color: #f8f9fa; 
+  color: #343a40; 
+}
+
+.custom-table td, .table th {
+  vertical-align: middle !important; 
+}
+
+.btn {
+  padding: 5px 10px !important; 
+}
+
+
+.follow, .unfollow {
+  height:45px; background-color: black; color:white; font-weight: 300;font-size: 1.4rem; margin-right: 10px; margin-top: 10px;
+}
+
+.icon {
+  font-size: 1.5em;
+}
+
+.profilepic {
+  max-width: 180px; border: 2px solid #000;
+}
+
+#editprofie-picture-display .profilepic {
+  max-width: 150px !important;
+}
+
+.icon-text-under {
+  font-size: 1.3em;
+  font-weight: 300;
+  margin-bottom: -10px;
+}
+
+.black-button {
+  background-color: #000000; color: white; 
+  font-size: 1.3rem;
+}
+
+.gray-button {
+  background-color: #a9a9a9; color: black;;
+}
+
+.red-button {
+  font-weight: 700;
+}
+
+.blue-button {
+  font-size: 1.3rem;
+  font-weight: 700;
+  background-color: #0d6efd;
+  color: white;
+}
+
+.view-link {
+  font-size: 1.55rem; 
+  font-weight: 700; 
+  color: blue; 
+}
+
+.block-unblock {
+  margin-bottom: 2px;
+  margin-left: 10px;
+  font-weight: 700;
+  padding: 5px 10px; 
+}
+
+#users-table {
+  margin-top: 10px; 
+}
+
+.accept-discard {
+  font-size: 1.25rem;
+  margin-left: 10px;
+  margin-top: 10px;
+  font-weight: 700;
+}
+
+.form-container {
+  border: 2px solid #ccc;
+  padding-top: 30px;
+  max-width: 350px;
+  margin: auto;
+}
+.form-group {
+  max-width: 500px;
+  margin: auto;
+}
+.form-control {
+  font-size: 1.2em;
+}
+label {
+  font-size: 1.2em;
+}
+
+.card-header {
+  font-size: 1.5em;
+}
+
+#contact-us-form {
+  margin: 0 !important;
+}
+
+.form-group .error{
+  color: red;
+  font-size: smaller;
+}

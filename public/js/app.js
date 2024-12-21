@@ -48,6 +48,42 @@ function addEventListeners() {
     if (createUserButton) {
         createUserButton.addEventListener('click', handleCreateUser);
     }
+
+    let deleteAccountButtons = document.querySelectorAll('button.delete-account');
+    if (deleteAccountButtons) {
+        deleteAccountButtons.forEach(button => {
+            button.addEventListener('click', handleDeleteAccount);
+        });
+    }
+
+    let blockUserButtons = document.querySelectorAll('.block-user');
+    if(blockUserButtons) {
+        blockUserButtons.forEach(button => {
+            button.addEventListener('click', handleBlockUser);
+        });
+    }
+
+    let unblockUserButtons = document.querySelectorAll('.unblock-user');
+    if(unblockUserButtons) {
+        unblockUserButtons.forEach(button => {
+            button.addEventListener('click', handleUnblockUser);
+        });
+    }
+
+    let acceptProposalButtons = document.querySelectorAll('.accept-proposal');
+    if (acceptProposalButtons) {
+        acceptProposalButtons.forEach(button => {
+            button.addEventListener('click', handleAcceptProposal);
+        });
+    }
+
+    let discardProposalButtons = document.querySelectorAll('.discard-proposal');
+    if (discardProposalButtons) {
+        discardProposalButtons.forEach(button => {
+            button.addEventListener('click', handleDiscardProposal);
+        });
+    }
+
   }
   
   
@@ -431,48 +467,53 @@ function addEventListeners() {
         },
         body: formData,
     })
-        .then(response => {
-            if (!response.ok) {
-                if (response.status === 422) {
-                    return response.json().then(data => {
-                        if (data.errors) throw data.errors;
-                        throw new Error('Validation failed without specific errors.');
-                    });
-                }
-                throw new Error('Profile update failed.');
-            }
-            return response.json();
-        })
-        .then(data => {
-            successMessage.style.display = "block";
-            errorMessage.style.display = "none";
-
-            form.querySelector('#username').value = data.username;
-            form.querySelector('#email').value = data.email;
-
-            const title = document.querySelector('#title');
-            if (title) {
-                title.textContent = `Edit ${data.username}'s Profile`;
-            }
-        })
-        .catch(errors => {
-            if (typeof errors === 'object') {
-                console.error("Validation errors:", errors);
-
-                Object.keys(errors).forEach(field => {
-                    const errorSpan = form.querySelector(`#${field}-error`);
-                    if (errorSpan) {
-                        errorSpan.textContent = errors[field].join(', ');
-                        errorSpan.style.display = 'block';
-                    }
+    .then(response => {
+        if (!response.ok) {
+            if (response.status === 422) {
+                return response.json().then(data => {
+                    if (data.errors) throw data.errors;
+                    throw new Error('Validation failed without specific errors.');
                 });
-            } else {
-                console.error("Error details:", errors);
-                errorMessage.style.display = "block";
-                successMessage.style.display = "none";
-                errorMessage.innerText = errors || "Unexpected error occurred. Please try again.";
             }
-        });
+            throw new Error('Profile update failed.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        successMessage.style.display = "block";
+        errorMessage.style.display = "none";
+
+        form.querySelector('#username').value = data.username;
+        form.querySelector('#email').value = data.email;
+
+        const profilePicture = document.getElementById('profile-picture-display');
+        if (profilePicture && data.image_path) {
+            profilePicture.src = data.image_path + '?' + new Date().getTime(); // Cache-busting
+        }
+
+        const title = document.querySelector('#title');
+        if (title) {
+            title.textContent = `Edit ${data.username}'s Profile`;
+        }
+    })
+    .catch(errors => {
+        if (typeof errors === 'object') {
+            console.error("Validation errors:", errors);
+
+            Object.keys(errors).forEach(field => {
+                const errorSpan = form.querySelector(`#${field}-error`);
+                if (errorSpan) {
+                    errorSpan.textContent = errors[field].join(', ');
+                    errorSpan.style.display = 'block';
+                }
+            });
+        } else {
+            console.error("Error details:", errors);
+            errorMessage.style.display = "block";
+            successMessage.style.display = "none";
+            errorMessage.innerText = errors || "Unexpected error occurred. Please try again.";
+        }
+    });
 }
 
 function handleCreateUser(event) {
@@ -516,11 +557,19 @@ function handleCreateUser(event) {
                   <td>${data.username}</td>
                   <td>${data.email}</td>
                   <td>
-                      <a href="/users/${data.user_id}/edit" class="btn btn-sm btn-primary">Edit</a>
-                      <button class="btn btn-sm btn-danger" disabled>Delete (Coming Soon)</button>
+                        <a href="/users/${data.user_id}" class="btn btn-sm btn-primary">View</a>
+                        <button type="button" class="btn btn-danger delete-account"
+                            data-delete-url="/admin/delete/${data.user_id}"
+                            data-context="admin">
+                            Delete
+                        </button>
                   </td>
               `;
               usersTable.appendChild(newRow);
+
+              const deleteButton = newRow.querySelector('.delete-account');
+              deleteButton.addEventListener('click', handleDeleteAccount);
+  
 
               form.reset();
 
@@ -543,5 +592,177 @@ function handleCreateUser(event) {
       });
 }
 
+function handleDeleteAccount(event) {
+    const deleteUrl = event.target.dataset.deleteUrl;
+    const context = event.target.dataset.context;
 
+    if (!confirm('Are you sure you want to delete your account? This action is irreversible.')) {
+        return;
+    }
 
+    fetch(deleteUrl, {
+        method: 'DELETE', 
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json'
+        },
+    })
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error('Failed to delete account.');
+        }
+        return response.json();
+    })
+    .then((data) => {
+            alert(data.message || 'Account deleted successfully.');
+
+            if (context !== 'admin') {
+                window.location.href = '/';
+            } else {
+                event.target.closest('tr').remove();
+            }
+        })
+    .catch((error) => {
+        console.error('Error:', error);
+        alert('An error occurred while deleting the account. Please try again.');
+    });
+}
+
+function handleBlockUser(event) {
+    const blockUrl = event.target.dataset.blockUrl;
+
+    console.log('Block URL:', blockUrl);
+
+    if(!confirm('Are you sure you want to block this user?')) {
+        return;
+    }
+
+    fetch(blockUrl, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to block user.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert(data.message);
+        location.reload(); 
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while blocking the user.');
+    });
+}
+
+function handleUnblockUser(event) {
+    const unblockUrl = event.target.dataset.unblockUrl;
+
+    fetch(unblockUrl, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to unblock user.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert(data.message);
+        location.reload(); 
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while unblocking the user.');
+    });
+}
+
+function openProposalForm() {
+    const modal = document.getElementById('proposalModal');
+    if (modal) {
+        modal.style.display = 'block';
+        modal.style.opacity = '1';
+        modal.style.transition = 'opacity 0.3s ease';
+    }
+}
+
+function closeProposalForm() {
+    const modal = document.getElementById('proposalModal');
+    if (modal) {
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300); 
+    }
+}
+
+function handleAcceptProposal(event) {
+    const acceptUrl = event.target.dataset.acceptUrl;
+
+    console.log('Accept URL:', acceptUrl);
+
+    if (!confirm('Are you sure you want to accept this topic?')) {
+        return;
+    }
+
+    fetch(acceptUrl, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        },
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to accept the proposal.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message);
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while accepting the proposal.');
+        });
+}
+
+function handleDiscardProposal(event) {
+    const discardUrl = event.target.dataset.discardUrl;
+
+    console.log('Discard URL:', discardUrl);
+
+    if (!confirm('Are you sure you want to discard this topic?')) {
+        return;
+    }
+
+    fetch(discardUrl, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        },
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to discard the proposal.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message);
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while discarding the proposal.');
+        });
+}

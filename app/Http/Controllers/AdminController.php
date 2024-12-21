@@ -5,9 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Blocked;
+use App\Models\TopicProposal;
+use App\Models\Tag;
+
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -21,14 +27,24 @@ class AdminController extends Controller
         }
 
         $users = User::paginate(10);
+        $proposals = DB::table('topic_proposal')->get();
 
-        return view('pages.adminDashboard', compact('users'));
+        return view('pages.adminDashboard', compact('users', 'proposals'));
     }
 
     public function createUser(Request $request)
     {
         $request->validate([
-            'username' => 'required|string|max:250',
+            'username' => [
+                'required',
+                'string',
+                'max:250',
+                function ($attribute, $value, $fail) {
+                    if (str_starts_with($value, '[Deleted')) {
+                        $fail('The username cannot start with "[Deleted".');
+                    }
+                },
+            ],
             'email' => 'required|email|max:250|unique:users',
             'password' => 'required|min:8|confirmed',
         ]);
@@ -39,11 +55,15 @@ class AdminController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $defaultProfilePicturePath = 'images/profile/default.png';
+        $user->image()->create(['path' => $defaultProfilePicturePath]);    
+
         return response()->json([
             'success' => true,
             'user_id' => $user->user_id,
             'username' => $user->username,
             'email' => $user->email,
+            'image_path' => $defaultProfilePicturePath,
         ]);
     }
 
@@ -52,9 +72,20 @@ class AdminController extends Controller
         $user = User::findOrFail($id);
     
         $request->validate([
-            'username' => 'required|string|max:250|unique:users,username,' . $user->user_id . ',user_id', 
+            'username' => [
+                'required',
+                'string',
+                'max:250',
+                'unique:users,username,' . $user->user_id . ',user_id',
+                function ($attribute, $value, $fail) {
+                    if (str_starts_with($value, '[Deleted')) {
+                        $fail('The username cannot start with "[Deleted".');
+                    }
+                },
+            ], 
             'email' => 'required|email|max:250|unique:users,email,' . $user->user_id . ',user_id',
             'password' => 'nullable|string|min:8|confirmed',
+            'image' => 'nullable|mimes:png,jpeg,jpg|max:2048'
         ]);
     
         $user->username = $request->input('username');
@@ -65,23 +96,81 @@ class AdminController extends Controller
         }
     
         $user->save();
+        
+        if ($request->file('image')) {
+            $file = $request->file('image');
+            $path = $file->store('images/profile', 'public');
     
+            if ($user->image && $user->image->path !== 'images/profile/default.png') {
+                Storage::disk('public')->delete($user->image->path);
+            }
+    
+            if ($user->image) {
+                $user->image->update(['path' => $path]);
+            } else {
+                $user->image()->create(['path' => $path]);
+            }
+        }
+
         return response()->json([
             'success' => true,
             'username' => $user->username,
             'email' => $user->email,
+            'image_path' => $user->image ? asset('storage/' . $user->image->path) : asset('storage/images/profile/default.png'),
         ]);
     }   
 
 
     /**
-     * Show the form for creating a new resource.
+     * Accept topic proposal.
      */
-    public function create()
+    public function acceptTopicProposal($id)
     {
-        //
-    }
+        $proposal = TopicProposal::findOrFail($id);
+    
+        if (!$proposal) {
+            return response()->json(['error' => 'Proposal not found'], 404);
+        }
+    
+        $existingTag = Tag::where('name', $proposal->title)->first();
+        if ($existingTag) {
+            $proposal->delete();
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Topic proposal already exists as a tag and has been removed from the proposals.',
+            ]);
+        }
+    
+        $tag = Tag::create([
+            'name' => $proposal->title,
+        ]);
 
+    
+        $proposal->delete();
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Topic accepted and added as a new tag.',
+        ]);
+    }
+    
+
+    /**
+     * Discard topic proposal.
+     */
+    public function discardTopicProposal($id)
+    {
+        $proposal = TopicProposal::findOrFail($id);
+        
+        if (!$proposal) {
+            return response()->json(['error' => 'Proposal not found'], 404);
+        }
+
+        $proposal->delete();
+
+        return response()->json(['success' => true, 'message' => 'Topic proposal discarded']);
+    }
     /**
      * Store a newly created resource in storage.
      */
@@ -107,18 +196,69 @@ class AdminController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Unblock a user.
      */
-    public function update(Request $request, Admin $admin)
+    public function unblockUser(Request $request, $id)
     {
-        //
+        $user = User::findOrFail($id);
+    
+        DB::table('blocked')->where('blocked_id', $id)->delete();
+    
+        return response()->json([
+            'success' => true,
+            'message' => "{$user->username} has been unblocked.",
+        ]);
     }
+    
 
     /**
-     * Remove the specified resource from storage.
+     * Block a user.
      */
-    public function destroy(Admin $admin)
+    public function blockUser(Request $request, $id)
     {
-        //
+        $user = User::findOrFail($id);
+    
+        if ($user->isAdmin()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Admins cannot be blocked.',
+            ], 403);
+        }
+    
+        DB::table('blocked')->insert(['blocked_id' => $id]);
+    
+        return response()->json([
+            'success' => true,
+            'message' => "{$user->username} has been blocked.",
+        ]);
     }
+
+    public function adminDeleteAccount(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+    
+        if (!Auth::user()->isAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+    
+        DB::transaction(function () use ($user) {
+            DB::statement('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
+    
+            DB::table('blacklist')->insert(['email' => $user->email]);
+    
+            $user->username = "[Deleted Account]";
+            $user->email = "deleted{$user->user_id}@user.com";
+            $user->password = null;
+            $user->remember_token = null;
+            $user->image()->delete();
+            $user->image()->create(['path' => 'images/profile/default.png']);    
+            $user->save();
+        });
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'User account deleted successfully.'
+        ]);
+    }
+    
 }
