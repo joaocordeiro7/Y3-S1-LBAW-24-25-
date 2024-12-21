@@ -125,24 +125,30 @@ class PostController extends Controller
         return view('pages.home', ['posts' => $posts], ['tags' => $tags]);
     }
 
-    public function index(Request $request)
-    {
+    public function index(Request $request) {
         $search = $request->input('search');
-
-        // Se houver pesquisa, usar ILIKE para busca tolerante
-        if ($search) {
-            $posts = DB::table('posts')
-                ->where('title', 'ILIKE', '%' . $search . '%')
-                ->orWhere('body', 'ILIKE', '%' . $search . '%')
-                ->paginate(10);
-        } else {
-            // Retorna todos os posts caso não haja 
-            $posts = DB::table('posts')->paginate(10);
-        }
-
         $tags = Tag::all();
-
-        return view('pages.home', ['posts' => $posts], ['tags' => $tags]);
+    
+        if ($search) {
+            $searchTerms = array_map(function ($term) {
+                return trim($term) . ':*'; 
+            }, explode(' ', $search));
+            $searchQuery = implode(' | ', $searchTerms); 
+    
+            $posts = Post::whereRaw(
+                "tsvectors @@ to_tsquery('english', ?)",
+                [$searchQuery]
+            )
+            ->orderByRaw(
+                "ts_rank(tsvectors, to_tsquery('english', ?)) DESC",
+                [$searchQuery]
+            )
+            ->paginate(10);
+        } else {
+            $posts = Post::paginate(10);
+        }
+    
+        return view('pages.home', ['posts' => $posts, 'tags' => $tags]);
     }
 
     public function showUserPosts($id)
