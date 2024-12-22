@@ -33,6 +33,13 @@
                                 Delete
                             </button>
                             @include('partials.blockUserButton', ['user' => $user])
+                            @if (!$user->isAdmin())
+                                <button type="button" class="btn btn-warning promote-user mb-2"
+                                    data-promote-url="{{ route('promoteToAdmin', ['id' => $user->user_id]) }}"
+                                    style="height:45px; color:black; font-size: 1.25rem; margin-right: 10px;">
+                                    Promote to Admin
+                                </button>
+                            @endif
                         </td>
                     </tr>
                 @endif

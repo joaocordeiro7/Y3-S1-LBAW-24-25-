@@ -860,3 +860,45 @@ function deleteReply(commentId) {
         alert('An error occurred while deleting the comment.');
     });
 }
+
+
+function handlePromoteUser(event) {
+    const promoteUrl = event.target.dataset.promoteUrl;
+
+    if (!confirm('Are you sure you want to promote this user to admin?')) {
+        return;
+    }
+
+    fetch(promoteUrl, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to promote user.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert(data.message);
+        location.reload(); 
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while promoting the user.');
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const promoteUserButtons = document.querySelectorAll('.promote-user');
+
+    if (promoteUserButtons) {
+        promoteUserButtons.forEach(button => {
+            button.addEventListener('click', handlePromoteUser);
+        });
+    }
+});
+

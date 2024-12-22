@@ -103,6 +103,7 @@ Route::controller(AdminController:: class)->group(function () {
     Route::delete('/admin/unblock/{id}', 'unblockUser')->name('unblockUser');
     Route::post('/admin/proposals/{id}/accept', 'acceptTopicProposal')->name('acceptTopicProposal');
     Route::delete('/admin/proposals/{id}/discard', 'discardTopicProposal')->name('discardTopicProposal');
+    Route::post('/admin/promote/{id}', 'promoteToAdmin')->name('promoteToAdmin');
 });
 
 Route::controller(ImageController:: class)->group(function () {
