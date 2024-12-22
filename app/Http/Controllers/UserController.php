@@ -69,7 +69,15 @@ class UserController extends Controller
      */
     public function show($id)
     {
+        if (!is_numeric($id)) {
+            abort(404, 'User not found');
+        }
+    
         $user = User::find($id);
+    
+        if (!$user) {
+            abort(404, 'User not found');
+        }
         //change to profileOwner
         $currentUser = Auth::check() && Auth::id() == $user->user_id;
     

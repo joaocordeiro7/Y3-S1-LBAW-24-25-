@@ -60,7 +60,16 @@ class PostController extends Controller
      */
     public function show(string $id): View
     {
+        if (!is_numeric($id)) {
+            abort(404, 'Post not found');
+        }
+    
         $post = Post::with('tags')->findOrFail($id);
+    
+        if (!$post) {
+            abort(404, 'Post not found');
+        }
+        
         $comments = $post->comments;
         return view('pages.post', ['post' => $post, 'comments' => $comments]);
     }

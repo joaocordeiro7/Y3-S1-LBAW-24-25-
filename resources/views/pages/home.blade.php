@@ -80,6 +80,11 @@
                             <button type="submit" class="btn" style="background-color:rgb(133, 9, 25); color:white; font-size: 1.25rem;">Search</button>
                             <button type="button" class="btn gray-button" onclick="window.location='{{ route('home') }}'">Clear</button>
                         </div>
+                        @if(session('error'))
+                            <div style="color: red; font-size: 0.9em; margin-top: 0.5em;">
+                                {{ session('error') }}
+                            </div>
+                        @endif
                     </form>
                 </div>
             </div>
