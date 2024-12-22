@@ -12,27 +12,31 @@
         <div class="newsBody">
             <pre>{{$post->body}}</pre>
         </div>
-        <div class="post-tags">
-            <h4>Tags:</h4>
-            @foreach ($post->tags as $tag)
-                <span>{{ $tag->name }}</span>
-            @endforeach
-        </div>
+        
         <div id="postDetails">
+            <div class="post-tags">
+                <span class="tags-list">
+                    <h4>Tags:</h4>
+                    @foreach ($post->tags as $tag)
+                        <span>{{ $tag->name }}</span>
+                    @endforeach
+                </span>
+            </div>
             <p><a href="/users/{{$post->owner->user_id}}">{{$post->owner->username}}</a> - Published at {{$post->created_at->format('d M Y H:i')}}</p>
-            
+            <div id="votes">
+                @if (Auth::check() && Auth::user()->user_id != $post->owner->user_id)
+                    <button onclick="like({{ $post->post_id }} , 1)"><i class="fa-regular fa-thumbs-up"></i></button>
+                    <span class="qtd-likes">{{ $post->upvotes }}</span>
+                    <button onclick="like({{ $post->post_id }} , 0)"><i class="fa-regular fa-thumbs-down"></i></button>
+                    <span class="qtd-deslikes">{{ $post->downvotes }}</span>
+                @else
+                    <span class="qtd-likes"><i class="fa-regular fa-thumbs-up"></i> {{ $post->upvotes }}</span>
+                    <span class="qtd-deslikes"><i class="fa-regular fa-thumbs-down"></i> {{ $post->downvotes }}</span>
+                @endif
+            </div>
         </div>
-        <div id="votes">
-            @if (Auth::check() && Auth::user()->user_id != $post->owner->user_id)
-                <button class="button-like" onclick="like({{ $post->post_id }} , 1)"><i class="fa-regular fa-thumbs-up"></i></button>
-                <h4 class="qtd-likes">{{ $post->upvotes }}</h4>
-                <button class="button-deslike" onclick="like({{ $post->post_id }} , 0)"><i class="fa-regular fa-thumbs-down"></i></button>
-                <h4 class="qtd-deslikes">{{ $post->downvotes }}</h4>
-            @else
-                <h4 class="qtd-likes"><i class="fa-regular fa-thumbs-up"></i> {{ $post->upvotes }}</h4>
-                <h4 class="qtd-deslikes"><i class="fa-regular fa-thumbs-down"></i> {{ $post->downvotes }}</h4>
-            @endif
-        </div>
+    </article>
+    <section class="comments-section">
         <div id="postComments" class="container">
             <h3 id="comments-title">Comments ({{ count($comments) }})</h3>
             @if (!Auth::check())
@@ -55,6 +59,7 @@
                             @if ($comment->reply_to === null)
                                 <article class="comment" data-comment-id="{{ $comment->comment_id }}">
                                     <p id="comment-body-{{ $comment->comment_id }}">{{ $comment->body }}</p>
+                                    <p><a href="/users/{{$comment->owner->user_id}}">{{$comment->owner->username}}</a> - Published at {{$comment->created_at->format('d M Y H:i')}}</p>
                                     @if (Auth::check() && (Auth::user()->user_id == $comment->owner->user_id || Auth::user()->isAdmin()))
                                         <button onclick="deleteComment({{ $comment->comment_id }})" class="delete-comment-btn">Delete</button>
                                     @endif
@@ -79,7 +84,6 @@
                                             <span id="downvotes-{{ $comment->comment_id }}">{{ $comment->downvotes ?? 0 }}</span>
                                         </div>
                                     @endif
-                                    <p><a href="/users/{{$comment->owner->user_id}}">{{$comment->owner->username}}</a> - Published at {{$comment->created_at->format('d M Y H:i')}}</p>
                                     <button class="reply-comment-btn" onclick="toggleReplyForm({{ $comment->comment_id }})">Reply</button>
                                     <form id="reply-form-{{ $comment->comment_id }}" class="hidden" method="POST">
                                         @csrf
@@ -92,6 +96,7 @@
                                             @foreach ($comment->replies as $reply)
                                                 <article class="reply" data-reply-id="{{ $reply->comment_id }}">
                                                     <p id="reply-body-{{ $reply->comment_id }}">{{ $reply->body }}</p>
+                                                    <p><a href="/users/{{ $reply->owner->user_id }}">{{ $reply->owner->username }}</a> - Published at {{ $reply->created_at->format('d M Y H:i') }}</p>
                                                     @if (Auth::check() && (Auth::user()->user_id == $reply->owner->user_id || Auth::user()->isAdmin()))
                                                         <button onclick="deleteReply({{ $reply->comment_id }})" class="delete-comment-btn">Delete</button>
                                                     @endif
@@ -116,7 +121,6 @@
                                                             <span id="downvotes-{{ $reply->comment_id }}">{{ $reply->downvotes ?? 0 }}</span>
                                                         </div>
                                                     @endif
-                                                    <p><a href="/users/{{ $reply->owner->user_id }}">{{ $reply->owner->username }}</a> - Published at {{ $reply->created_at->format('d M Y H:i') }}</p>
                                                 </article>
                                             @endforeach
                                         </div>
@@ -128,7 +132,7 @@
                 </section>
             @endif
         </div>
-    </article>
+    </section>
     <section class="postEditForm hidden" data-id="{{ $post->post_id }}">
         <form>
             {{csrf_field()}}
