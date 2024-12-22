@@ -360,7 +360,7 @@ class PostController extends Controller
                 return response()->json(['success' => false, 'error' => 'You cannot delete a comment with upvotes or downvotes.']);
             }
 
-            // Deleta o comentário
+            // Apaga o comentário
             $comment->delete();
 
             return response()->json(['success' => true, 'message' => 'Comment deleted successfully.']);
