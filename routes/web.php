@@ -65,6 +65,8 @@ Route::controller(PostController::class)->group(function (){
     Route::post('/comments/reply', 'replyToComment')->middleware('auth');
     Route::put('/comments/reply/update/{id}', 'updateComment')->name('comments.update');
     Route::delete('/comments/delete/{id}', 'deleteComment')->middleware('auth');
+    Route::get('/posts/tag/{tag}', 'filterByTag')->name('posts.tag');
+
 });
 
 
@@ -91,8 +93,9 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/api/checkNotf','getNewNotf')->name('checkForNewNotfs');
     Route::post('/api/readNotf','readNotf');
     Route::delete('/users/delete/{id}', 'deleteAccount')->name('deleteAccount');  
-    Route::post('/user/propose-topic', 'proposeTopic')->middleware('auth')->name('proposeTopic')    ;
-    Route::post('/user/getUsername','getUsername');
+    Route::post('/user/propose-topic', 'proposeTopic')->middleware('auth')->name('proposeTopic');
+    Route::get('/users/{id}/followers', 'followers')->name('user.followers');
+    Route::get('/users/{id}/following', 'following')->name('user.following');
 });
 
 // Admin
@@ -105,6 +108,7 @@ Route::controller(AdminController:: class)->group(function () {
     Route::delete('/admin/unblock/{id}', 'unblockUser')->name('unblockUser');
     Route::post('/admin/proposals/{id}/accept', 'acceptTopicProposal')->name('acceptTopicProposal');
     Route::delete('/admin/proposals/{id}/discard', 'discardTopicProposal')->name('discardTopicProposal');
+    Route::post('/admin/promote/{id}', 'promoteToAdmin')->name('promoteToAdmin');
 });
 
 Route::controller(ImageController:: class)->group(function () {

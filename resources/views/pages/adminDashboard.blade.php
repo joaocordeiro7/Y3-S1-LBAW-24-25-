@@ -27,12 +27,19 @@
                         <td class="align-middle">
                             <div id="users-table">
                                 <a href="{{ route('profile', $user->user_id) }}" class="view-link mx-2">[view]</a>
-                                <button type="button" id="deleteAccount" class="px-3 ms-2 black-button"
+                                <button type="button" id="deleteAccount" class="delete-account px-3 ms-2 black-button"
                                     data-delete-url="{{ route('adminDeleteAccount', ['id' => $user->user_id]) }}"
                                     data-context="admin">
                                     Delete
                                 </button>
                                 @include('partials.blockUserButton', ['user' => $user])
+                                @if (!$user->isAdmin())
+                                    <button type="button" class="btn btn-warning promote-user mb-2"
+                                        data-promote-url="{{ route('promoteToAdmin', ['id' => $user->user_id]) }}"
+                                        style="height:45px; color:black; font-size: 1.25rem; margin-right: 10px;">
+                                        Promote to Admin
+                                    </button>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -40,6 +47,9 @@
             @endforeach
             </tbody>
         </table>
+        <div class="pagination">
+            {{ $users->links('pagination::bootstrap-4') }}
+        </div>
     </div>
 
     <h2>Manage Topic Proposals</h2>
@@ -71,6 +81,9 @@
             @endforeach
             </tbody>
         </table>
+        <div class="pagination">
+            {{ $proposals->links('pagination::bootstrap-4') }}
+        </div>
     </div>
 </div>
 

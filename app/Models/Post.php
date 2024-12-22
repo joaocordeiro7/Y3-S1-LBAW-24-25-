@@ -30,7 +30,7 @@ class Post extends Model
     }
 
     public function comments(){
-      return $this->hasMany(Comment::class, 'post', 'post_id');
+      return $this->hasMany(Comment::class, 'post', 'post_id')->orderBy('created_at', 'desc');
     }
 
     public function tags(){

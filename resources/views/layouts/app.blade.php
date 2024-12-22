@@ -47,9 +47,12 @@
                 <hr>
                 <footer>
                     <div class="row">
-                    <div class="col-lg-12">
-                        <p>Copyright &copy; The Bulletin 2024</p>
-                    </div>
+                        <div class="col-lg-12">
+                            <p>Copyright &copy; The Bulletin 2024</p>
+                            <a class="button" href="{{ route('features') }}">Features</a>
+                            <a class="button" href="{{ route('contacts') }}">Contacts</a>
+                            <a class="button" href="{{ route('aboutUs') }}">About Us</a> 
+                        </div>
                     </div>
                 </footer>
             </div>

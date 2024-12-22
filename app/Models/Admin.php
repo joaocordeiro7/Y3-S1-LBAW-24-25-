@@ -14,4 +14,6 @@ class Admin extends Model
     protected $table = 'admins';
 
     protected $primaryKey = 'admin_id';
+
+    protected $fillable = ['admin_id'];
 }

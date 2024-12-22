@@ -71,7 +71,15 @@ class UserController extends Controller
      */
     public function show($id)
     {
+        if (!is_numeric($id)) {
+            abort(404, 'User not found');
+        }
+    
         $user = User::find($id);
+    
+        if (!$user) {
+            abort(404, 'User not found');
+        }
         //change to profileOwner
         $currentUser = Auth::check() && Auth::id() == $user->user_id;
     
@@ -235,11 +243,7 @@ class UserController extends Controller
     }
 
 
-    public function getUsername(Request $request){
-        $username = User::find($request->input('id'))->username;
-
-        return response()->json(['name'=>$username]);
-    }
+    
 
     public function getNewNotf(Request $request){
         $newN = UpvoteOnPostNotification::getNewNotifs($request);
@@ -252,6 +256,21 @@ class UserController extends Controller
 
     public function readNotf(Request $request){
         UpvoteOnPostNotification::readNotf($request);
+    }
+    public function followers($id) {
+        $followers = User::whereHas('follows', function ($query) use ($id) {
+            $query->where('userid2', $id);
+        })->get(['user_id', 'username']);
+    
+        return response()->json($followers);
+    }
+    
+    public function following($id) {
+        $following = User::whereHas('followedBy', function ($query) use ($id) {
+            $query->where('userid1', $id);
+        })->get(['user_id', 'username']);
+    
+        return response()->json($following);
     }
 
 }

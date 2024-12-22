@@ -26,8 +26,8 @@ class AdminController extends Controller
             return redirect('/')->with('error', 'You are not authorized to access this page.');
         }
 
-        $users = User::paginate(10);
-        $proposals = DB::table('topic_proposal')->get();
+        $users = User::where('username', 'not like', '[Deleted%]')->paginate(10, ['*'], 'users_page'); 
+        $proposals = TopicProposal::paginate(10, ['*'], 'proposals_page');
 
         return view('pages.adminDashboard', compact('users', 'proposals'));
     }
@@ -260,5 +260,24 @@ class AdminController extends Controller
             'message' => 'User account deleted successfully.'
         ]);
     }
-    
+
+    public function promoteToAdmin($id) {
+        if (!Auth::user()->isAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $user = User::findOrFail($id);
+
+        if ($user->isAdmin()) {
+            return response()->json(['error' => 'User is already an admin'], 400);
+        }
+
+        Admin::create(['admin_id' => $user->user_id]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "{$user->username} has been promoted to admin."
+        ]);
+    }
+
 }

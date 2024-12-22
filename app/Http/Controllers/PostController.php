@@ -60,7 +60,16 @@ class PostController extends Controller
      */
     public function show(string $id): View
     {
+        if (!is_numeric($id)) {
+            abort(404, 'Post not found');
+        }
+    
         $post = Post::with('tags')->findOrFail($id);
+    
+        if (!$post) {
+            abort(404, 'Post not found');
+        }
+        
         $comments = $post->comments;
         return view('pages.post', ['post' => $post, 'comments' => $comments]);
     }
@@ -486,5 +495,23 @@ class PostController extends Controller
             return response()->json(['success' => false, 'error' => 'An unexpected error occurred: ' . $e->getMessage()], 500);
         }
     }
+
+
+    public function filterByTag(string $tagName): View {
+        $tag = Tag::where('name', $tagName)->first();
+    
+        if (!$tag) {
+            return redirect()->route('home')->with('error', 'Tag not found.');
+        }
+    
+        $posts = $tag->posts()->with('tags')->get();
+    
+        return view('pages.postsByTag', [
+            'posts' => $posts,
+            'tagName' => $tagName,
+        ]);
+    }
+    
+
 
 }

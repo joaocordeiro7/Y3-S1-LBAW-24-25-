@@ -13,7 +13,7 @@
                         <ul class="list-group mb-4">
                             @foreach ($tags as $tag)
                                 <li class="list-group-item">
-                                    <a href="{{ route('home', ['tag' => $tag->name]) }}">{{ $tag->name }}</a>
+                                    <a href="{{ route('posts.tag', ['tag' => $tag->name]) }}">{{ $tag->name }}</a>
                                 </li>
                             @endforeach
                         </ul>
@@ -43,7 +43,7 @@
             <div class="d-flex justify-content-center gap-4" style="flex-grow: 1;">
                 <div class="search" style="padding: 1em; max-width: 20em; border: 1px solid rgb(10, 10, 10);">
                     <form method="GET" action="{{ route('home') }}" class="d-flex flex-column gap-2">
-                        <label for="search">Looking for a news?</label>
+                        <label for="search">Looking for news?</label>
                         <p style="font-size: 0.8em; color: rgb(88,88,88)">Use Exact Match Search</p>
                         <input type="text" name="search" id="search" placeholder="Search posts" value="{{ request('search') }}" required>
                         <!-- Checkboxes para escolher os atributos -->
@@ -67,7 +67,7 @@
                         <!-- Botão de pesquisa -->
                         <div class="form-group d-flex flex-row justify-content-between gap-2">
                             <button type="submit" class="btn" style="background-color:rgb(133, 9, 25); color:white; font-size: 1.25rem;">Search</button>
-                            <a href="{{ route('home') }}" class="btn btn-lg" style="font-size: 1.4rem; background-color: #a9a9a9; color: black; max-height: 30px;">Clear</a>
+                            <button type="button" class="btn gray-button" onclick="window.location='{{ route('home') }}'">Clear</button>
                         </div>
                     </form>
                 </div>
@@ -78,8 +78,13 @@
                         <input type="text" name="username" placeholder="Search for a username" required>
                         <div class="form-group d-flex flex-row justify-content-between gap-2">
                             <button type="submit" class="btn" style="background-color:rgb(133, 9, 25); color:white; font-size: 1.25rem;">Search</button>
-                            <a href="{{ route('home') }}" class="btn btn-lg" style="font-size: 1.4rem; background-color: #a9a9a9; color: black; max-height: 30px;">Clear</a>
+                            <button type="button" class="btn gray-button" onclick="window.location='{{ route('home') }}'">Clear</button>
                         </div>
+                        @if(session('error'))
+                            <div style="color: red; font-size: 0.9em; margin-top: 0.5em;">
+                                {{ session('error') }}
+                            </div>
+                        @endif
                     </form>
                 </div>
             </div>
@@ -102,6 +107,7 @@
             <button type="submit" class="btn" style="background-color:rgb(133, 9, 25); color:white; font-size: 1.25rem;">Apply</button>
         </div>
     </div>
+
     <!-- Exibição dos Posts -->
     <div class="container" style="margin-top: 5em">
         <h1>Latest Posts</h1>

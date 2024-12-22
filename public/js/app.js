@@ -581,11 +581,15 @@ function handleCreateUser(event) {
                   <td>${data.username}</td>
                   <td>${data.email}</td>
                   <td>
-                        <a href="/users/${data.user_id}" class="btn btn-sm btn-primary">View</a>
-                        <button type="button" class="btn btn-danger delete-account"
+                        <a href="/users/${data.user_id}"  class="view-link mx-2">[view]</a>
+                        <button type="button" id="deleteAccount" class="delete-account px-3 ms-2 black-button"
                             data-delete-url="/admin/delete/${data.user_id}"
                             data-context="admin">
                             Delete
+                        </button>
+                        <button type="button" class="block-unblock btn btn-danger btn-lg block-user" 
+                            data-block-url="/admin/block/${data.user_id}">
+                            Block User
                         </button>
                   </td>
               `;
@@ -1092,3 +1096,142 @@ function deleteReply(commentId) {
         alert('An error occurred while deleting the comment.');
     });
 }
+
+
+function handlePromoteUser(event) {
+    const promoteUrl = event.target.dataset.promoteUrl;
+
+    if (!confirm('Are you sure you want to promote this user to admin?')) {
+        return;
+    }
+
+    fetch(promoteUrl, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to promote user.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert(data.message);
+        location.reload(); 
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while promoting the user.');
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const promoteUserButtons = document.querySelectorAll('.promote-user');
+
+    if (promoteUserButtons) {
+        promoteUserButtons.forEach(button => {
+            button.addEventListener('click', handlePromoteUser);
+        });
+    }
+});
+
+function openFollowersList() {
+    const modal = document.getElementById('followersModal');
+    const followersList = document.getElementById('followersList');
+    followersList.innerHTML = 'Loading...';
+
+    fetch(`/users/${userId}/followers`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(followers => {
+            followersList.innerHTML = '';
+            if (followers.length > 0) {
+                followers.forEach(follower => {
+                    const li = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = `/users/${follower.user_id}`;
+                    link.textContent = follower.username;
+                    link.style.textDecoration = 'none';
+                    li.appendChild(link);
+                    followersList.appendChild(li);
+                });
+            } else {
+                followersList.innerHTML = '<li>No followers yet.</li>';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching followers:', error);
+            followersList.innerHTML = '<li>Error loading followers. Please try again.</li>';
+        });
+
+    modal.style.display = 'block';
+    modal.style.opacity = '1';
+    modal.style.transition = 'opacity 0.3s ease';
+}
+
+
+
+function closeFollowersList() {
+    const modal = document.getElementById('followersModal');
+    modal.style.opacity = '0';
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+}
+
+
+function openFollowingList() {
+    const modal = document.getElementById('followingModal');
+    const followingList = document.getElementById('followingList');
+    followingList.innerHTML = 'Loading...';
+
+    fetch(`/users/${userId}/following`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(following => {
+            followingList.innerHTML = '';
+            if (following.length > 0) {
+                following.forEach(user => {
+                    const li = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = `/users/${user.user_id}`;
+                    link.textContent = user.username;
+                    link.style.textDecoration = 'none';
+                    li.appendChild(link);
+                    followingList.appendChild(li);
+                });
+            } else {
+                followingList.innerHTML = '<li>Not following anyone yet.</li>';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching following:', error);
+            followingList.innerHTML = '<li>Error loading following. Please try again.</li>';
+        });
+
+    modal.style.display = 'block';
+    modal.style.opacity = '1';
+    modal.style.transition = 'opacity 0.3s ease';
+}
+
+
+
+function closeFollowingList() {
+    const modal = document.getElementById('followingModal');
+    modal.style.opacity = '0';
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+}
+
