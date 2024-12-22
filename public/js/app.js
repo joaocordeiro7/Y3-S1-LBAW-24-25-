@@ -281,7 +281,13 @@ function addEventListeners() {
       notfs.removeChild(read_ntof);
     }
     
-    lastIdChecked=lastNotf.getAttribute('data-id');
+    if(document.querySelector('ol#notfs :first-child')== null){
+      lastIdChecked=new Date().toISOString();
+    }
+    else{
+      lastIdChecked=lastNotf.getAttribute('data-id');
+    }
+    
 
     function checkForNotf(){
       sendAjaxRequest('post','/api/checkNotf',{lastId: lastIdChecked},NotfUpdate);
