@@ -24,6 +24,7 @@
         <main>
             <header>
                 <h1><a href="{{ url('/home') }}">The Bulletin</a></h1>
+                <a class="button" href="{{ url('/aboutUs') }}"> About Us </a> 
                 @if (Auth::check())
                 <a class="button" href="{{ url('/createPosts') }}"> Post News </a> <a class="button" href="{{ url('/logout') }}"> Logout </a> <a href="{{url('/users/'.Auth::user()->user_id)}}">{{ Auth::user()->username }}</a>
                 @else
