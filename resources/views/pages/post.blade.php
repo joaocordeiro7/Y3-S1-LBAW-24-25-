@@ -91,7 +91,7 @@
                                         <div class="replies">
                                             @foreach ($comment->replies as $reply)
                                                 <article class="reply" data-reply-id="{{ $reply->comment_id }}">
-                                                    <p id="comment-body-{{ $reply->comment_id }}">{{ $reply->body }}</p>
+                                                    <p id="reply-body-{{ $reply->comment_id }}">{{ $reply->body }}</p>
                                                     @if (Auth::check() && (Auth::user()->user_id == $reply->owner->user_id || Auth::user()->isAdmin()))
                                                         <button onclick="deleteReply({{ $reply->comment_id }})" class="delete-comment-btn">Delete</button>
                                                     @endif
@@ -100,7 +100,7 @@
                                                         <form id="edit-reply-form-{{ $reply->comment_id }}" class="hidden" method="POST" action="{{ route('comments.update', $reply->comment_id) }}">
                                                             @csrf
                                                             @method('PUT')
-                                                            <textarea name="body" required>{{ $reply->body }}</textarea>
+                                                            <textarea id="editedBody" name="body" type="text" placeholder="Rewrite your reply here" required>{{ $reply->body }}</textarea>
                                                             <button type="button" onclick="saveEditedReply({{ $reply->comment_id }})">Save</button>
                                                             <button type="button" onclick="cancelEditReply({{ $reply->comment_id }})">Cancel</button>
                                                         </form>
