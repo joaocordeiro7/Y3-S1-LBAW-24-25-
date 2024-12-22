@@ -219,4 +219,20 @@ class UserController extends Controller
         
     }
 
+    public function followers($id) {
+        $followers = User::whereHas('follows', function ($query) use ($id) {
+            $query->where('userid2', $id);
+        })->get(['user_id', 'username']);
+    
+        return response()->json($followers);
+    }
+    
+    public function following($id) {
+        $following = User::whereHas('followedBy', function ($query) use ($id) {
+            $query->where('userid1', $id);
+        })->get(['user_id', 'username']);
+    
+        return response()->json($following);
+    }
+
 }

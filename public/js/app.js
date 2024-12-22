@@ -902,3 +902,100 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+function openFollowersList() {
+    const modal = document.getElementById('followersModal');
+    const followersList = document.getElementById('followersList');
+    followersList.innerHTML = 'Loading...';
+
+    fetch(`/users/${userId}/followers`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(followers => {
+            followersList.innerHTML = '';
+            if (followers.length > 0) {
+                followers.forEach(follower => {
+                    const li = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = `/users/${follower.user_id}`;
+                    link.textContent = follower.username;
+                    link.style.textDecoration = 'none';
+                    li.appendChild(link);
+                    followersList.appendChild(li);
+                });
+            } else {
+                followersList.innerHTML = '<li>No followers yet.</li>';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching followers:', error);
+            followersList.innerHTML = '<li>Error loading followers. Please try again.</li>';
+        });
+
+    modal.style.display = 'block';
+    modal.style.opacity = '1';
+    modal.style.transition = 'opacity 0.3s ease';
+}
+
+
+
+function closeFollowersList() {
+    const modal = document.getElementById('followersModal');
+    modal.style.opacity = '0';
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+}
+
+
+function openFollowingList() {
+    const modal = document.getElementById('followingModal');
+    const followingList = document.getElementById('followingList');
+    followingList.innerHTML = 'Loading...';
+
+    fetch(`/users/${userId}/following`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(following => {
+            followingList.innerHTML = '';
+            if (following.length > 0) {
+                following.forEach(user => {
+                    const li = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = `/users/${user.user_id}`;
+                    link.textContent = user.username;
+                    link.style.textDecoration = 'none';
+                    li.appendChild(link);
+                    followingList.appendChild(li);
+                });
+            } else {
+                followingList.innerHTML = '<li>Not following anyone yet.</li>';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching following:', error);
+            followingList.innerHTML = '<li>Error loading following. Please try again.</li>';
+        });
+
+    modal.style.display = 'block';
+    modal.style.opacity = '1';
+    modal.style.transition = 'opacity 0.3s ease';
+}
+
+
+
+function closeFollowingList() {
+    const modal = document.getElementById('followingModal');
+    modal.style.opacity = '0';
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+}
+

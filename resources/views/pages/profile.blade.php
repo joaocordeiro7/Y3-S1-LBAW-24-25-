@@ -39,7 +39,7 @@
         </a>
 
         <a href="#" class="btn w-200 text-center mx-5 position-relative">
-            <i class="fa-duotone fa-solid fa-users fa-7x"></i>
+            <i class="fa-duotone fa-solid fa-users fa-7x" onclick="openFollowersList()"></i>
             <span class="position-absolute top-0 start-10 translate-middle-x badge rounded-pill bg-primary" style="font-size: 1.5em;">
             {{ $user->followedBy()->count() }}
             </span>
@@ -47,14 +47,35 @@
         </a>
 
         <a href="#" class="btn w-200 text-center mx-5 position-relative">
-            <i class="fa-duotone fa-solid fa-users fa-7x"></i>
+            <i class="fa-duotone fa-solid fa-users fa-7x" onclick="openFollowingList()"></i>
             <span class="position-absolute top-0 start-10 translate-middle-x badge rounded-pill bg-primary" style="font-size: 1.5em;">
             {{ $user->follows()->count() }}
             </span>
             <div class="mt-2" style="font-size: 1.2em;">FOLLOWING</div>
         </a>
     </div>
-
+    <!-- Followed List -->
+    <script>
+        const userId = {{ $user->user_id }};
+    </script>
+    <div id="followersModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1050;">
+        <div style="margin: 10% auto; background: white; padding: 20px; max-width: 400px; border-radius: 8px;">
+            <h4 class="mb-4">Users following you</h4>
+            <ul id="followersList"  style="list-style-type: none; padding: 0; margin: 0;"></ul>  
+            <div class="d-flex justify-content-end gap-4">
+                <button type="button" class="btn btn-secondary" onclick="closeFollowersList()" style="font-size:1.2rem;">Go Back</button>
+            </div>
+        </div>
+    </div>
+    <div id="followingModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1050;">
+        <div style="margin: 10% auto; background: white; padding: 20px; max-width: 400px; border-radius: 8px;">
+            <h4 class="mb-4">Users you follow</h4>
+            <ul id="followingList"  style="list-style-type: none; padding: 0; margin: 0;"></ul>  
+            <div class="d-flex justify-content-end gap-4">
+                <button type="button" class="btn btn-secondary" onclick="closeFollowingList()" style="font-size:1.2rem;">Go Back</button>
+            </div>
+        </div>
+    </div>
 
     <p>Reputation: {{ $user->reputation }}</p>
     <div class="vote-bar">

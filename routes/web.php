@@ -90,7 +90,9 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/api/follow/{userToFollow}','follow');
     Route::post('/api/unfollow/{userToUnfollow}','unfollow');
     Route::delete('/users/delete/{id}', 'deleteAccount')->name('deleteAccount');  
-    Route::post('/user/propose-topic', 'proposeTopic')->middleware('auth')->name('proposeTopic')    ;
+    Route::post('/user/propose-topic', 'proposeTopic')->middleware('auth')->name('proposeTopic');
+    Route::get('/users/{id}/followers', 'followers')->name('user.followers');
+    Route::get('/users/{id}/following', 'following')->name('user.following');
 });
 
 // Admin
