@@ -260,5 +260,4 @@ class AdminController extends Controller
             'message' => 'User account deleted successfully.'
         ]);
     }
-    
 }

@@ -349,11 +349,15 @@ function handleCreateUser(event) {
                   <td>${data.username}</td>
                   <td>${data.email}</td>
                   <td>
-                        <a href="/users/${data.user_id}" class="btn btn-sm btn-primary">View</a>
-                        <button type="button" class="btn btn-danger delete-account"
+                        <a href="/users/${data.user_id}"  class="view-link mx-2">[view]</a>
+                        <button type="button" id="deleteAccount" class="delete-account px-3 ms-2 black-button"
                             data-delete-url="/admin/delete/${data.user_id}"
                             data-context="admin">
                             Delete
+                        </button>
+                        <button type="button" class="block-unblock btn btn-danger btn-lg block-user" 
+                            data-block-url="/admin/block/${data.user_id}">
+                            Block User
                         </button>
                   </td>
               `;

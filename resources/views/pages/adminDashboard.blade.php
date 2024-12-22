@@ -27,7 +27,7 @@
                         <td class="align-middle">
                             <div id="users-table">
                                 <a href="{{ route('profile', $user->user_id) }}" class="view-link mx-2">[view]</a>
-                                <button type="button" id="deleteAccount" class="px-3 ms-2 black-button"
+                                <button type="button" id="deleteAccount" class="delete-account px-3 ms-2 black-button"
                                     data-delete-url="{{ route('adminDeleteAccount', ['id' => $user->user_id]) }}"
                                     data-context="admin">
                                     Delete
