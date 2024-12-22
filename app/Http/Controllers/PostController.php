@@ -125,31 +125,66 @@ class PostController extends Controller
         return view('pages.home', ['posts' => $posts], ['tags' => $tags]);
     }
 
+
     public function index(Request $request) {
         $search = $request->input('search');
+        $searchIn = $request->input('search_in', ['title', 'body', 'comments']);
+        $sort = $request->input('sort', 'date');
+        $order = $request->input('order', 'desc'); 
         $tags = Tag::all();
+    
+        $query = Post::query();
     
         if ($search) {
             $searchTerms = array_map(function ($term) {
-                return trim($term) . ':*'; 
+                return trim($term) . ':*';
             }, explode(' ', $search));
-            $searchQuery = implode(' | ', $searchTerms); 
+            $searchQuery = implode(' | ', $searchTerms);
     
-            $posts = Post::whereRaw(
-                "tsvectors @@ to_tsquery('english', ?)",
-                [$searchQuery]
-            )
-            ->orderByRaw(
-                "ts_rank(tsvectors, to_tsquery('english', ?)) DESC",
-                [$searchQuery]
-            )
-            ->paginate(10);
-        } else {
-            $posts = Post::paginate(10);
+            $query->where(function ($q) use ($searchQuery, $searchIn) {
+                if (in_array('title', $searchIn)) {
+                    $q->orWhereRaw(
+                        "setweight(to_tsvector('english', title), 'A') @@ to_tsquery('english', ?)",
+                        [$searchQuery]
+                    );
+                }
+                if (in_array('body', $searchIn)) {
+                    $q->orWhereRaw(
+                        "setweight(to_tsvector('english', body), 'B') @@ to_tsquery('english', ?)",
+                        [$searchQuery]
+                    );
+                }
+                if (in_array('comments', $searchIn)) {
+                    $q->orWhereExists(function ($subquery) use ($searchQuery) {
+                        $subquery->select(DB::raw(1))
+                            ->from('comments')
+                            ->whereRaw("comments.post = posts.post_id")
+                            ->whereRaw(
+                                "comments.tsvectors @@ to_tsquery('english', ?)",
+                                [$searchQuery]
+                            );
+                    });
+                }
+            });
         }
     
-        return view('pages.home', ['posts' => $posts, 'tags' => $tags]);
-    }
+        $validSortColumns = ['date' => 'created_at', 'popularity' => 'upvotes'];
+        $sortColumn = $validSortColumns[$sort] ?? 'created_at';
+    
+        $query->orderBy($sortColumn, $order);
+    
+        $posts = $query->paginate(10);
+    
+        return view('pages.home', [
+            'posts' => $posts,
+            'tags' => $tags,
+            'sort' => $sort,
+            'order' => $order,
+            'search_in' => $searchIn,
+        ]);
+    }    
+        
+    
 
     public function showUserPosts($id)
     {
