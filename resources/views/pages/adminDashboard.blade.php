@@ -40,6 +40,9 @@
             @endforeach
             </tbody>
         </table>
+        <div class="pagination">
+            {{ $users->links('pagination::bootstrap-4') }}
+        </div>
     </div>
 
     <h2>Manage Topic Proposals</h2>
@@ -71,6 +74,9 @@
             @endforeach
             </tbody>
         </table>
+        <div class="pagination">
+            {{ $proposals->links('pagination::bootstrap-4') }}
+        </div>
     </div>
 </div>
 

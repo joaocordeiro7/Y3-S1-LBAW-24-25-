@@ -508,3 +508,23 @@ label {
 .light-gray-border {
   border: 1px solid #d3d3d3; /* Light gray color */
 }
+
+.pagination .page-link {
+  border: 1px solid #ccc;
+  background-color: transparent;
+  color: black;
+  padding: 4px 8px;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.pagination .page-link:hover {
+  background-color: #f8f9fa;
+  color: #0056b3;
+}
+
+.pagination .active .page-link {
+  background-color: black;
+  color: white;
+  border-color: white;
+}

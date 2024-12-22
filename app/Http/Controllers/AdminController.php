@@ -26,8 +26,8 @@ class AdminController extends Controller
             return redirect('/')->with('error', 'You are not authorized to access this page.');
         }
 
-        $users = User::paginate(10);
-        $proposals = DB::table('topic_proposal')->get();
+        $users = User::where('username', 'not like', '[Deleted%]')->paginate(10, ['*'], 'users_page'); 
+        $proposals = TopicProposal::paginate(10, ['*'], 'proposals_page');
 
         return view('pages.adminDashboard', compact('users', 'proposals'));
     }
