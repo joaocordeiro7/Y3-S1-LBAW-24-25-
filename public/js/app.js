@@ -119,7 +119,7 @@ function addEventListeners() {
     notfs.classList.remove('visible');
     this.removeEventListener('click', closeNotfMenu);
     this.addEventListener('click',openNotfMenu);
-    var bellIcon = document.querySelector('.fa-solid.fa-bell');
+    let bellIcon = document.querySelector('.fa-solid.fa-bell');
     bellIcon.style.color='black';
   }
 
@@ -364,7 +364,7 @@ function addEventListeners() {
         }
         lastIdChecked=res[0].created_at;
         //give warning
-        var bellIcon = document.querySelector('.fa-solid.fa-bell');
+        let bellIcon = document.querySelector('.fa-solid.fa-bell');
         bellIcon.style.color='red';
       }
       

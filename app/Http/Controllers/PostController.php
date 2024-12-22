@@ -103,6 +103,7 @@ class PostController extends Controller
         $this->authorize('delete',$post);
 
         try{
+            DB::table('upvoteonpostnotification')->where('post',$id)->delete();
             $post->delete();
         }catch(\Illuminate\Database\QueryException $ex){
             return response()->json(['postId'=>$id]);
@@ -419,6 +420,8 @@ class PostController extends Controller
             }
 
             // Apaga o comentário
+            DB::table('upvoteoncommentnotification')->where('liked_comment',$id)->delete();
+            DB::table('commentnotification')->where('comment',$id)->delete();
             $comment->delete();
 
             return response()->json(['success' => true, 'message' => 'Comment deleted successfully.']);
