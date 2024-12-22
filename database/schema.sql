@@ -156,7 +156,7 @@ CREATE TABLE UserReport(
 
 CREATE TABLE CommentReport(
     rID INT REFERENCES Report (report_id) ON UPDATE CASCADE,
-    reported_comment INT REFERENCES Comments (comment_id) ON UPDATE CASCADE,
+    reported_comment INT REFERENCES Comments (comment_id) ON UPDATE CASCADE ON DELETE CASCADE,
     PRIMARY KEY (rID)
     
 );
@@ -194,7 +194,7 @@ CREATE TABLE UpvoteOnCommentNotification(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP CHECK(created_at<=CURRENT_TIMESTAMP),
     emitter INT REFERENCES Users (user_id) ON UPDATE CASCADE,
     receiver INT REFERENCES Users (user_id) ON UPDATE CASCADE,
-    liked_comment INT REFERENCES Comments (comment_id) ON UPDATE CASCADE
+    liked_comment INT REFERENCES Comments (comment_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 
@@ -204,7 +204,7 @@ CREATE TABLE CommentNotification(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP CHECK(created_at<=CURRENT_TIMESTAMP),
     emitter INT REFERENCES Users (user_id) ON UPDATE CASCADE,
     receiver INT REFERENCES Users (user_id) ON UPDATE CASCADE,
-    comment INT REFERENCES Comments (comment_id) ON UPDATE CASCADE
+    comment INT REFERENCES Comments (comment_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE blacklist(
@@ -450,8 +450,8 @@ DROP FUNCTION IF EXISTS update_reputation_posts;
 CREATE FUNCTION update_reputation_posts() RETURNS TRIGGER AS
 $BODY$
     BEGIN
-        IF NEW.liked THEN UPDATE Posts SET upvotes = upvotes + 1 WHERE post_id = NEW.postId; UPDATE Users SET reputation = reputation+1 WHERE user_id=NEW.userId;
-        ELSE UPDATE Posts SET downvotes = downvotes + 1 WHERE post_id = NEW.postId; UPDATE Users SET reputation = reputation - 1 WHERE user_id=NEW.userId;
+        IF NEW.liked THEN UPDATE Posts SET upvotes = upvotes + 1 WHERE post_id = NEW.postId; UPDATE Users SET reputation = Users.reputation+1 FROM Posts INNER JOIN Users AS u ON u.user_id=Posts.ownerId WHERE Posts.post_id=NEW.postId AND Users.user_id = u.user_id;
+        ELSE UPDATE Posts SET downvotes = downvotes + 1 WHERE post_id = NEW.postId; UPDATE Users SET reputation = Users.reputation-1 FROM Posts INNER JOIN Users AS u ON u.user_id=Posts.ownerId WHERE Posts.post_id=NEW.postId AND Users.user_id = u.user_id;
         END IF;
         RETURN NEW;
     END
@@ -467,8 +467,8 @@ DROP FUNCTION IF EXISTS update_reputation_comments;
 CREATE FUNCTION update_reputation_comments() RETURNS TRIGGER AS
 $BODY$
     BEGIN
-        IF NEW.liked THEN UPDATE Comments SET upvotes = upvotes + 1 WHERE comment_id = NEW.comment_id; UPDATE Users SET reputation = reputation+1 WHERE user_id=NEW.userId;
-        ELSE UPDATE Comments SET downvotes = downvotes + 1 WHERE comment_id = NEW.comment_id; UPDATE Users SET reputation = reputation - 1 WHERE user_id=NEW.userId;
+        IF NEW.liked THEN UPDATE Comments SET upvotes = upvotes + 1 WHERE comment_id = NEW.comment_id; UPDATE Users SET reputation = Users.reputation+1 FROM Comments INNER JOIN Users AS u ON u.user_id=Comments.ownerId WHERE Comments.comment_id=NEW.comment_id AND Users.user_id = u.user_id;
+        ELSE UPDATE Comments SET downvotes = downvotes + 1 WHERE comment_id = NEW.comment_id; UPDATE Users SET reputation = Users.reputation-1 FROM Comments INNER JOIN Users AS u ON u.user_id=Comments.ownerId WHERE Comments.comment_id=NEW.comment_id AND Users.user_id = u.user_id;
         END IF;
         RETURN NEW;
     END
@@ -484,8 +484,8 @@ DROP FUNCTION IF EXISTS update_reputation_posts_removed_like;
 CREATE FUNCTION update_reputation_posts_removed_like() RETURNS TRIGGER AS
 $BODY$
     BEGIN
-        IF OLD.liked THEN UPDATE Posts SET upvotes = upvotes - 1 WHERE post_id = OLD.postId; UPDATE Users SET reputation = reputation-1 WHERE user_id=OLD.userId;
-        ELSE UPDATE Post SET downvotes = downvotes - 1 WHERE post_id = OLD.postId; UPDATE Users SET reputation = reputation + 1 WHERE user_id=OLD.userId;
+        IF OLD.liked THEN UPDATE Posts SET upvotes = upvotes - 1 WHERE post_id = OLD.postId; UPDATE Users SET reputation = Users.reputation-1 FROM Posts INNER JOIN Users AS u ON u.user_id=Posts.ownerId WHERE Posts.post_id=OLD.postId AND Users.user_id = u.user_id;
+        ELSE UPDATE Posts SET downvotes = downvotes - 1 WHERE post_id = OLD.postId; UPDATE Users SET reputation = Users.reputation+1 FROM Posts INNER JOIN Users AS u ON u.user_id=Posts.ownerId WHERE Posts.post_id=OLD.postId AND Users.user_id = u.user_id;
         END IF;
         RETURN OLD;
     END
@@ -501,8 +501,8 @@ DROP FUNCTION IF EXISTS update_reputation_comments_removed_like;
 CREATE FUNCTION update_reputation_comments_removed_like() RETURNS TRIGGER AS
 $BODY$
     BEGIN
-        IF OLD.liked THEN UPDATE Comments SET upvotes = upvotes - 1 WHERE comment_id = OLD.comment_id; UPDATE Users SET reputation = reputation-1 WHERE user_id=OLD.userId;
-        ELSE UPDATE Comments SET downvotes = downvotes - 1 WHERE comment_id = OLD.comment_id; UPDATE Users SET reputation = reputation + 1 WHERE user_id=OLD.userId;
+        IF OLD.liked THEN UPDATE Comments SET upvotes = upvotes - 1 WHERE comment_id = OLD.comment_id; UPDATE Users SET reputation = Users.reputation-1 FROM Comments INNER JOIN Users AS u ON u.user_id=Comments.ownerId WHERE Comments.comment_id=OLD.comment_id AND Users.user_id = u.user_id;
+        ELSE UPDATE Comments SET downvotes = downvotes - 1 WHERE comment_id = OLD.comment_id; UPDATE Users SET reputation = Users.reputation+1 FROM Comments INNER JOIN Users AS u ON u.user_id=Comments.ownerId WHERE Comments.comment_id=OLD.comment_id AND Users.user_id = u.user_id;
         END IF;
         RETURN OLD;
     END
@@ -513,6 +513,43 @@ CREATE TRIGGER update_reputation_comments_removed_like
     BEFORE DELETE ON InterationComments
     FOR EACH ROW
     EXECUTE PROCEDURE update_reputation_comments_removed_like();
+
+
+DROP FUNCTION IF EXISTS update_reputation_posts_changed_like;
+CREATE FUNCTION update_reputation_posts_changed_like() RETURNS TRIGGER AS
+$BODY$
+    BEGIN
+        UPDATE Posts SET upvotes = (SELECT COUNT(*) FROM InterationPosts WHERE postid = NEW.postId AND liked = TRUE), downvotes = (SELECT COUNT(*) FROM InterationPosts WHERE postid = NEW.postId AND liked = FALSE) WHERE post_id = OLD.postId;
+        IF OLD.liked THEN UPDATE Users SET reputation = Users.reputation-2 FROM Posts INNER JOIN Users AS u ON u.user_id=Posts.ownerId WHERE Posts.post_id=OLD.postId AND Users.user_id = u.user_id;
+        ELSE UPDATE Users SET reputation = Users.reputation+2 FROM Posts INNER JOIN Users AS u ON u.user_id=Posts.ownerId WHERE Posts.post_id=OLD.postId AND Users.user_id = u.user_id;
+        END IF;
+        RETURN OLD;
+    END
+$BODY$
+language plpgsql;
+
+CREATE TRIGGER update_reputation_posts_changed_like
+    AFTER UPDATE ON InterationPosts
+    FOR EACH ROW
+    EXECUTE PROCEDURE update_reputation_posts_changed_like();
+
+DROP FUNCTION IF EXISTS update_reputation_comments_changed_like;
+CREATE FUNCTION update_reputation_comments_changed_like() RETURNS TRIGGER AS
+$BODY$
+    BEGIN
+        UPDATE Comments SET upvotes = (SELECT COUNT(*) FROM InterationComments WHERE comment_id = NEW.comment_id AND liked = TRUE), downvotes = (SELECT COUNT(*) FROM InterationComments WHERE comment_id = NEW.comment_id AND liked = FALSE) WHERE comment_id = OLD.comment_id;
+        IF OLD.liked THEN UPDATE Users SET reputation = Users.reputation-2 FROM Comments INNER JOIN Users AS u ON u.user_id=Comments.ownerId WHERE Comments.comment_id=OLD.comment_id AND Users.user_id = u.user_id;
+        ELSE UPDATE Users SET reputation = Users.reputation+2 FROM Comments INNER JOIN Users AS u ON u.user_id=Comments.ownerId WHERE Comments.comment_id=OLD.comment_id AND Users.user_id = u.user_id;
+        END IF;
+        RETURN OLD;
+    END
+$BODY$
+language plpgsql;
+
+CREATE TRIGGER update_reputation_comments_changed_like
+    AFTER UPDATE ON InterationComments
+    FOR EACH ROW
+    EXECUTE PROCEDURE update_reputation_comments_changed_like();
 
 
 DROP FUNCTION IF EXISTS block_appeal_verify;

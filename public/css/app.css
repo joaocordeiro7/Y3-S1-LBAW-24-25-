@@ -503,3 +503,59 @@ label {
   color: red;
   font-size: smaller;
 }
+.comment .hidden {
+  display: none;
+}
+
+textarea {
+  width: 100%;
+  height: 100px;
+}
+
+.vote-bar {
+  display: flex;
+  width: 100%;
+  height: 20px;
+  margin-top: 20px;
+}
+
+.vote-bar .upvotes, .vote-bar .downvotes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: black;
+  min-width: 30px;
+}
+
+.upvotes {
+  background-color: #d4e8d4; 
+  flex: 1;
+}
+
+.downvotes {
+  background-color: #d4b4b4;
+  flex: 1;
+}
+
+@media (max-width: 600px) {
+  .vote-bar {
+      height: 15px;
+      font-size: 12px;
+  }
+}
+
+#tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#tags div {
+  display: flex;
+  align-items: center;
+}
+
+#tags input[type="checkbox"] {
+  margin-right: 5px;
+}

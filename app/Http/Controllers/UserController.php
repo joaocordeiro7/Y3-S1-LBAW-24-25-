@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Post;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -74,11 +76,16 @@ class UserController extends Controller
         $currentUser = Auth::check() && Auth::id() == $user->user_id;
     
         $canAdminEdit = Auth::check() && Auth::user()->isAdmin();
+
+        $upvotes = Post::where('ownerid', $id)->sum('upvotes') + Comment::where('ownerid', $id)->sum('upvotes');
+        $downvotes = Post::where('ownerid', $id)->sum('downvotes') + Comment::where('ownerid', $id)->sum('downvotes');
     
         return view('pages.profile', [
             'user' => $user,
             'currentUser' => $currentUser,
             'canAdminEdit' => $canAdminEdit,
+            'upvotes' => $upvotes,
+            'downvotes' => $downvotes,
         ]);
     }
     

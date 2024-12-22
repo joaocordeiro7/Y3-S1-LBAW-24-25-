@@ -35,9 +35,12 @@ Route::redirect('/', '/home');
 
 Route::view('/features', 'static.features')->name('features');
 
+Route::view('/aboutUs', 'static.aboutUs')->name('aboutUs');
+
 Route::view('/contacts', 'static.contacts')->name('contacts');
 
 Route::post('/contacts/feedback', [StaticPageController::class, 'submitFeedback'])->name('feedback.submit');
+
 
 
 Route::controller(PostController::class)->group(function (){
@@ -52,13 +55,17 @@ Route::controller(PostController::class)->group(function (){
     Route::post('/api/createPosts','store')->name('publish');
     Route::post('/post/edit/{id}','update');
     Route::get('/', 'index')->name('home');
-    Route::get('/posts', 'index')->name('posts.index');
     Route::post('/deletePost/{id}','destroy');
     Route::get('/user/{id}/posts', 'showUserPosts')->name('user.posts');
     Route::post('/api/getMorePosts','getMorePosts');
+    Route::post('/post/like', 'like');
+    Route::post('/comment/vote', 'voteComment')->name('comment.vote');
+    Route::post('/comments/store', 'storeComment')->name('comments.store');
+    Route::put('/comments/update/{id}', 'updateComment')->name('comments.update');
+    Route::post('/comments/reply', 'replyToComment')->middleware('auth');
+    Route::put('/comments/reply/update/{id}', 'updateComment')->name('comments.update');
+    Route::delete('/comments/delete/{id}', 'deleteComment')->middleware('auth');
 });
-
-
 
 
 

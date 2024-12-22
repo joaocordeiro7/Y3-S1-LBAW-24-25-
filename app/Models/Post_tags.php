@@ -11,16 +11,12 @@ class Tag extends Model
 
     public $timestamps = false;
 
-    protected $table = 'tag';
+    protected $table = 'post_tags';
 
-    protected $primaryKey = 'tag_id';
+    protected $primaryKey = 'id';
     
     protected $fillable = [
-        'name',
+        'post', 'tag',
     ];
-
-    public function posts(){
-        return $this->belongsToMany(Post::class, 'post_tags', 'tag', 'post');
-    }
 
 }
