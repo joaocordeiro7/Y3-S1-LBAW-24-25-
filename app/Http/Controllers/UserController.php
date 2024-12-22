@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Post;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -72,11 +74,16 @@ class UserController extends Controller
         $currentUser = Auth::check() && Auth::id() == $user->user_id;
     
         $canAdminEdit = Auth::check() && Auth::user()->isAdmin();
+
+        $upvotes = Post::where('ownerid', $id)->sum('upvotes') + Comment::where('ownerid', $id)->sum('upvotes');
+        $downvotes = Post::where('ownerid', $id)->sum('downvotes') + Comment::where('ownerid', $id)->sum('downvotes');
     
         return view('pages.profile', [
             'user' => $user,
             'currentUser' => $currentUser,
             'canAdminEdit' => $canAdminEdit,
+            'upvotes' => $upvotes,
+            'downvotes' => $downvotes,
         ]);
     }
     
@@ -223,6 +230,22 @@ class UserController extends Controller
 
         return response()->json(['success' => 'users now follow']);
         
+    }
+
+    public function followers($id) {
+        $followers = User::whereHas('follows', function ($query) use ($id) {
+            $query->where('userid2', $id);
+        })->get(['user_id', 'username']);
+    
+        return response()->json($followers);
+    }
+    
+    public function following($id) {
+        $following = User::whereHas('followedBy', function ($query) use ($id) {
+            $query->where('userid1', $id);
+        })->get(['user_id', 'username']);
+    
+        return response()->json($following);
     }
 
 }

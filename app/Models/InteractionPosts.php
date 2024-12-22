@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Admin extends Model
+class InteractionPosts extends Model
 {
     use HasFactory;
 
     public $timestamps  = false;
 
-    protected $table = 'admins';
+    protected $table = 'interationposts';
 
-    protected $primaryKey = 'admin_id';
+    protected $primaryKey = 'id';
 
-    protected $fillable = ['admin_id'];
+    protected $fillable = ['userid', 'postid', 'liked'];
 }

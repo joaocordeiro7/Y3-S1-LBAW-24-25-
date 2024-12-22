@@ -260,4 +260,24 @@ class AdminController extends Controller
             'message' => 'User account deleted successfully.'
         ]);
     }
+
+    public function promoteToAdmin($id) {
+        if (!Auth::user()->isAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $user = User::findOrFail($id);
+
+        if ($user->isAdmin()) {
+            return response()->json(['error' => 'User is already an admin'], 400);
+        }
+
+        Admin::create(['admin_id' => $user->user_id]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "{$user->username} has been promoted to admin."
+        ]);
+    }
+
 }
