@@ -235,10 +235,10 @@ class UserController extends Controller
     }
 
 
-    public function shownotf(): View
-    {
-        $notfs=UpvoteOnPostNotification::getNotif();
-        return view('pages.notf',['notfs'=>$notfs]);
+    public function getUsername(Request $request){
+        $username = User::find($request->input('id'))->username;
+
+        return response()->json(['name'=>$username]);
     }
 
     public function getNewNotf(Request $request){

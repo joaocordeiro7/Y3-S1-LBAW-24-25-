@@ -119,6 +119,8 @@ function addEventListeners() {
     notfs.classList.remove('visible');
     this.removeEventListener('click', closeNotfMenu);
     this.addEventListener('click',openNotfMenu);
+    var bellIcon = document.querySelector('.fa-solid.fa-bell');
+    bellIcon.style.color='black';
   }
 
   function deleteNews(event){
@@ -307,13 +309,21 @@ function addEventListeners() {
           let par = document.createElement('p');
           read_button.addEventListener('click',readNews);
 
+          let checkIcon = document.createElement('i');
+          checkIcon.classList.add('fa-solid');
+          checkIcon.classList.add('fa-check');
+            
+          read_button.append(checkIcon);
+
+          
+          
           if(notf.post){
             link = document.createElement('a');
             link.innerHTML='see';
             link.href='/post/'+notf.post;
 
             par = document.createElement('p')
-            par.innerHTML=notf.emitter+' liked one of your posts '+link;
+            par.innerHTML='A user liked one of your posts '+link;
 
             read_button.setAttribute('data-type','like_post');
             read_button.setAttribute('data-id',notf.notfid);
@@ -339,7 +349,7 @@ function addEventListeners() {
           if(notf.comment){
             
 
-            par.innerHTML='A user comment on one of your posts';
+            par.innerHTML='A user commented on one of your posts';
             read_button.setAttribute('data-type','comment');
             read_button.setAttribute('data-id',notf.notfid);
             
@@ -354,6 +364,8 @@ function addEventListeners() {
         }
         lastIdChecked=res[0].created_at;
         //give warning
+        var bellIcon = document.querySelector('.fa-solid.fa-bell');
+        bellIcon.style.color='red';
       }
       
       console.log(res);

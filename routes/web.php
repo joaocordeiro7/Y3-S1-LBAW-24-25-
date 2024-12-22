@@ -92,6 +92,7 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/api/readNotf','readNotf');
     Route::delete('/users/delete/{id}', 'deleteAccount')->name('deleteAccount');  
     Route::post('/user/propose-topic', 'proposeTopic')->middleware('auth')->name('proposeTopic')    ;
+    Route::post('/user/getUsername','getUsername');
 });
 
 // Admin

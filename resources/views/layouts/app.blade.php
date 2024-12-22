@@ -33,7 +33,7 @@
                 <a class="button" href="{{route('adminDashboard')}}">Dashboard</a>
                 @endif
                 @if (Auth::check())
-                    <span class="dropdown">notf</span>
+                    <span class="dropdown"><i class="fa-solid fa-bell"></i></span>
                     @php
                         $notfs = \App\Http\Controllers\UserController::userNotf();
                     @endphp
