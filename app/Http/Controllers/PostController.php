@@ -404,4 +404,22 @@ class PostController extends Controller
         }
     }
 
+
+    public function filterByTag(string $tagName): View {
+        $tag = Tag::where('name', $tagName)->first();
+    
+        if (!$tag) {
+            return redirect()->route('home')->with('error', 'Tag not found.');
+        }
+    
+        $posts = $tag->posts()->with('tags')->get();
+    
+        return view('pages.postsByTag', [
+            'posts' => $posts,
+            'tagName' => $tagName,
+        ]);
+    }
+    
+
+
 }

@@ -13,7 +13,7 @@
                         <ul class="list-group mb-4">
                             @foreach ($tags as $tag)
                                 <li class="list-group-item">
-                                    <a href="{{ route('home', ['tag' => $tag->name]) }}">{{ $tag->name }}</a>
+                                    <a href="{{ route('posts.tag', ['tag' => $tag->name]) }}">{{ $tag->name }}</a>
                                 </li>
                             @endforeach
                         </ul>
