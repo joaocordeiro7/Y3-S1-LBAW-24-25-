@@ -49,17 +49,17 @@
                         <!-- Checkboxes para escolher os atributos -->
                         <div class="d-flex gap-3 align-items-center flex-wrap">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="search_in[]" value="title" id="searchTitle" 
+                                <input id="checkTitle" class="form-check-input" type="checkbox" name="search_in[]" value="title" id="searchTitle" 
                                     {{ is_array(request('search_in')) && in_array('title', request('search_in')) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="searchTitle">Title</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="search_in[]" value="body" id="searchBody" 
+                                <input id="checkBody" class="form-check-input" type="checkbox" name="search_in[]" value="body" id="searchBody" 
                                     {{ is_array(request('search_in')) && in_array('body', request('search_in')) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="searchBody">Body</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="search_in[]" value="comments" id="searchComments" 
+                                <input id="checkComments" class="form-check-input" type="checkbox" name="search_in[]" value="comments" id="searchComments" 
                                     {{ is_array(request('search_in')) && in_array('comments', request('search_in')) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="searchComments">Comments</label>
                             </div>
@@ -88,13 +88,13 @@
             <input type="hidden" name="search" value="{{ request('search') }}">
 
             <!-- Dropdown de Filtros -->
-            <select name="sort" class="form-select me-2" style="max-width: 200px;" onchange="this.form.submit()">
+            <select id="sortBy" name="sort" class="form-select me-2" style="max-width: 200px;" onchange="this.form.submit()">
                 <option value="date" {{ request('sort') == 'date' ? 'selected' : '' }}>Sort by Date</option>
                 <option value="popularity" {{ request('sort') == 'popularity' ? 'selected' : '' }}>Sort by Popularity</option>
             </select>
 
             <!-- Dropdown de Ordem -->
-            <select name="order" class="form-select me-2" style="max-width: 200px;" onchange="this.form.submit()">
+            <select id="orderBy" name="order" class="form-select me-2" style="max-width: 200px;" onchange="this.form.submit()">
                 <option value="desc" {{ request('order') == 'desc' ? 'selected' : '' }}>Descending</option>
                 <option value="asc" {{ request('order') == 'asc' ? 'selected' : '' }}>Ascending</option>
             </select>

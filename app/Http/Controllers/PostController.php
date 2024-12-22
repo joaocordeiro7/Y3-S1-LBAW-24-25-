@@ -175,7 +175,7 @@ class PostController extends Controller
     
         $query->orderBy($sortColumn, $order);
     
-        $posts = $query->paginate(10);
+        $posts = $query->distinct()->paginate(3);
     
         return view('pages.home', [
             'posts' => $posts,
@@ -196,12 +196,52 @@ class PostController extends Controller
         return view('pages.user_posts', compact('user', 'posts'));
     }
 
-    public static function getMoreResulsts($page,$search){
-        $posts = DB::table('posts')
-                ->where('title', 'ILIKE', '%' . $search . '%')
-                ->orWhere('body', 'ILIKE', '%' . $search . '%')
-                ->orderBy('created_at','desc')->orderBy('upvotes','desc')
-                ->paginate(6,['*'],'page',$page);
+    public static function getMoreResulsts($page,$search,$searchIn,$sort,$order){
+        $query = Post::query();
+    
+        if ($search) {
+            $searchTerms = array_map(function ($term) {
+                return trim($term) . ':*';
+            }, explode(' ', $search));
+            $searchQuery = implode(' | ', $searchTerms);
+    
+            $query->where(function ($q) use ($searchQuery, $searchIn) {
+                if (in_array('title', $searchIn)) {
+                    $q->orWhereRaw(
+                        "setweight(to_tsvector('english', title), 'A') @@ to_tsquery('english', ?)",
+                        [$searchQuery]
+                    );
+                }
+                if (in_array('body', $searchIn)) {
+                    $q->orWhereRaw(
+                        "setweight(to_tsvector('english', body), 'B') @@ to_tsquery('english', ?)",
+                        [$searchQuery]
+                    );
+                }
+                if (in_array('comments', $searchIn)) {
+                    $q->orWhereExists(function ($subquery) use ($searchQuery) {
+                        $subquery->select(DB::raw(1))
+                            ->from('comments')
+                            ->whereRaw("comments.post = posts.post_id")
+                            ->whereRaw(
+                                "comments.tsvectors @@ to_tsquery('english', ?)",
+                                [$searchQuery]
+                            );
+                    });
+                }
+            });
+        }
+    
+        $validSortColumns = ['date' => 'created_at', 'popularity' => 'upvotes'];
+        $sortColumn = $validSortColumns[$sort] ?? 'created_at';
+    
+        $query->orderBy($sortColumn, $order);
+    
+        
+    
+        $posts = $query->distinct()->paginate(3,['*'],'page',$page);
+    
+        
         
         return $posts;
     }
@@ -209,11 +249,28 @@ class PostController extends Controller
     public function getMorePosts(Request $request){
         $page = $request['page']+2;
         
-        if($request['search']!=""){
-            $posts = PostController::getMoreResulsts($page,$request['search']);
+        if($request['search']=="" && !isset($request['sort']) && !isset($request['order'])){
+            $posts = Post::select(['post_id', 'title', 'body'])->orderBy('created_at','desc')->orderBy('upvotes','desc')->paginate(6,['*'],'page',$page);
+            
         }
         else{
-            $posts = Post::select(['post_id', 'title', 'body'])->orderBy('created_at','desc')->orderBy('upvotes','desc')->paginate(6,['*'],'page',$page);
+            
+            $searchIn = ['title','body','comments'];
+            \Log::info('Search:', ['title' => $request['title']]);
+            if($request->input('title')==='false'){
+                \Log::info('here');
+                $searchIn = array_filter($searchIn, function($item) { return $item !== 'title'; });
+            }
+            if($request->input('body')==='false'){
+                $searchIn = array_filter($searchIn, function($item) { return $item !== 'body'; });
+            }
+            if($request->input('comments')==='false'){
+                $searchIn = array_filter($searchIn, function($item) { return $item !== 'comments'; });
+            }
+            $searchIn = array_values($searchIn);
+            \Log::info('Search:', ['array' => $searchIn]);
+            $posts = PostController::getMoreResulsts($page,$request['search'],$searchIn,$request['sort'],$request['order']);
+            
         }
 
         return response()->json($posts);

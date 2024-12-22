@@ -293,7 +293,7 @@ function addEventListeners() {
 
     function checkForNotf(){
       sendAjaxRequest('post','/api/checkNotf',{lastId: lastIdChecked},NotfUpdate);
-      console.log({lastId: lastIdChecked});
+      
     }
 
     function NotfUpdate(){
@@ -368,7 +368,7 @@ function addEventListeners() {
         bellIcon.style.color='red';
       }
       
-      console.log(res);
+      
     }
     setInterval(checkForNotf,10000);
   }
@@ -382,7 +382,6 @@ function addEventListeners() {
   let loading = false;
   let posts = document.querySelector('section#posts');
   let search= document.querySelector('input#search');
-  console.log(posts);
 
   function MorePostsHandler(){
     let res = JSON.parse(this.responseText);
@@ -435,13 +434,18 @@ function addEventListeners() {
   function loadMorePosts(){
     loading=true;
     let searchValue = search.value;
-    if(searchValue==""){
+    const checkboxBody = document.getElementById('checkBody');
+    const checkboxTitle = document.getElementById('checkTitle');
+    const checkboxComments = document.getElementById('checkComments');
+
+    const sortByValue = document.getElementById('sortBy').value;
+    const orderByValue = document.getElementById('orderBy').value;
+    if(searchValue=="" && !checkboxBody.checked && !checkboxTitle.checked && !checkboxComments.checked && sortByValue=="date" && orderByValue=="desc"){
       getMore('/api/getMorePosts',{page: page,search:searchValue},MorePostsHandler);
       page++;
     }
     else{
-      console.log(searchValue)
-      getMore('/api/getMorePosts',{page: pageResults,search:searchValue},MorePostsHandler);
+      getMore('/api/getMorePosts',{page: pageResults,search:searchValue,title: checkboxTitle.checked,body: checkboxBody.checked,comments: checkboxComments.checked,sort: sortByValue, order: orderByValue},MorePostsHandler);
       pageResults++;
     }
     
