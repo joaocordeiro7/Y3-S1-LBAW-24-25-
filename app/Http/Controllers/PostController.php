@@ -207,7 +207,7 @@ class PostController extends Controller
 
     public static function getMoreResulsts($page,$search,$searchIn,$sort,$order){
         $query = Post::query();
-    
+        
         if ($search) {
             $searchTerms = array_map(function ($term) {
                 return trim($term) . ':*';
@@ -261,6 +261,7 @@ class PostController extends Controller
         if($request['search']=="" && !isset($request['sort']) && !isset($request['order'])){
             $posts = Post::select(['post_id', 'title', 'body'])->orderBy('created_at','desc')->orderBy('upvotes','desc')->paginate(6,['*'],'page',$page);
             
+            
         }
         else{
             
@@ -277,8 +278,12 @@ class PostController extends Controller
                 $searchIn = array_filter($searchIn, function($item) { return $item !== 'comments'; });
             }
             $searchIn = array_values($searchIn);
-            
+            if(empty($searchIn)){
+                $searchIn = ['title','body','comments'];
+            }
             $posts = PostController::getMoreResulsts($page,$request['search'],$searchIn,$request['sort'],$request['order']);
+
+            
             
         }
 
