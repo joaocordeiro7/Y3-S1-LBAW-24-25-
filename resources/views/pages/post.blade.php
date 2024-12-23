@@ -103,7 +103,7 @@
                                                     @endif
                                                     @if (Auth::check() && Auth::user()->user_id == $reply->owner->user_id)
                                                         <button class="edit-comment-btn" onclick="editReply({{ $reply->comment_id }})">Edit</button>
-                                                        <form id="edit-reply-form-{{ $reply->comment_id }}" class="hidden" method="POST" action="{{ route('comments.updateReply', $reply->comment_id) }}">
+                                                        <form id="edit-reply-form-{{ $reply->comment_id }}" class="hidden" method="POST" action="{{ route('comments.update', $reply->comment_id) }}">
                                                             @csrf
                                                             @method('PUT')
                                                             <textarea id="editedBody" name="body" type="text" placeholder="Rewrite your reply here" required>{{ html_entity_decode($reply->body, ENT_QUOTES, 'UTF-8') }}</textarea>
