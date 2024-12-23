@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
-class UpvoteOnPostNotification extends Notification
+class UserNotification extends Notification
 {
     use Queueable;
 

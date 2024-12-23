@@ -115,9 +115,9 @@ function addEventListeners() {
 
   function openNotfMenu(){
     let notfs=document.getElementById('notfs');
-    console.log(notfs);
+    
     notfs.classList.add('visible');
-    console.log(notfs);
+    
     this.removeEventListener('click', openNotfMenu);
     this.addEventListener('click',closeNotfMenu);
   }
@@ -261,7 +261,7 @@ function addEventListeners() {
 
     function sendFollowTagRequest(event){
         let name = this.getAttribute('data-tagname');
-        console.log(this);
+        
         sendAjaxRequest('post','/followTag',{name: name},followTagHandler);
         event.preventDefault();
     }
@@ -323,8 +323,7 @@ function addEventListeners() {
     function readNews(event){
       nid = this.getAttribute('data-id');
       ntype = this.getAttribute('data-type');
-      console.log(nid);
-      console.log(ntype);
+      
 
       sendAjaxRequest('post','/api/readNotf',{id: nid,type: ntype },readHandler(nid,ntype));
       event.preventDefault();
@@ -440,9 +439,9 @@ function addEventListeners() {
   function MorePostsHandler(){
     let res = JSON.parse(this.responseText);
     loading=false
-    console.log(res);
+    
     if(res['data'].length>0){
-      console.log('a');
+      
       for(let i = 0; i<res['data'].length; i++){
         let postArticle = document.createElement('article');
         postArticle.classList.add('post');
@@ -1312,14 +1311,14 @@ function openFollowedTagsList(){
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            console.log(response);
+            
             return response.json();
         })
         .then(following => {
             followingList.innerHTML = '';
             if (following.length > 0) {
                 following.forEach(tag => {
-                    console.log(tag);
+                    
                     const li = document.createElement('li');
                     const link = document.createElement('a');
                     link.href = `/posts/tag/${tag.name}`;

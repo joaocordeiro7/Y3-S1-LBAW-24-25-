@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
-use App\Notifications\UpvoteOnPostNotification;
+use App\Notifications\UserNotification;
 use Illuminate\View\View;
 
 
@@ -246,16 +246,16 @@ class UserController extends Controller
     
 
     public function getNewNotf(Request $request){
-        $newN = UpvoteOnPostNotification::getNewNotifs($request);
+        $newN = UserNotification::getNewNotifs($request);
         return response()->json($newN);
     }
 
     public static function userNotf(){
-        return UpvoteOnPostNotification::getNotif();
+        return UserNotification::getNotif();
     }
 
     public function readNotf(Request $request){
-        UpvoteOnPostNotification::readNotf($request);
+        UserNotification::readNotf($request);
     }
     public function followers($id) {
         $followers = User::whereHas('follows', function ($query) use ($id) {
