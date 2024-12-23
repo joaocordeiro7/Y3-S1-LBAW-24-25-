@@ -63,7 +63,7 @@ Route::controller(PostController::class)->group(function (){
     Route::post('/comments/store', 'storeComment')->name('comments.store');
     Route::put('/comments/update/{id}', 'updateComment')->name('comments.update');
     Route::post('/comments/reply', 'replyToComment')->middleware('auth');
-    Route::put('/comments/reply/update/{id}', 'updateComment')->name('comments.update');
+    Route::put('/comments/reply/update/{id}', 'updateComment');
     Route::delete('/comments/delete/{id}', 'deleteComment')->middleware('auth');
     Route::get('/posts/tag/{tag}', 'filterByTag')->name('posts.tag');
     Route::post('/api/getMoreTagPosts','getMoreTagPosts');
