@@ -8,7 +8,7 @@
         <p>No posts available.</p>
     @else
         <span class="error"></span>
-        <ul id="postsList">
+        <ul id="postsList" style="list-style-type: none; padding: 0;">
             @foreach($posts as $post)
                 <li id="{{$post->post_id}}">
                     <h2>{{ html_entity_decode($post->title, ENT_QUOTES, 'UTF-8') }}</h2>
