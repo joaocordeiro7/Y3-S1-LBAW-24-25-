@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mt-5">
-    <h1 >Posts with Tag: {{ $tagName }}</h1>
+    <h1 data-tagName="{{$tagName}}" id="tagName">Posts with Tag: {{ $tagName }}</h1>
     @if(Auth::check())
         @if(Auth::user()->alreadyFollowsTag($tagName))
         <button data-tagName="{{$tagName}}" class="unfollowTag">unfollow tag</button>

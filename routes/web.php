@@ -66,6 +66,7 @@ Route::controller(PostController::class)->group(function (){
     Route::put('/comments/reply/update/{id}', 'updateComment')->name('comments.update');
     Route::delete('/comments/delete/{id}', 'deleteComment')->middleware('auth');
     Route::get('/posts/tag/{tag}', 'filterByTag')->name('posts.tag');
+    Route::post('/api/getMoreTagPosts','getMoreTagPosts');
 
 });
 

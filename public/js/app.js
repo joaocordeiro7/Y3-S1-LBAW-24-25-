@@ -432,6 +432,7 @@ function addEventListeners() {
 
   let page = 0;
   let pageResults = 0;
+  let pageTag = 0;
   let loading = false;
   let posts = document.querySelector('section#posts');
   let search= document.querySelector('input#search');
@@ -505,12 +506,25 @@ function addEventListeners() {
     
   }
 
+  function loadMoreTagPosts(){
+    loading = true;
+    const tagname = document.getElementById('tagName').getAttribute('data-tagName');
+    getMore('/api/getMoreTagPosts',{page: pageTag, name: tagname},MorePostsHandler);
+    pageTag++;
+  }
+
   if(posts != null){
     
     window.addEventListener('scroll',function(){
       
       if((window.innerHeight + window.scrollY) >= (document.body.offsetHeight-2) && !loading){
-        //loadMorePosts();
+        if(search != null){
+            loadMorePosts();
+        }
+        else{
+            loadMoreTagPosts();
+        }
+        
       }
     })
     

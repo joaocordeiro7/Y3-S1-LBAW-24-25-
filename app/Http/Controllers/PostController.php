@@ -265,9 +265,9 @@ class PostController extends Controller
         else{
             
             $searchIn = ['title','body','comments'];
-            \Log::info('Search:', ['title' => $request['title']]);
+            
             if($request->input('title')==='false'){
-                \Log::info('here');
+                
                 $searchIn = array_filter($searchIn, function($item) { return $item !== 'title'; });
             }
             if($request->input('body')==='false'){
@@ -277,7 +277,7 @@ class PostController extends Controller
                 $searchIn = array_filter($searchIn, function($item) { return $item !== 'comments'; });
             }
             $searchIn = array_values($searchIn);
-            \Log::info('Search:', ['array' => $searchIn]);
+            
             $posts = PostController::getMoreResulsts($page,$request['search'],$searchIn,$request['sort'],$request['order']);
             
         }
@@ -504,12 +504,26 @@ class PostController extends Controller
             return redirect()->route('home')->with('error', 'Tag not found.');
         }
     
-        $posts = $tag->posts()->with('tags')->get();
+        $posts = $tag->posts()->with('tags')->paginate(6);
     
         return view('pages.postsByTag', [
             'posts' => $posts,
             'tagName' => $tagName,
         ]);
+    }
+
+    public function getMoreTagPosts(Request $request){
+        $page = $request['page']+2;
+        $tag = Tag::where('name', $request['name'])->first();
+    
+        if (!$tag) {
+            return redirect()->route('home')->with('error', 'Tag not found.');
+        }
+    
+        $posts = $tag->posts()->with('tags')->paginate(6,['*'],'page',$page);
+
+        return response()->json($posts);
+
     }
     
 
