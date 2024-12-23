@@ -113,6 +113,7 @@ class PostController extends Controller
 
         try{
             DB::table('upvoteonpostnotification')->where('post',$id)->delete();
+            DB::table('post_tags')->where('post',$id)->delete();
             $post->delete();
         }catch(\Illuminate\Database\QueryException $ex){
             return response()->json(['postId'=>$id]);
