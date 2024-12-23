@@ -96,4 +96,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(Blocked::class, 'blocked_id', 'user_id');
     }
+
+    public function followedTags(){
+        return $this->belongsToMany(Tag::class,'followed_tags','userid','tagid') ;
+    }
+
+    public static function alreadyFollowsTag($tag): bool{
+        $id = DB::table('tag')->where('name',$tag)->select('tag_id')->first();
+        \Log::info('TAG id',['id' => $id]);
+        return DB::table('followed_tags')->where('userid',"=",Auth::id())->where('tagid',"=",$id->tag_id)->exists();
+    }
 }

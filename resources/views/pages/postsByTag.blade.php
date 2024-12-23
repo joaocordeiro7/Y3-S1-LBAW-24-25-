@@ -2,8 +2,15 @@
 
 @section('content')
 <div class="container mt-5">
-    <h1>Posts with Tag: {{ $tagName }}</h1>
-
+    <h1 >Posts with Tag: {{ $tagName }}</h1>
+    @if(Auth::check())
+        @if(Auth::user()->alreadyFollowsTag($tagName))
+        <button data-tagName="{{$tagName}}" class="unfollowTag">unfollow tag</button>
+        @else
+        <button data-tagName="{{$tagName}}" class="followTag">follow tag</button>
+        @endif
+    <span class="error"></span>
+    @endif
     @if ($posts->isEmpty())
         <p>No posts found for this tag.</p>
     @else

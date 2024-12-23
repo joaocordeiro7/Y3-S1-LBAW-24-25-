@@ -96,6 +96,9 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/user/propose-topic', 'proposeTopic')->middleware('auth')->name('proposeTopic');
     Route::get('/users/{id}/followers', 'followers')->name('user.followers');
     Route::get('/users/{id}/following', 'following')->name('user.following');
+    Route::get('/users/{id}/followedTags','followedTags');
+    Route::post('/followTag','followTag');
+    Route::post('/unfollowTag','unfollowTag');
 });
 
 // Admin

@@ -30,6 +30,14 @@ function addEventListeners() {
     if(notfMeunuButton !=null)
       notfMeunuButton.addEventListener('click',openNotfMenu);
 
+    let followTagButton = document.querySelector('button.followTag');
+    if(followTagButton != null)
+        followTagButton.addEventListener('click',sendFollowTagRequest);
+
+    let unfollowTagButton = document.querySelector('button.unfollowTag');
+    if(unfollowTagButton != null)
+        unfollowTagButton.addEventListener('click',sendUnfollowTagRequest);
+
     let saveChangesButton = document.getElementById('saveChanges');
     if (saveChangesButton) {
         saveChangesButton.addEventListener('click', (event) => {
@@ -248,10 +256,55 @@ function addEventListeners() {
       button.innerHTML="follow";
       button.removeEventListener('click', sendUnfollowRequest);
       button.addEventListener('click',sendFollowRequest);
-    }
-    
-    
+    } 
   }
+
+    function sendFollowTagRequest(event){
+        let name = this.getAttribute('data-tagname');
+        console.log(this);
+        sendAjaxRequest('post','/followTag',{name: name},followTagHandler);
+        event.preventDefault();
+    }
+
+    function followTagHandler(){
+        let res = JSON.parse(this.responseText);
+
+        if(res.success != null){
+            let button = document.querySelector('button.followTag');
+            button.classList.add('unfollowTag');
+            button.classList.remove('followTag');
+            button.innerHTML="unfollow tag";
+            button.removeEventListener('click', sendFollowTagRequest);
+            button.addEventListener('click',sendUnfollowTagRequest);
+        }
+        else{
+            let errorSpan = document.querySelector('span.error');
+            errorSpan.innerHTML=res.fail;
+        }
+    }
+
+    function sendUnfollowTagRequest(event){
+        let name = this.getAttribute('data-tagname');
+        sendAjaxRequest('post','/unfollowTag',{name: name},unfollowTagHandler);
+        event.preventDefault();
+    }
+
+    function unfollowTagHandler(){
+        let res = JSON.parse(this.responseText);
+
+        if(res.success != null){
+            let button = document.querySelector('button.unfollowTag');
+            button.classList.add('followTag');
+            button.classList.remove('unfollowTag');
+            button.innerHTML="follow tag";
+            button.removeEventListener('click', sendUnfollowTagRequest);
+            button.addEventListener('click',sendFollowTagRequest);
+        }
+        else{
+            let errorSpan = document.querySelector('span.error');
+            errorSpan.innerHTML=res.fail;
+        }
+    }
   
   addEventListeners();
 
@@ -457,7 +510,7 @@ function addEventListeners() {
     window.addEventListener('scroll',function(){
       
       if((window.innerHeight + window.scrollY) >= (document.body.offsetHeight-2) && !loading){
-        loadMorePosts();
+        //loadMorePosts();
       }
     })
     
@@ -1235,3 +1288,50 @@ function closeFollowingList() {
     }, 300);
 }
 
+function openFollowedTagsList(){
+    const modal = document.getElementById('followedTagsModal');
+    const followingList = document.getElementById('followedTagsList');
+    followingList.innerHTML = 'Loading...';
+
+    fetch(`/users/${userId}/followedTags`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            console.log(response);
+            return response.json();
+        })
+        .then(following => {
+            followingList.innerHTML = '';
+            if (following.length > 0) {
+                following.forEach(tag => {
+                    console.log(tag);
+                    const li = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = `/posts/tag/${tag.name}`;
+                    link.textContent = tag.name;
+                    link.style.textDecoration = 'none';
+                    li.appendChild(link);
+                    followingList.appendChild(li);
+                });
+            } else {
+                followingList.innerHTML = '<li>Not following any tags yet.</li>';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching following:', error);
+            followingList.innerHTML = '<li>Error loading following. Please try again.</li>';
+        });
+
+    modal.style.display = 'block';
+    modal.style.opacity = '1';
+    modal.style.transition = 'opacity 0.3s ease';
+}
+
+function closeFollowedTagsList(){
+    const modal = document.getElementById('followedTagsModal');
+    modal.style.opacity = '0';
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+}

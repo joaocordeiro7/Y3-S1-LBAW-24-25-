@@ -273,4 +273,35 @@ class UserController extends Controller
         return response()->json($following);
     }
 
+    public function followedTags($userId){
+        $tags = DB::table('followed_tags')->join('tag','followed_tags.tagid','=','tag.tag_id')->where('followed_tags.userid',$userId)->select('tag.name')->get();
+        return response()->json($tags);
+    }
+
+    public function followTag(Request $request){
+        $id = DB::table('tag')->where('name',$request['name'])->select('tag_id')->first();
+        \Log::info('Tag id:',['id'=>$request['name']]);
+        if($id==null){
+            return response()->json(['fail'=>'invalid tag try reloading the page']);
+        }
+        else{
+            DB::table('followed_tags')->insert([
+                'tagid' => $id->tag_id,
+                'userid' => Auth::id()
+            ]);
+            return response()->json(['success'=>'user now follows the tag']);
+        }
+    }
+
+    public function unfollowTag(Request $request){
+        $id = DB::table('tag')->where('name',$request['name'])->select('tag_id')->first();
+        if($id==null){
+            return response()->json(['fail'=>'invalid tag try reloading the page']);
+        }
+        else{
+            DB::table('followed_tags') ->where('userid', Auth::id()) ->where('tagid', $id->tag_id) ->delete();
+            return response()->json(['success'=>'user now does not follow the tag']);
+        }
+        
+    }
 }
