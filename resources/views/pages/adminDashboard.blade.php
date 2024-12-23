@@ -21,9 +21,9 @@
             @foreach ($users as $user)
                 @if (!str_starts_with($user->username, '[Deleted')) 
                     <tr>
-                        <td>{{ $user->user_id }}</td>
-                        <td>{{ $user->username }}</td>
-                        <td>{{ $user->email }}</td>
+                        <td>{{ html_entity_decode($user->user_id, ENT_QUOTES, 'UTF-8') }}</td>
+                        <td>{{ html_entity_decode($user->username, ENT_QUOTES, 'UTF-8') }}</td>
+                        <td>{{ html_entity_decode($user->email, ENT_QUOTES, 'UTF-8') }}</td>
                         <td class="align-middle">
                             <div id="users-table">
                                 <a href="{{ route('profile', $user->user_id) }}" class="view-link mx-2">[view]</a>

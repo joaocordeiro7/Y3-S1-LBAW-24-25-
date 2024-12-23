@@ -11,8 +11,8 @@
         <ul id="postsList">
             @foreach($posts as $post)
                 <li id="{{$post->post_id}}">
-                    <h2>{{ $post->title }}</h2>
-                    <p>{{ \Illuminate\Support\Str::words($post->body, 25, '...') }}</p>
+                    <h2>{{ html_entity_decode($post->title, ENT_QUOTES, 'UTF-8') }}</h2>
+                    <p>{{ \Illuminate\Support\Str::words(html_entity_decode($post->body, ENT_QUOTES, 'UTF-8'), 25, '...') }}</p>
                     <a href="{{ url('/post/' . $post->post_id) }}">Read More</a>
                     
                     @can('delete', $post)

@@ -50,8 +50,9 @@ class AdminController extends Controller
         ]);
 
         $user = User::create([
-            'username' => $request->username,
-            'email' => $request->email,
+            
+            'username' => htmlspecialchars($request->username,ENT_QUOTES,'UTF-8'),
+            'email' => htmlspecialchars($request->email,ENT_QUOTES,'UTF-8'),
             'password' => Hash::make($request->password),
         ]);
 
@@ -87,9 +88,9 @@ class AdminController extends Controller
             'password' => 'nullable|string|min:8|confirmed',
             'image' => 'nullable|mimes:png,jpeg,jpg|max:2048'
         ]);
-    
-        $user->username = $request->input('username');
-        $user->email = $request->input('email');
+        
+        $user->username = htmlspecialchars($request->input('username'),ENT_QUOTES,'UTF-8');
+        $user->email = htmlspecialchars($request->input('email'),ENT_QUOTES,'UTF-8');
     
         if ($request->filled('password')) {
             $user->password = bcrypt($request->input('password'));
@@ -131,7 +132,7 @@ class AdminController extends Controller
         if (!$proposal) {
             return response()->json(['error' => 'Proposal not found'], 404);
         }
-    
+        //dar decode
         $existingTag = Tag::where('name', $proposal->title)->first();
         if ($existingTag) {
             $proposal->delete();
@@ -141,7 +142,7 @@ class AdminController extends Controller
                 'message' => 'Topic proposal already exists as a tag and has been removed from the proposals.',
             ]);
         }
-    
+        //dar decode
         $tag = Tag::create([
             'name' => $proposal->title,
         ]);

@@ -41,8 +41,8 @@ class PostController extends Controller
     
         $this->authorize('store', $newPost);
     
-        $newPost->title = $validatedRequest['newsTitle'];
-        $newPost->body = $validatedRequest['newsBody'];
+        $newPost->title = htmlspecialchars($validatedRequest['newsTitle'],ENT_QUOTES,'UTF-8');
+        $newPost->body = htmlspecialchars($validatedRequest['newsBody'],ENT_QUOTES,'UTF-8');
         $newPost->ownerid = Auth::user()->user_id;
         $newPost->save();
     
@@ -94,8 +94,8 @@ class PostController extends Controller
         
         $this->authorize('update',$post);
 
-        $post->title = $validatedRequest['title'];
-        $post->body = $validatedRequest['body'];
+        $post->title = htmlspecialchars($validatedRequest['title'],ENT_QUOTES,'UTF-8');
+        $post->body = htmlspecialchars($validatedRequest['body'],ENT_QUOTES,'UTF-8');
         $post->updated_at = $request->input('timestamp');
 
         $post->save();
@@ -418,7 +418,7 @@ class PostController extends Controller
         $comment = Comment::create([
             'ownerid' => Auth::user()->user_id,
             'post' => $request->post_id,
-            'body' => $request->body,
+            'body' => htmlspecialchars($request->body,ENT_QUOTES,'UTF-8'),
         ]);
     
         return response()->json([
@@ -452,7 +452,7 @@ class PostController extends Controller
 
         $reply = Comment::create([
             'body' => $request->body,
-            'reply_to' => $request->reply_to,
+            'reply_to' => htmlspecialchars($request->reply_to,ENT_QUOTES,'UTF-8'),
             'ownerid' => Auth::user()->user_id,
             'post' => Comment::findOrFail($request->reply_to)->post,
         ]);

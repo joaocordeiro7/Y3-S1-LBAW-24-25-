@@ -139,9 +139,9 @@ class UserController extends Controller
             'password' => 'nullable|string|min:8|confirmed',
             'image' => 'nullable|mimes:png,jpeg,jpg|max:2048' 
         ]);
-    
-        $user->username = $request->input('username');
-        $user->email = $request->input('email');
+        
+        $user->username = htmlspecialchars($request->input('username'),ENT_QUOTES,'UTF-8');
+        $user->email = htmlspecialchars($request->input('email'),ENT_QUOTES,'UTF-8');
         if ($request->filled('password')) {
             $user->password = bcrypt($request->input('password'));
         }
@@ -181,9 +181,9 @@ class UserController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
         ]);
-
+        
         DB::table('topic_proposal')->insert([
-            'title' => $validated['title'],
+            'title' => htmlspecialchars($validated['title'],ENT_QUOTES,'UTF-8'),
         ]);
 
         return redirect()->back()->with('success', 'Topic proposed successfully!');
@@ -210,7 +210,7 @@ class UserController extends Controller
     }
 
     public function follow(int $userToFollow){
-        //$this->authorize('canFollow',$userToFollow);
+        
 
         if(User::alreadyFollows($userToFollow) || !Auth::check() || Auth::id()===$userToFollow){
 
@@ -228,7 +228,7 @@ class UserController extends Controller
     }
 
     public function unfollow(int $userToUnfollow){
-        //$this->authorize('canFollow',$userToFollow);
+        
 
         if(!User::alreadyFollows($userToUnfollow)){
 
