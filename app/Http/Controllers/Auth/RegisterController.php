@@ -48,7 +48,7 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        $defaultPath = 'images/profile/default.png';    
+        $defaultPath = 'default_image/default.png';    
         $user->image()->create(['path' => $defaultPath]);
 
         $credentials = $request->only('email', 'password');
