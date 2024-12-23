@@ -118,9 +118,9 @@
                 @foreach ($posts as $post)
                     <article class="post">
                         <header>
-                            <h2>{{ $post->title }}</h2>
+                            <h2>{{ html_entity_decode($post->title, ENT_QUOTES, 'UTF-8') }}</h2>
                         </header>
-                        <p>{{ \Illuminate\Support\Str::words($post->body, 25, '...') }}</p>
+                        <p>{{ \Illuminate\Support\Str::words(html_entity_decode($post->body, ENT_QUOTES, 'UTF-8'), 25, '...') }}</p>
                         <a href="{{ url('/post/' . $post->post_id) }}">Read More</a>
                     </article>
                 @endforeach

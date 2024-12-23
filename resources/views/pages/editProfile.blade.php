@@ -5,7 +5,7 @@
 @section('content')
 <div class="container">
     <div class="d-flex justify-content-between flex-column align-items-start mb-3">
-        <h1 id="title">Edit {{ $user->username }}'s Profile</h1>
+        <h1 id="title">Edit {{ html_entity_decode($user->username, ENT_QUOTES, 'UTF-8') }}'s Profile</h1>
         <img 
             id="editprofile-picture-display" 
             src="{{ asset('storage/' . $user->image->path) }}" 

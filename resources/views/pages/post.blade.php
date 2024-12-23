@@ -7,10 +7,11 @@
             
         @endif
         <header class="newsTitle">
-            <h2>{{$post->title}}</h2>
+            
+            <h2>{{html_entity_decode($post->title, ENT_QUOTES, 'UTF-8')}}</h2>
         </header>
         <div class="newsBody">
-            <pre>{{$post->body}}</pre>
+            <pre>{{html_entity_decode($post->body, ENT_QUOTES, 'UTF-8')}}</pre>
         </div>
         
         <div id="postDetails">
@@ -22,7 +23,7 @@
                     @endforeach
                 </span>
             </div>
-            <p><a href="/users/{{$post->owner->user_id}}">{{$post->owner->username}}</a> - Published at {{$post->created_at->format('d M Y H:i')}}</p>
+            <p><a href="/users/{{$post->owner->user_id}}">{{html_entity_decode($post->owner->username, ENT_QUOTES, 'UTF-8')}}</a> - Published at {{$post->created_at->format('d M Y H:i')}}</p>
             <div id="votes">
                 @if (Auth::check() && Auth::user()->user_id != $post->owner->user_id)
                     <button onclick="like({{ $post->post_id }} , 1)"><i class="fa-regular fa-thumbs-up"></i></button>
@@ -58,8 +59,8 @@
                         @foreach ($comments as $comment)
                             @if ($comment->reply_to === null)
                                 <article class="comment" data-comment-id="{{ $comment->comment_id }}">
-                                    <p id="comment-body-{{ $comment->comment_id }}">{{ $comment->body }}</p>
-                                    <p><a href="/users/{{$comment->owner->user_id}}">{{$comment->owner->username}}</a> - Published at {{$comment->created_at->format('d M Y H:i')}}</p>
+                                    <p id="comment-body-{{ $comment->comment_id }}">{{ html_entity_decode($comment->body, ENT_QUOTES, 'UTF-8') }}</p>
+                                    <p><a href="/users/{{$comment->owner->user_id}}">{{html_entity_decode($comment->owner->username, ENT_QUOTES, 'UTF-8')}}</a> - Published at {{$comment->created_at->format('d M Y H:i')}}</p>
                                     @if (Auth::check() && (Auth::user()->user_id == $comment->owner->user_id || Auth::user()->isAdmin()))
                                         <button onclick="deleteComment({{ $comment->comment_id }})" class="delete-comment-btn">Delete</button>
                                     @endif
@@ -68,7 +69,7 @@
                                         <form id="edit-comment-form-{{ $comment->comment_id }}" class="hidden" method="POST" action="{{ route('comments.update', $comment->comment_id) }}">
                                             @csrf
                                             @method('PUT')
-                                            <textarea id="editedBody" name="body" type="text" placeholder="Rewrite your comment here" required>{{ $comment->body }}</textarea>
+                                            <textarea id="editedBody" name="body" type="text" placeholder="Rewrite your comment here" required>{{ html_entity_decode($comment->body, ENT_QUOTES, 'UTF-8') }}</textarea>
                                             <button type="button" onclick="saveEditedComment({{ $comment->comment_id }})">Save</button>
                                             <button type="button" onclick="cancelEdit({{ $comment->comment_id }})">Cancel</button>
                                         </form>
@@ -95,8 +96,8 @@
                                         <div class="replies">
                                             @foreach ($comment->replies as $reply)
                                                 <article class="reply" data-reply-id="{{ $reply->comment_id }}">
-                                                    <p id="reply-body-{{ $reply->comment_id }}">{{ $reply->body }}</p>
-                                                    <p><a href="/users/{{ $reply->owner->user_id }}">{{ $reply->owner->username }}</a> - Published at {{ $reply->created_at->format('d M Y H:i') }}</p>
+                                                    <p id="reply-body-{{ $reply->comment_id }}">{{ html_entity_decode($reply->body, ENT_QUOTES, 'UTF-8') }}</p>
+                                                    <p><a href="/users/{{ $reply->owner->user_id }}">{{ html_entity_decode($reply->owner->username, ENT_QUOTES, 'UTF-8') }}</a> - Published at {{ $reply->created_at->format('d M Y H:i') }}</p>
                                                     @if (Auth::check() && (Auth::user()->user_id == $reply->owner->user_id || Auth::user()->isAdmin()))
                                                         <button onclick="deleteReply({{ $reply->comment_id }})" class="delete-comment-btn">Delete</button>
                                                     @endif
@@ -105,7 +106,7 @@
                                                         <form id="edit-reply-form-{{ $reply->comment_id }}" class="hidden" method="POST" action="{{ route('comments.update', $reply->comment_id) }}">
                                                             @csrf
                                                             @method('PUT')
-                                                            <textarea id="editedBody" name="body" type="text" placeholder="Rewrite your reply here" required>{{ $reply->body }}</textarea>
+                                                            <textarea id="editedBody" name="body" type="text" placeholder="Rewrite your reply here" required>{{ html_entity_decode($reply->body, ENT_QUOTES, 'UTF-8') }}</textarea>
                                                             <button type="button" onclick="saveEditedReply({{ $reply->comment_id }})">Save</button>
                                                             <button type="button" onclick="cancelEditReply({{ $reply->comment_id }})">Cancel</button>
                                                         </form>
@@ -136,11 +137,11 @@
     <section class="postEditForm hidden" data-id="{{ $post->post_id }}">
         <form>
             {{csrf_field()}}
-            <input type="text" id="newTitle" value="{{$post->title}}" required>
+            <input type="text" id="newTitle" value="{{html_entity_decode($post->title, ENT_QUOTES, 'UTF-8')}}" required>
             @if($errors->has('title'))
                 <span class="error">{{$errors->first('title')}}</span>
             @endif
-            <textarea id="newBody" rows="16" required>{{$post->body}}</textarea>
+            <textarea id="newBody" rows="16" required>{{html_entity_decode($post->body, ENT_QUOTES, 'UTF-8')}}</textarea>
             @if($errors->has('body'))
                 <span class="error">{{$errors->first('body')}}</span>
             @endif

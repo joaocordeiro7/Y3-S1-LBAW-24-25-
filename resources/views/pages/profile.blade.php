@@ -14,7 +14,7 @@
     </div>
     <div class="d-flex justify-content-between">
         <h1>
-            {{ $user->username }}
+            {{ html_entity_decode($user->username, ENT_QUOTES, 'UTF-8') }}
             @if ($currentUser || $canAdminEdit)
                 <a href="{{ route('editProfile', ['id' => $user->user_id]) }}" class="ml-2 h1">[edit]</a>
             @endif

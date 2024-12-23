@@ -13,13 +13,13 @@
 
 <div class="form-group">
     <label for="username">Username:</label>
-    <input type="text" name="username" id="username" value="{{ old('username', $user->username) }}" class="form-control">
+    <input type="text" name="username" id="username" value="{{ old('username', html_entity_decode($user->username), ENT_QUOTES, 'UTF-8') }}" class="form-control">
     <span class="error text-danger" style="display: none;" id="username-error"></span>
 </div>
 
 <div class="form-group">
     <label for="email">Email:</label>
-    <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" class="form-control">
+    <input type="email" name="email" id="email" value="{{ old('email', html_entity_decode($user->email), ENT_QUOTES, 'UTF-8') }}" class="form-control">
     <span class="error text-danger" style="display: none;" id="email-error"></span>
 </div>
 
