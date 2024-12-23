@@ -10,6 +10,7 @@ IMAGE_NAME=gitlab.up.pt:5050/lbaw/lbaw2425/lbaw24104
 composer install
 php artisan config:clear
 php artisan clear-compiled
+php artisan storage:link
 php artisan optimize
 
 # docker buildx build --push --platform linux/amd64 -t $IMAGE_NAME .
