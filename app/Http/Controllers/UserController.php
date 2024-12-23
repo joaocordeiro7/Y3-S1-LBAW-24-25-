@@ -200,6 +200,9 @@ class UserController extends Controller
     public function search(Request $request)
     {
         $username = $request->input('username');
+        if (str_starts_with($username, '[Deleted')){
+            return redirect()->back()->with('error', 'Search for a user that still exists.');
+        }
         $user = User::where('username', $username)->first();
 
         if ($user) {

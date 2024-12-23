@@ -103,8 +103,6 @@
                 <option value="desc" {{ request('order') == 'desc' ? 'selected' : '' }}>Descending</option>
                 <option value="asc" {{ request('order') == 'asc' ? 'selected' : '' }}>Ascending</option>
             </select>
-
-            <button type="submit" class="btn" style="background-color:rgb(133, 9, 25); color:white; font-size: 1.25rem;">Apply</button>
         </div>
     </div>
 
